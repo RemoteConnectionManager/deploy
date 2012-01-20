@@ -1,4 +1,5 @@
-#from http://gnuwin32.sourceforge.net/packages/unzip.htm
+#from http://gnuwin32.sourceforge.net/packages/gzip.htm or
+#and http://www.gzip.org/
 #this imports variables here
 PackageSetup()
 
@@ -7,12 +8,21 @@ if(WIN32)
 	
 	ExternalProject_Add(
 		${PACKAGE}
-		${Package_std_dirs}
-		#MD5 925a5d4d9b4a63ff1a473cc4d47f2f05
-		URL http://switch.dl.sourceforge.net/project/gnuwin32/unzip/5.51-1/unzip-5.51-1-bin.zip
+		#WARNING!!!! this way  zip file directly expand into install/bin dir == source dir
+		DOWNLOAD_DIR ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/win32_bin_download
+		SOURCE_DIR ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}
+		#MD5 b24802293f74ab11aaa5786f36c59819
+		URL http://switch.dl.sourceforge.net/project/gnuwin32/gzip/1.3.12-1/gzip-1.3.12-1-bin.zip
 	)
 	#### add install step here (copy????)
 else()
+	#configure based install like ./configure --prefix=/tmp/md5deep
+	ExternalProject_Add(
+		${PACKAGE}
+		${Package_std_dirs}
+		#SHA256 a6a29f9892fa3a4a48bee0da341fd5dad5cdcdc2aecc521b28cf0b652bb3c415 
+		URL http://ftp.gnu.org/gnu/gzip/gzip-1.3.12.tar.gz
+	)
 endif()
 
 

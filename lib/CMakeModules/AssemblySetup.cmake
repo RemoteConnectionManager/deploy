@@ -15,6 +15,15 @@ option(EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT OFF)
 set(EXTERNAL_ASSEMBLY_BUILD_SHARED ${EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT})
 #
 
+# Allow the user to decide if Packages that use Find have to search in environment
+option(EXTERNAL_ASSEMBLY_ENVIRONMENT_FIND ON)
+if(NOT EXTERNAL_ASSEMBLY_ENVIRONMENT_FIND)
+	set(Package_search_hints NO_SYSTEM_ENVIRONMENT_PATH)
+endif()
+#
+
+  
+
 
   FIND_PACKAGE(Subversion)
   IF(Subversion_FOUND)
@@ -47,10 +56,15 @@ get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../S
 #################################################################################
 function(add_external_package_dir pkg ver)
 	if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg})
-		if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/${ver})
-			add_subdirectory(${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg})
+		if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/Include.cmake)
+			include(${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/Include.cmake)
+			Package_Handle(${ver})
 		else()
-			message("NOT FOUND Version ${ver} of Package  ${pkg} in ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}")
+			if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/${ver})
+				add_subdirectory(${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg})
+			else()
+				message("NOT FOUND Version ${ver} of Package  ${pkg} in ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}")
+			endif()
 		endif()
 	else()
 		message("NOT FOUND Package ${pkg} in ${CMAKE_SOURCE_DIR}/../../Packages")
@@ -146,3 +160,17 @@ function(PackageWriteMultiPatchFile outvar)
 	#message("--->${mycommand}<--")
 
 endfunction(PackageWriteMultiPatchFile)
+
+function(PackageWindowsBinarySimpleAdd URL)
+		ExternalProject_Add(
+			${PACKAGE}
+			#WARNING!!!! this way  zip file directly expand into install/bin dir == source dir
+			DOWNLOAD_DIR ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/win32_bin_download
+			SOURCE_DIR ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}
+			URL ${URL}
+			INSTALL_COMMAND ""
+			CONFIGURE_COMMAND ""
+			BUILD_COMMAND ""
+		)
+endfunction(PackageWindowsBinarySimpleAdd)
+
