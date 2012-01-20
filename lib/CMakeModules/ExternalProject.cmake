@@ -18,6 +18,8 @@
 #    [CVS_TAG tag]               # Tag to checkout from CVS repo
 #    [SVN_REPOSITORY url]        # URL of Subversion repo
 #    [SVN_REVISION rev]          # Revision to checkout from Subversion repo
+#    [BZR_REPOSITORY url]        # URL of Subversion repo
+#    [BZR_REVISION rev]          # Revision to checkout from Subversion repo
 #    [URL /.../src.tgz]          # Full path or URL of source
 #   #--Update/Patch step----------
 #    [UPDATE_COMMAND cmd...]     # Source work-tree update command
@@ -70,7 +72,7 @@
 # If SOURCE_DIR is explicitly set to an existing directory the project
 # will be built from it.
 # Otherwise a download step must be specified using one of the
-# DOWNLOAD_COMMAND, CVS_*, SVN_*, or URL options.
+# DOWNLOAD_COMMAND, CVS_*, SVN_*, BZR_*, or URL options.
 # The URL option may refer locally to a directory or source tarball,
 # or refer to a remote tarball (e.g. http://.../src.tgz).
 #
@@ -691,6 +693,7 @@ function(_ep_add_download_command name)
   get_property(cmd TARGET ${name} PROPERTY _EP_DOWNLOAD_COMMAND)
   get_property(cvs_repository TARGET ${name} PROPERTY _EP_CVS_REPOSITORY)
   get_property(svn_repository TARGET ${name} PROPERTY _EP_SVN_REPOSITORY)
+  get_property(bzr_repository TARGET ${name} PROPERTY _EP_BZR_REPOSITORY)
   get_property(url TARGET ${name} PROPERTY _EP_URL)
 
   # TODO: Perhaps file:// should be copied to download dir before extraction.
@@ -751,6 +754,32 @@ function(_ep_add_download_command name)
     set(comment "Performing download step (SVN checkout) for '${name}'")
     set(cmd ${Subversion_SVN_EXECUTABLE} co ${svn_repository} ${svn_revision} ${src_name})
     list(APPEND depends ${srcstamp_dir}/${name}-svninfo.txt)
+  elseif(bzr_repository)
+    find_package(Bazaar)
+    if(NOT Bazaar_EXECUTABLE)
+      message(FATAL_ERROR "error: could not find bzr for checkout of ${name}")
+    endif()
+
+    get_property(bzr_revision TARGET ${name} PROPERTY _EP_BZR_REVISION)
+
+    set(repository ${bzr_repository})
+    set(module)
+    set(tag ${bzr_revision})
+    configure_file(
+      "${CMAKE_ROOT}/Modules/RepositoryInfo.txt.in"
+      "${srcstamp_dir}/${name}-bzrinfo.txt"
+      @ONLY
+      )
+
+    get_filename_component(src_name "${source_dir}" NAME)
+    get_filename_component(work_dir "${source_dir}" PATH)
+    set(comment "Performing download step (Bazaar checkout) for '${name}'")
+	if(bzr_revision)
+		set(cmd ${Bazaar_EXECUTABLE} checkout -r ${bzr_revision} ${bzr_repository} ${src_name})
+	else()
+		set(cmd ${Bazaar_EXECUTABLE} checkout ${bzr_repository} ${src_name})
+	endif()
+    list(APPEND depends ${srcstamp_dir}/${name}-bzrinfo.txt)
   elseif(url)
     get_filename_component(work_dir "${source_dir}" PATH)
     set(repository "external project URL")
@@ -788,7 +817,7 @@ function(_ep_add_download_command name)
       list(APPEND cmd ${CMAKE_COMMAND} -P ${srcstamp_dir}/extract-${name}.cmake)
     endif()
   else()
-    message(SEND_ERROR "error: no download info for '${name}' -- please specify existing SOURCE_DIR or one of URL, CVS_REPOSITORY and CVS_MODULE, SVN_REPOSITORY or DOWNLOAD_COMMAND")
+    message(SEND_ERROR "error: no download info for '${name}' -- please specify existing SOURCE_DIR or one of URL, CVS_REPOSITORY and CVS_MODULE, SVN_REPOSITORY, BZR_REPOSITORY or DOWNLOAD_COMMAND")
   endif()
 
   ExternalProject_Add_Step(${name} download
@@ -808,6 +837,7 @@ function(_ep_add_update_command name)
   get_property(cmd TARGET ${name} PROPERTY _EP_UPDATE_COMMAND)
   get_property(cvs_repository TARGET ${name} PROPERTY _EP_CVS_REPOSITORY)
   get_property(svn_repository TARGET ${name} PROPERTY _EP_SVN_REPOSITORY)
+  get_property(bzr_repository TARGET ${name} PROPERTY _EP_BZR_REPOSITORY)
 
   set(work_dir)
   set(comment)
@@ -832,6 +862,15 @@ function(_ep_add_update_command name)
     set(comment "Performing update step (SVN update) for '${name}'")
     get_property(svn_revision TARGET ${name} PROPERTY _EP_SVN_REVISION)
     set(cmd ${Subversion_SVN_EXECUTABLE} up ${svn_revision})
+    set(always 1)
+  elseif(bzr_repository)
+    if(NOT Bazaar_EXECUTABLE)
+      message(FATAL_ERROR "error: could not find bzr for update of ${name}")
+    endif()
+    set(work_dir ${source_dir})
+    set(comment "Performing update step (Bazaar update) for '${name}'")
+    #not sure what does it mean for Bazaar#get_property(svn_revision TARGET ${name} PROPERTY _EP_SVN_REVISION)
+    set(cmd ${Bazaar_EXECUTABLE} update )
     set(always 1)
   endif()
 
