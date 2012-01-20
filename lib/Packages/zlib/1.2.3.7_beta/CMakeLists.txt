@@ -28,7 +28,6 @@ ExternalProject_Add(
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
-		-DCMAKE_C_FLAGS:STRING=${MY_CMAKE_C_FLAGS}
 )
 
 ########################################################################################
