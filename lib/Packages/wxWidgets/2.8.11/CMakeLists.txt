@@ -8,6 +8,7 @@ if(WIN32)
 else()
 	#configure based install like ./configure --prefix=/$HOME/apache
 	set(Package_PkgConfig ON)
+	set(Package_configure_flags --with-opengl)
 	PackageUnixConfigureSimpleAdd(
 		http://prdownloads.sourceforge.net/wxwindows/wxWidgets-2.8.11.tar.gz
 	)
