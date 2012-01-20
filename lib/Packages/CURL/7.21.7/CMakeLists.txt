@@ -57,7 +57,7 @@ set(_disable_use_openssl "-DCMAKE_USE_OPENSSL:BOOL=OFF")
 		set(Package_specific_cmake_args ${Package_specific_cmake_args} -DCURL_DISABLE_LDAP:BOOL=ON)
 	endif()
 	if(${PACKAGE}_disable_openssl)
-		set(Package_specific_cmake_args ${Package_specific_cmake_args} -DCURL_DISABLE_LDAP:BOOL=ON)
+		set(Package_specific_cmake_args ${Package_specific_cmake_args} --DCMAKE_USE_OPENSSL:BOOL=OFF)
 	endif()
 PackageCmakeAdd()
 
