@@ -28,7 +28,7 @@ FIND_PATH(TIFF_INCLUDE_DIR
   ${Package_search_hints}
 )
 
-SET(TIFF_NAMES ${TIFF_NAMES} tiff libtiff libtiff3)
+SET(TIFF_NAMES ${TIFF_NAMES} libtiff tiff libtiff3)
 FIND_LIBRARY(TIFF_LIBRARY
   NAMES ${TIFF_NAMES} 
   ${Package_search_hints}

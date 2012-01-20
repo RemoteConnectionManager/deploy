@@ -10,7 +10,7 @@
 # None of the above will be defined unles zlib can be found.
 # PNG depends on Zlib
 INCLUDE(FindZLIB)
-message("-------CUSTOM FindPNG------ with hints-->${Package_search_hints}<--")
+message("-------CUSTOM FindPNG------ with hints-->${Package_search_hints}<--CMAKE_PREFIX_PATH-->${CMAKE_PREFIX_PATH}<--")
 
 IF(ZLIB_FOUND)
   FIND_PATH(PNG_PNG_INCLUDE_DIR png.h
@@ -18,7 +18,7 @@ IF(ZLIB_FOUND)
   ${Package_search_hints}
   )
 
-  SET(PNG_NAMES ${PNG_NAMES} png12  png libpng  libpng12 libpng12_static libpng14 libpng14_static)
+  SET(PNG_NAMES ${PNG_NAMES} libpng12 libpng12_static libpng14 libpng14_static png12  png libpng  )
   FIND_LIBRARY(
 	PNG_LIBRARY 
 	NAMES ${PNG_NAMES} 
