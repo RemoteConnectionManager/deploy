@@ -4,7 +4,6 @@ SET(Zip_FOUND FALSE)
 FIND_PROGRAM(
 	zip_EXECUTABLE zip
 	DOC "zip exe"
-	${Package_search_hints}
 #always prefer system installed tools (no linux package yet)	${Package_search_hints}
 )
 MARK_AS_ADVANCED(zip_EXECUTABLE)
