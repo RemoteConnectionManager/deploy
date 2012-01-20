@@ -13,35 +13,43 @@ PackageWriteMultiPatchFile(tmp
 
 file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
 
-ExternalProject_Add(
-	${PACKAGE}-GetSource
-	SOURCE_DIR ${Package_Source_Dir}
-	STAMP_DIR ${Package_Source_Stamp_Dir}
-	URL http://www.ijg.org/files/jpegsrc.v7.tar.gz
-	URL_MD5 382ef33b339c299b56baf1296cda9785
-	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
-	UPDATE_COMMAND ""
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ""
-)
+set(Package_source_setup
+                URL http://www.ijg.org/files/jpegsrc.v7.tar.gz
+                URL_MD5 382ef33b339c299b56baf1296cda9785
+		PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
+        )
 
-if(Package_current_dependencies_effective_line)
-	set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
-else()
-	set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
-endif()
+PackageCmakeAdd()
 
-ExternalProject_Add(
-	${PACKAGE}
-	${Package_std_dirs}
-	DOWNLOAD_COMMAND ""	
-	CMAKE_GENERATOR ${CMAKE_GENERATOR}
-	CMAKE_ARGS 
-		${Package_std_cmake_args}
-	${Package_current_dependencies_effective_line} 
-	STEP_TARGETS configure build
-)
+# ExternalProject_Add(
+# 	${PACKAGE}-GetSource
+# 	SOURCE_DIR ${Package_Source_Dir}
+# 	STAMP_DIR ${Package_Source_Stamp_Dir}
+# 	URL http://www.ijg.org/files/jpegsrc.v7.tar.gz
+# 	URL_MD5 382ef33b339c299b56baf1296cda9785
+# 	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
+# 	UPDATE_COMMAND ""
+# 	CONFIGURE_COMMAND ""
+# 	BUILD_COMMAND ""
+# 	INSTALL_COMMAND ""
+# )
+# 
+# if(Package_current_dependencies_effective_line)
+# 	set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
+# else()
+# 	set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
+# endif()
+# 
+# ExternalProject_Add(
+# 	${PACKAGE}
+# 	${Package_std_dirs}
+# 	DOWNLOAD_COMMAND ""	
+# 	CMAKE_GENERATOR ${CMAKE_GENERATOR}
+# 	CMAKE_ARGS 
+# 		${Package_std_cmake_args}
+# 	${Package_current_dependencies_effective_line} 
+# 	STEP_TARGETS configure build
+# )
 
 #get_filename_component(Package_Dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 #message("processing file-->${Package_Dir} parent ${CMAKE_PARENT_LIST_FILE}")
