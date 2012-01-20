@@ -8,4 +8,5 @@ debug_message("configuring with generator -->${CMAKE_GENERATOR}<--")
 
 add_external_package_dir(Apache 2.2.15)
 add_external_package_dir(Subversion 1.6.9)
+add_external_package_dir(PHP 5.2.13)
 
