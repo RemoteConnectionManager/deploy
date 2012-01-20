@@ -18,7 +18,7 @@ if(WIN32)
 #			${Package_add_cmake_args}
 	)
 else()
-	message(FATAL_ERROR "package ${PACKAGE} not currently available for Linux")
+#	message(FATAL_ERROR "package ${PACKAGE} not currently available for Linux")
 	#skipping configure make and install as required as source
 	ExternalProject_Add(
 		${PACKAGE}
