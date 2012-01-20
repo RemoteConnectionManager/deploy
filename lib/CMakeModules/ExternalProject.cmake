@@ -18,8 +18,8 @@
 #    [CVS_TAG tag]               # Tag to checkout from CVS repo
 #    [SVN_REPOSITORY url]        # URL of Subversion repo
 #    [SVN_REVISION rev]          # Revision to checkout from Subversion repo
-#    [BZR_REPOSITORY url]        # URL of Subversion repo
-#    [BZR_REVISION rev]          # Revision to checkout from Subversion repo
+#    [BZR_REPOSITORY url]        # URL of Bazaar repo
+#    [BZR_REVISION rev]          # Revision to checkout from Bazaar repo
 #    [URL /.../src.tgz]          # Full path or URL of source
 #   #--Update/Patch step----------
 #    [UPDATE_COMMAND cmd...]     # Source work-tree update command
