@@ -1,1 +1,5 @@
-set(Package_current_dependencies ZLIB PNG JPEG Freetype CURL)
+#if(WIN32)
+  set(Package_current_dependencies ZLIB PNG JPEG Freetype CURL)
+#else()
+#  set(Package_current_dependencies ZLIB PNG JPEG Freetype CURL FFmpeg)
+#endif()
