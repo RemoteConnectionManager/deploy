@@ -30,7 +30,12 @@ ExternalProject_Add(
 		-DCMP_LIBRARY_OUTPUT_DIRECTORY:PATH=${CMP_LIBRARY_OUTPUT_DIRECTORY}
 )
 
-
+if(UNIX)
+	PackageUnixPkgConfigInstall(
+		  freetype238
+		  freetype2
+	)
+endif()
 
 #get_filename_component(Package_Dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 #message("processing file-->${Package_Dir} parent ${CMAKE_PARENT_LIST_FILE}")

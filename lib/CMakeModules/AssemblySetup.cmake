@@ -292,6 +292,7 @@ function(PackageUnixConfigureSimpleAdd URL)
 		ExternalProject_Add(
 			${PACKAGE}
 			${Package_std_dirs}
+			${Package_current_dependencies_effective_line}
 			URL ${URL}
 			${conf_command}
 			${list_separator}
@@ -314,6 +315,15 @@ function(PackageUnixConfigureSimpleAdd URL)
 #	endif()
 
 endfunction(PackageUnixConfigureSimpleAdd)
+
+function(PackageUnixPkgConfigInstall LIBNAME PKGFILENAME)
+		ExternalProject_Add_Step(${PACKAGE} install_pkgconfig
+			COMMAND ${CMAKE_COMMAND} -Dprefix:PATH=<INSTALL_DIR> -Dname:STRING=${PACKAGE} -Dversion:STRING=${VERSION} -Dlibname:STRING=${LIBNAME} -Dpkgfilename:string=${PKGFILENAME} -P ${_mymoduledir}/pkgconfig_lib_configure.cmake
+			COMMENT "installing pkgconfig"
+			DEPENDEES install
+		)
+endfunction(PackageUnixPkgConfigInstall)
+
 
 function(PackageUnixConfigureSimpleAddInSource URL)
 		ExternalProject_Add(
