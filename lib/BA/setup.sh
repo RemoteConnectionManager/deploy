@@ -104,9 +104,12 @@ if [ "$source_dir" = "" ]; then
     source_dir="${ba_work_dir}/src"
   fi
 fi
+if [ "$work_default_base_dir" = "" ]; then
+  work_default_base_dir="/scratch_local/pro3dwe1/build/ba_builds"
+fi
 if [ "$work_dir" = "" ]; then
   if [ "$user" = "pro3dwe1" ]; then
-    work_dir="/scratch_local/pro3dwe1/build/ba_builds/${ba_module_name}/${ba_module_version}"
+    work_dir="${work_default_base_dir}/${ba_module_name}/${ba_module_version}"
   else
     work_dir="${ba_work_dir}/build"
   fi
