@@ -13,9 +13,12 @@ else()
 	ExternalProject_Add(
 		${PACKAGE}
 		${Package_std_dirs}
-		URL http://dev.mysql.com/get/Downloads/MySQL-5.5/mysql-5.5.8.tar.gz/from/http://sunsite.informatik.rwth-aachen.de/mysql/
+		URL http://ftp.heanet.ie/mirrors/www.mysql.com/Downloads/MySQL-5.5/mysql-5.5.8.tar.gz
 		URL_MD5 42e866302b61f5e213afd33e04677017
-		CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR> 
+		CMAKE_COMMAND ${CMAKE_COMMAND}
+		CMAKE_ARGS ${Package_std_cmake_args}
+		${Package_current_dependencies_effective_line}
+		#CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR> --with-plugins=innodb_plugin
 	)
 	
 endif()
