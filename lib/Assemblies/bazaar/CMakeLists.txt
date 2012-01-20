@@ -17,10 +17,10 @@ if(EXISTS ${_vcvars})
 endif()
 message("CMAKE_MAKE_PROGRAM-->${CMAKE_MAKE_PROGRAM}<->CMAKE_BUILD_TOOL->${CMAKE_BUILD_TOOL}<-- CMAKE_CXX_COMPILER ->${CMAKE_CXX_COMPILER}<- CMAKE_SYSTEM_PROCESSOR -->${CMAKE_SYSTEM_PROCESSOR}<--  ->${_tmp}/VC/vcvars.bat")
 
-add_external_package_dir(QT)
-add_external_package_dir(nasm 2.07)
-add_external_package_dir(Python 2.6.5)
-add_external_package_dir(OpenSSL 0.9.8n)
+#add_external_package_dir(QT)
+#add_external_package_dir(nasm 2.07)
+#add_external_package_dir(Python 2.6.5)
+#add_external_package_dir(OpenSSL 0.9.8n)
 
-add_external_package_dir(Paramiko)
+add_external_package_dir(Bazaar)
 
