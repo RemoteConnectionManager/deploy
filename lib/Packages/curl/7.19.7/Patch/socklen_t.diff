@@ -1,0 +1,13 @@
+diff -Nur src_orig/CMakeLists.txt src/CMakeLists.txt
+--- src_orig/CMakeLists.txt	Mon Feb 22 00:29:25 2010
++++ src/CMakeLists.txt	Wed Feb 24 13:43:46 2010
+@@ -783,7 +783,9 @@
+ 
+ if(HAVE_SOCKLEN_T)
+   set(CURL_TYPEOF_CURL_SOCKLEN_T "socklen_t")
++  SET(CMAKE_EXTRA_INCLUDE_FILES sys/socket.h)
+   check_type_size("socklen_t" CURL_SIZEOF_CURL_SOCKLEN_T)
++  SET(CMAKE_EXTRA_INCLUDE_FILES)
+ else()
+   set(CURL_TYPEOF_CURL_SOCKLEN_T int)
+   set(CURL_SIZEOF_CURL_SOCKLEN_T ${SIZEOF_INT})

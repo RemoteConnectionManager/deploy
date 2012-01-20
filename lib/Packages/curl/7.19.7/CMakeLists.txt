@@ -12,6 +12,7 @@ PackageWriteMultiPatchFile(tmp
 	lib_install.diff
     override_modules.diff
 	openssl.diff
+	socklen_t.diff
 )
 
 file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
