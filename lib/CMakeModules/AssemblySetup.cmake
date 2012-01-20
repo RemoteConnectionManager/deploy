@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
 
 function(debug_message)
 	if(MESSAGE_DEBUG_ACTIVE)
@@ -322,9 +321,10 @@ function(PackageBinarySimpleAdd URL download_subfolder)
 		${PACKAGE}
 		#WARNING!!!! this way  zip file directly expand into install/bin dir == source dir
 		DOWNLOAD_DIR ${download_subfolder}
-		SOURCE_DIR ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}
+		SOURCE_DIR  ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${PACKAGE}/build
+		INSTALL_DIR ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}
 		URL ${URL}
-		INSTALL_COMMAND ""
+		INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> <INSTALL_DIR>
 		CONFIGURE_COMMAND ""
 		BUILD_COMMAND ""
 		${Package_current_dependencies_effective_line}
