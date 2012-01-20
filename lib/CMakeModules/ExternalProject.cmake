@@ -20,6 +20,8 @@
 #    [SVN_REVISION rev]          # Revision to checkout from Subversion repo
 #    [BZR_REPOSITORY url]        # URL of Bazaar repo
 #    [BZR_REVISION rev]          # Revision to checkout from Bazaar repo
+#    [HG_REPOSITORY url]        # URL of Mercurial repo
+#    [HG_REVISION rev]          # Revision to checkout from MERCURIAL repo
 #    [URL /.../src.tgz]          # Full path or URL of source
 #   #--Update/Patch step----------
 #    [UPDATE_COMMAND cmd...]     # Source work-tree update command
@@ -72,7 +74,7 @@
 # If SOURCE_DIR is explicitly set to an existing directory the project
 # will be built from it.
 # Otherwise a download step must be specified using one of the
-# DOWNLOAD_COMMAND, CVS_*, SVN_*, BZR_*, or URL options.
+# DOWNLOAD_COMMAND, CVS_*, SVN_*, BZR_*, HG_ or URL options.
 # The URL option may refer locally to a directory or source tarball,
 # or refer to a remote tarball (e.g. http://.../src.tgz).
 #
@@ -722,6 +724,7 @@ function(_ep_add_download_command name)
   get_property(cvs_repository TARGET ${name} PROPERTY _EP_CVS_REPOSITORY)
   get_property(svn_repository TARGET ${name} PROPERTY _EP_SVN_REPOSITORY)
   get_property(bzr_repository TARGET ${name} PROPERTY _EP_BZR_REPOSITORY)
+  get_property(hg_repository TARGET ${name} PROPERTY _EP_HG_REPOSITORY)
   get_property(url TARGET ${name} PROPERTY _EP_URL)
 
   # TODO: Perhaps file:// should be copied to download dir before extraction.
@@ -808,6 +811,32 @@ function(_ep_add_download_command name)
 		set(cmd ${Bazaar_EXECUTABLE} checkout ${bzr_repository} ${src_name})
 	endif()
     list(APPEND depends ${srcstamp_dir}/${name}-bzrinfo.txt)
+  elseif(hg_repository)
+    find_package(Mercurial)
+    if(NOT Mercurial_EXECUTABLE)
+      message(FATAL_ERROR "error: could not find hg for clone of ${name}")
+    endif()
+
+    get_property(hg_revision TARGET ${name} PROPERTY _EP_HG_REVISION)
+
+    set(repository ${hg_repository})
+    set(module)
+    set(tag ${hg_revision})
+    configure_file(
+      "${CMAKE_ROOT}/Modules/RepositoryInfo.txt.in"
+      "${srcstamp_dir}/${name}-hginfo.txt"
+      @ONLY
+      )
+
+    get_filename_component(src_name "${source_dir}" NAME)
+    get_filename_component(work_dir "${source_dir}" PATH)
+    set(comment "Performing download step (Mercurial checkout) for '${name}'")
+	if(hg_revision)
+		set(cmd ${Mercurial_EXECUTABLE} clone -r ${hg_revision} ${hg_repository} ${src_name})
+	else()
+		set(cmd ${Mercurial_EXECUTABLE} clone ${hg_repository} ${src_name})
+	endif()
+    list(APPEND depends ${srcstamp_dir}/${name}-hginfo.txt)  
   elseif(url)
     get_filename_component(work_dir "${source_dir}" PATH)
     set(repository "external project URL")
@@ -845,7 +874,7 @@ function(_ep_add_download_command name)
       list(APPEND cmd ${CMAKE_COMMAND} -P ${srcstamp_dir}/extract-${name}.cmake)
     endif()
   else()
-    message(SEND_ERROR "error: no download info for '${name}' -- please specify existing SOURCE_DIR or one of URL, CVS_REPOSITORY and CVS_MODULE, SVN_REPOSITORY, BZR_REPOSITORY or DOWNLOAD_COMMAND")
+    message(SEND_ERROR "error: no download info for '${name}' -- please specify existing SOURCE_DIR or one of URL, CVS_REPOSITORY and CVS_MODULE, SVN_REPOSITORY, BZR_REPOSITORY, HG_REPOSITORY or DOWNLOAD_COMMAND")
   endif()
 
   ExternalProject_Add_Step(${name} download
@@ -866,6 +895,7 @@ function(_ep_add_update_command name)
   get_property(cvs_repository TARGET ${name} PROPERTY _EP_CVS_REPOSITORY)
   get_property(svn_repository TARGET ${name} PROPERTY _EP_SVN_REPOSITORY)
   get_property(bzr_repository TARGET ${name} PROPERTY _EP_BZR_REPOSITORY)
+  get_property(hg_repository TARGET ${name} PROPERTY _EP_HG_REPOSITORY)
 
   set(work_dir)
   set(comment)
@@ -899,6 +929,15 @@ function(_ep_add_update_command name)
     set(comment "Performing update step (Bazaar update) for '${name}'")
     #not sure what does it mean for Bazaar#get_property(svn_revision TARGET ${name} PROPERTY _EP_SVN_REVISION)
     set(cmd ${Bazaar_EXECUTABLE} update )
+    set(always 1)
+  elseif(hg_repository)
+    if(NOT Mercurial_EXECUTABLE)
+      message(FATAL_ERROR "error: could not find hg for update of ${name}")
+    endif()
+    set(work_dir ${source_dir})
+    set(comment "Performing update step (Bazaar update) for '${name}'")
+    #not sure what does it mean for Bazaar#get_property(svn_revision TARGET ${name} PROPERTY _EP_SVN_REVISION)
+    set(cmd ${Mercurial_EXECUTABLE} update )
     set(always 1)
   endif()
 
