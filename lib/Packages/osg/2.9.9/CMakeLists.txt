@@ -16,9 +16,17 @@ PackageWriteMultiPatchFile(tmp
 file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
 
 if(UNIX)
-  set(make_command BUILD_COMMAND make --jobs 4)
+  if(APPLE)
+     #set(custom_cmake_args -DCMAKE_OSX_ARCHITECTURES=i386 -DDESIRED_QT_VERSION=10000 -DOSG_DEFAULT_IMAGE_PLUGIN_FOR_OSX=imageio -DOSG_WINDOWING_SYSTEM=Cocoa)
+     set(custom_cmake_args  -DOSG_DEFAULT_IMAGE_PLUGIN_FOR_OSX=imageio -DOSG_WINDOWING_SYSTEM=Cocoa)
+     set(make_command "")
+  else()
+     set(make_command BUILD_COMMAND make --jobs 4)
+     set(custom_cmake_args "")
+  endif()
 else()
   set(make_command "")
+  set(custom_cmake_args "")
 endif()
 
 ExternalProject_Add(
@@ -30,6 +38,7 @@ ExternalProject_Add(
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
 #		-DBUILD_OSG_EXAMPLES:BOOL=ON
+        	${custom_cmake_args}
 	${make_command}
 	${Package_current_dependencies_effective_line}
 )
