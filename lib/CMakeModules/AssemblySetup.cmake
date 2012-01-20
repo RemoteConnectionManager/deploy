@@ -32,7 +32,7 @@ option(EXTERNAL_ASSEMBLY_BUILD_SHARED OFF)
 
 
 
-include(ExternalProject3)
+include(ExternalProject)
 
 set(EXTERNAL_ASSEMBLY_BASE_BUILD ${CMAKE_BINARY_DIR}/bld)
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install)
