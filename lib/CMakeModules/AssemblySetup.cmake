@@ -369,6 +369,22 @@ function(PackageUnixConfigureSimpleAdd URL)
 
 endfunction(PackageUnixConfigureSimpleAdd)
 
+function(PackageUnixAddCmakeVarsToConfigureFlags)
+	if(CMAKE_C_FLAGS)
+		set(Package_configure_flags ${Package_configure_flags} "CFLAGS=${CMAKE_C_FLAGS}")
+	endif()
+	if(CMAKE_C_COMPILER)
+		set(Package_configure_flags ${Package_configure_flags} "CC=${CMAKE_C_COMPILER}")
+	endif()
+	if(CMAKE_CXX_FLAGS)
+		set(Package_configure_flags ${Package_configure_flags} "CXXFLAGS=${CMAKE_CXX_FLAGS}")
+	endif()
+	if(CMAKE_CXX_COMPILER)
+		set(Package_configure_flags ${Package_configure_flags} "CXX=${CMAKE_CXX_COMPILER}")
+	endif()
+	set(Package_configure_flags "${Package_configure_flags}" PARENT_SCOPE)
+endfunction(PackageUnixAddCmakeVarsToConfigureFlags)
+
 function(PackageUnixPkgConfigInstall LIBNAME PKGFILENAME)
 		ExternalProject_Add_Step(${PACKAGE} install_pkgconfig
 			COMMAND ${CMAKE_COMMAND} -Dprefix:PATH=<INSTALL_DIR> -Dname:STRING=${PACKAGE} -Dversion:STRING=${VERSION} -Dlibname:STRING=${LIBNAME} -Dpkgfilename:string=${PKGFILENAME} -P ${_mymoduledir}/pkgconfig_lib_configure.cmake
