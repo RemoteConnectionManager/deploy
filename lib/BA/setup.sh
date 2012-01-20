@@ -2,7 +2,7 @@ module purge
 module load autoload
 module load profile/advanced
 module load ba
-module load bzr
+#module load bzr
 module use /plx/userprod/pro3dwe1/BA/modulefiles/
 module load cmake
 
@@ -67,7 +67,7 @@ if [ "$autopackage_version" = "" ]; then
 fi 
 
 if [ "$module_build_setup" = "" ]; then 
-  module_build_setup="module purge\\nmodule load autoload cmake bzr"
+  module_build_setup="module purge\\nmodule load autoload cmake"
 fi 
 
 
