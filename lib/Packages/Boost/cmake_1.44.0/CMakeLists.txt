@@ -21,7 +21,9 @@ ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
 	${Package_current_dependencies_effective_line}
-	GIT_REPOSITORY git://gitorious.org/~denisarnaud/boost/denisarnauds-zeuners-boost-cmake.git
+#	DOWNLOAD_COMMAND ${Git_EXECUTABLE} clone --branch cmake-1.44.0 git://gitorious.org/~denisarnaud/boost/denisarnauds-zeuners-boost-cmake.git src
+	DOWNLOAD_COMMAND ${Git_EXECUTABLE} clone --branch cmake-1.44.0 http://git.gitorious.org/~denisarnaud/boost/denisarnauds-zeuners-boost-cmake.git <SOURCE_DIR>
+#	GIT_REPOSITORY git://gitorious.org/~denisarnaud/boost/denisarnauds-zeuners-boost-cmake.git
 	UPDATE_COMMAND ""
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
