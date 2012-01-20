@@ -761,7 +761,7 @@ ELSE (_boost_IN_CACHE)
   if(WIN32)
     if(MSVC OR "${CMAKE_CXX_COMPILER}" MATCHES "icl"
             OR "${CMAKE_CXX_COMPILER}" MATCHES "icpc")
-      set(_boost_DEBUG_ABI_TAG "${_boost_DEBUG_ABI_TAG}g")
+      #luigi disabilitato#set(_boost_DEBUG_ABI_TAG "${_boost_DEBUG_ABI_TAG}g")
     endif()
   endif()
   #  y        using special debug build of python
@@ -769,7 +769,7 @@ ELSE (_boost_IN_CACHE)
     set(_boost_DEBUG_ABI_TAG "${_boost_DEBUG_ABI_TAG}y")
   endif()
   #  d        using a debug version of your code
-  set(_boost_DEBUG_ABI_TAG "${_boost_DEBUG_ABI_TAG}d")
+  #luigi disabilitato#set(_boost_DEBUG_ABI_TAG "${_boost_DEBUG_ABI_TAG}d")
   #  p        using the STLport standard library rather than the
   #           default one supplied with your compiler
   if(Boost_USE_STLPORT)
@@ -913,6 +913,7 @@ ELSE (_boost_IN_CACHE)
     # Find DEBUG libraries
     #
     set(_boost_DEBUG_NAMES
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}${_boost_DEBUG_ABI_TAG}-${Boost_LIB_VERSION}d
       ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}${_boost_DEBUG_ABI_TAG}-${Boost_LIB_VERSION}
       ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}${_boost_DEBUG_ABI_TAG}
       ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_DEBUG_ABI_TAG}-${Boost_LIB_VERSION}
@@ -933,6 +934,7 @@ ELSE (_boost_IN_CACHE)
       message(STATUS "[ ${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE} ] "
                      "Searching for ${UPPERCOMPONENT}_LIBRARY_DEBUG: ${_boost_DEBUG_NAMES}")
     endif()
+	message("BOOST Find ->${Boost_${UPPERCOMPONENT}_LIBRARY_DEBUG}names --->${_boost_DEBUG_NAMES}<--")
     find_library(Boost_${UPPERCOMPONENT}_LIBRARY_DEBUG
         NAMES ${_boost_DEBUG_NAMES}
         HINTS ${_boost_LIBRARY_SEARCH_DIRS}
