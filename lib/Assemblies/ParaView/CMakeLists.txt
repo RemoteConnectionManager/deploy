@@ -6,11 +6,15 @@ endif()
 include(../../CMakeModules/AssemblySetup.cmake)
 debug_message("configuring with generator -->${CMAKE_GENERATOR}<--")
 
-get_filename_component(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_SOURCE_DIR}/../../../install/paraview ABSOLUTE)
 
-get_filename_component(QT_INSTALL_DIR ${CMAKE_SOURCE_DIR}/../../../install/qt ABSOLUTE)
-get_filename_component(PYTHON_INSTALL_DIR ${CMAKE_SOURCE_DIR}/../../../install/python ABSOLUTE)
-set(CMAKE_PREFIX_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX} ${QT_INSTALL_DIR} ${PYTHON_INSTALL_DIR})
-#set(CMAKE_FIND_ROOT_PATH "${CMAKE_PREFIX_PATH}" )
-#set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-add_external_package_dir(ParaView)
+# set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/../../install/python)
+# add_external_package_dir(Python 2.7.1)
+# set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/../../install/Qt4)
+# add_external_package_dir(Qt4 4.7.2)
+
+set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/../install/ParaView)
+
+set(CMAKE_PREFIX_PATH   "${CMAKE_BINARY_DIR}/../../install/python;${CMAKE_BINARY_DIR}/../../install/Qt4;${EXTERNAL_ASSEMBLY_COMMON_PREFIX}" )
+set(CMAKE_FIND_ROOT_PATH "${CMAKE_PREFIX_PATH}" )
+
+add_external_package_dir(ParaView 3.10.1)
