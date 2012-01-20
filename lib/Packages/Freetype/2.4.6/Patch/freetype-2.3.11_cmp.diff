@@ -5,8 +5,8 @@
 +project(Freetype C)
 +
 +set(FREETYPE2_MAJOR_VERSION 2)
-+set(FREETYPE2_MINOR_VERSION 3)
-+set(FREETYPE2_PATCH_VERSION 11)
++set(FREETYPE2_MINOR_VERSION 4)
++set(FREETYPE2_PATCH_VERSION 6)
 +
 +#luigi to adapt to FindFreeType###set(FREETYPE2_LIB_NAME ${CMAKEPORTS_NAME_PREFIX}freetype${FREETYPE2_MAJOR_VERSION}${FREETYPE2_MINOR_VERSION}${FREETYPE2_PATCH_VERSION})
 +set(FREETYPE2_LIB_NAME ${CMAKEPORTS_NAME_PREFIX}freetype)
@@ -39,7 +39,7 @@
 +
 +
 +if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
-+    install(DIRECTORY include/ DESTINATION include PATTERN "internal" EXCLUDE)
++    install(DIRECTORY include/ DESTINATION include/freetype2 PATTERN "internal" EXCLUDE)
 +endif()
 +
 +# CREATE PKGCONFIG FILES
@@ -47,14 +47,14 @@
 +set(prefix      ${CMAKE_INSTALL_PREFIX})
 +set(exec_prefix ${CMAKE_INSTALL_PREFIX})
 +set(libdir      ${CMAKE_INSTALL_PREFIX}/lib)
-+set(includedir  ${CMAKE_INSTALL_PREFIX}/include)
++set(includedir  ${CMAKE_INSTALL_PREFIX}/include/freetype2)
 +
 +IF(UNIX)
 +  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/builds/unix/freetype-config.in
 +    ${CMAKE_CURRENT_BINARY_DIR}/freetype-config)
 +
 +  if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
-+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/freetype-config      DESTINATION bin)
++      install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/freetype-config      DESTINATION bin )
 +  endif()
 +endif()
 \ No newline at end of file
