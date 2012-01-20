@@ -72,5 +72,5 @@ add_external_package_dir(osgdata svn_head)
   set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 
 add_external_package_dir(osg4web B7)
-add_external_package_dir(Firebreath 1.4.2)
+add_external_package_dir(Firebreath 1.6)
 
