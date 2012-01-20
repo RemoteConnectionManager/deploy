@@ -9,6 +9,7 @@
 #    [LIST_SEPARATOR sep]        # Sep to be replaced by ; in cmd lines
 #    [TMP_DIR dir]               # Directory to store temporary files
 #    [STAMP_DIR dir]             # Directory to store step timestamps
+#    [SRCSTAMP_DIR dir]          # Directory to store source step timestamps
 #   #--Download step--------------
 #    [DOWNLOAD_DIR dir]          # Directory to store downloaded files
 #    [DOWNLOAD_COMMAND cmd...]   # Command to download source tree
@@ -46,6 +47,7 @@
 # under the specified prefix:
 #   TMP_DIR      = <prefix>/tmp
 #   STAMP_DIR    = <prefix>/src/<name>-stamp
+#   SRCSTAMP_DIR = <prefix>/src/<name>-srcstamp
 #   DOWNLOAD_DIR = <prefix>/src
 #   SOURCE_DIR   = <prefix>/src/<name>
 #   BINARY_DIR   = <prefix>/src/<name>-build
@@ -54,6 +56,7 @@
 # of an external project are stored under the specified base:
 #   TMP_DIR      = <base>/tmp/<name>
 #   STAMP_DIR    = <base>/Stamp/<name>
+#   SRCSTAMP_DIR = <base>/SrcStamp/<name>
 #   DOWNLOAD_DIR = <base>/Download/<name>
 #   SOURCE_DIR   = <base>/Source/<name>
 #   BINARY_DIR   = <base>/Build/<name>
@@ -391,6 +394,7 @@ function(_ep_set_directories name)
     set(source_default "${prefix}/src/${name}")
     set(binary_default "${prefix}/src/${name}-build")
     set(stamp_default "${prefix}/src/${name}-stamp")
+    set(srcstamp_default "${prefix}/src/${name}-srcstamp")
     set(install_default "${prefix}")
   else() # assert(base)
     set(tmp_default "${base}/tmp/${name}")
@@ -398,6 +402,7 @@ function(_ep_set_directories name)
     set(source_default "${base}/Source/${name}")
     set(binary_default "${base}/Build/${name}")
     set(stamp_default "${base}/Stamp/${name}")
+    set(srcstamp_default "${base}/SrcStamp/${name}")
     set(install_default "${base}/Install/${name}")
   endif()
   get_property(build_in_source TARGET ${name} PROPERTY _EP_BUILD_IN_SOURCE)
@@ -409,7 +414,7 @@ function(_ep_set_directories name)
     endif()
   endif()
   set(top "${CMAKE_CURRENT_BINARY_DIR}")
-  set(places stamp download source binary install tmp)
+  set(places stamp srcstamp download source binary install tmp)
   foreach(var ${places})
     string(TOUPPER "${var}" VAR)
     get_property(${var}_dir TARGET ${name} PROPERTY _EP_${VAR}_DIR)
@@ -563,7 +568,8 @@ endfunction(_ep_get_configuration_subdir_suffix)
 function(ExternalProject_Add_Step name step)
   set(cmf_dir ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles)
   ExternalProject_Get_Property(${name} stamp_dir)
-  message("qui stamp dir -->${stamp_dir}<--")
+  ExternalProject_Get_Property(${name} srcstamp_dir)
+  #message("qui stamp dir -->${stamp_dir}<--srcstamp_dir-->${srcstamp_dir}<--")
   _ep_get_configuration_subdir_suffix(cfgdir)
 
   _ep_parse_arguments(ExternalProject_Add_Step
@@ -575,7 +581,7 @@ function(ExternalProject_Add_Step name step)
 	get_property(mystamp TARGET ${name} PROPERTY _EP_${step}_MYSTAMP)
   else()
 	if(${step} STREQUAL "download" OR ${step} STREQUAL "patch" OR ${step} STREQUAL "update")
-		set(mystamp ${stamp_dir}/${name}-src-${step})
+		set(mystamp ${srcstamp_dir}/${name}-${step})
 	else()
 		set(mystamp ${stamp_dir}${cfgdir}/${name}-${step})
 		add_custom_command(APPEND
@@ -583,7 +589,7 @@ function(ExternalProject_Add_Step name step)
 			DEPENDS ${mystamp}
 		)
 	endif()
-	message("qui mystamp dir -->${mystamp}<--")
+	#message("qui mystamp dir -->${mystamp}<--")
 	set_property(TARGET ${name} PROPERTY _EP_${step}_MYSTAMP ${mystamp} )
   endif()
 
@@ -661,7 +667,7 @@ endfunction(ExternalProject_Add_Step)
 
 function(_ep_add_mkdir_command name)
   ExternalProject_Get_Property(${name}
-    source_dir binary_dir install_dir stamp_dir download_dir tmp_dir)
+    source_dir binary_dir install_dir stamp_dir srcstamp_dir download_dir tmp_dir)
 
   _ep_get_configuration_subdir_suffix(cfgdir)
 
@@ -672,13 +678,14 @@ function(_ep_add_mkdir_command name)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${install_dir}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${tmp_dir}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${stamp_dir}${cfgdir}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${srcstamp_dir}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${download_dir}
     )
 endfunction(_ep_add_mkdir_command)
 
 
 function(_ep_add_download_command name)
-  ExternalProject_Get_Property(${name} source_dir stamp_dir download_dir tmp_dir)
+  ExternalProject_Get_Property(${name} source_dir stamp_dir srcstamp_dir download_dir tmp_dir)
 
   get_property(cmd_set TARGET ${name} PROPERTY _EP_DOWNLOAD_COMMAND SET)
   get_property(cmd TARGET ${name} PROPERTY _EP_DOWNLOAD_COMMAND)
@@ -713,7 +720,7 @@ function(_ep_add_download_command name)
     set(tag ${cvs_tag})
     configure_file(
       "${CMAKE_ROOT}/Modules/RepositoryInfo.txt.in"
-      "${stamp_dir}/${name}-cvsinfo.txt"
+      "${srcstamp_dir}/${name}-cvsinfo.txt"
       @ONLY
       )
 
@@ -721,7 +728,7 @@ function(_ep_add_download_command name)
     get_filename_component(work_dir "${source_dir}" PATH)
     set(comment "Performing download step (CVS checkout) for '${name}'")
     set(cmd ${CVS_EXECUTABLE} -d ${cvs_repository} -q co ${cvs_tag} -d ${src_name} ${cvs_module})
-    list(APPEND depends ${stamp_dir}/${name}-cvsinfo.txt)
+    list(APPEND depends ${srcstamp_dir}/${name}-cvsinfo.txt)
   elseif(svn_repository)
     find_package(Subversion)
     if(NOT Subversion_SVN_EXECUTABLE)
@@ -735,7 +742,7 @@ function(_ep_add_download_command name)
     set(tag ${svn_revision})
     configure_file(
       "${CMAKE_ROOT}/Modules/RepositoryInfo.txt.in"
-      "${stamp_dir}/${name}-svninfo.txt"
+      "${srcstamp_dir}/${name}-svninfo.txt"
       @ONLY
       )
 
@@ -743,7 +750,7 @@ function(_ep_add_download_command name)
     get_filename_component(work_dir "${source_dir}" PATH)
     set(comment "Performing download step (SVN checkout) for '${name}'")
     set(cmd ${Subversion_SVN_EXECUTABLE} co ${svn_repository} ${svn_revision} ${src_name})
-    list(APPEND depends ${stamp_dir}/${name}-svninfo.txt)
+    list(APPEND depends ${srcstamp_dir}/${name}-svninfo.txt)
   elseif(url)
     get_filename_component(work_dir "${source_dir}" PATH)
     set(repository "external project URL")
@@ -751,10 +758,10 @@ function(_ep_add_download_command name)
     set(tag "")
     configure_file(
       "${CMAKE_ROOT}/Modules/RepositoryInfo.txt.in"
-      "${stamp_dir}/${name}-urlinfo.txt"
+      "${srcstamp_dir}/${name}-urlinfo.txt"
       @ONLY
       )
-    list(APPEND depends ${stamp_dir}/${name}-urlinfo.txt)
+    list(APPEND depends ${srcstamp_dir}/${name}-urlinfo.txt)
     if(IS_DIRECTORY "${url}")
       get_filename_component(abs_dir "${url}" ABSOLUTE)
       set(comment "Performing download step (DIR copy) for '${name}'")
@@ -768,8 +775,8 @@ function(_ep_add_download_command name)
           message(FATAL_ERROR "Could not extract tarball filename from url:\n  ${url}")
         endif()
         set(file ${download_dir}/${fname})
-        _ep_write_downloadfile_script("${stamp_dir}/download-${name}.cmake" "${url}" "${file}" "")
-        set(cmd ${CMAKE_COMMAND} -P ${stamp_dir}/download-${name}.cmake
+        _ep_write_downloadfile_script("${srcstamp_dir}/download-${name}.cmake" "${url}" "${file}" "")
+        set(cmd ${CMAKE_COMMAND} -P ${srcstamp_dir}/download-${name}.cmake
           COMMAND)
         set(comment "Performing download step (download and extract) for '${name}'")
       else()
@@ -777,8 +784,8 @@ function(_ep_add_download_command name)
         set(comment "Performing download step (extract) for '${name}'")
       endif()
       # TODO: Support other archive formats.
-      _ep_write_extractfile_script("${stamp_dir}/extract-${name}.cmake" "${file}" "${tmp_dir}" "${source_dir}")
-      list(APPEND cmd ${CMAKE_COMMAND} -P ${stamp_dir}/extract-${name}.cmake)
+      _ep_write_extractfile_script("${srcstamp_dir}/extract-${name}.cmake" "${file}" "${tmp_dir}" "${source_dir}")
+      list(APPEND cmd ${CMAKE_COMMAND} -P ${srcstamp_dir}/extract-${name}.cmake)
     endif()
   else()
     message(SEND_ERROR "error: no download info for '${name}' -- please specify existing SOURCE_DIR or one of URL, CVS_REPOSITORY and CVS_MODULE, SVN_REPOSITORY or DOWNLOAD_COMMAND")
@@ -981,6 +988,7 @@ function(ExternalProject_Add name)
   _ep_parse_arguments(ExternalProject_Add ${name} _EP_ "${ARGN}")
   _ep_set_directories(${name})
   ExternalProject_Get_Property(${name} stamp_dir)
+  ExternalProject_Get_Property(${name} srcstamp_dir)
 
   # The 'complete' step depends on all other steps and creates a
   # 'done' mark.  A dependent external project's 'configure' step
