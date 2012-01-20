@@ -22,6 +22,8 @@
 #    [BZR_REVISION rev]          # Revision to checkout from Bazaar repo
 #    [HG_REPOSITORY url]        # URL of Mercurial repo
 #    [HG_REVISION rev]          # Revision to checkout from MERCURIAL repo
+#    [GIT_REPOSITORY url]        # URL of Git repo
+#    [GIT_REVISION rev]          # Revision to checkout from Git repo
 #    [URL /.../src.tgz]          # Full path or URL of source
 #    [TIMEOUT seconds]           # Time allowed for file download operations
 #   #--Update/Patch step----------
@@ -75,7 +77,7 @@
 # If SOURCE_DIR is explicitly set to an existing directory the project
 # will be built from it.
 # Otherwise a download step must be specified using one of the
-# DOWNLOAD_COMMAND, CVS_*, SVN_*, BZR_*, HG_ or URL options.
+# DOWNLOAD_COMMAND, CVS_*, SVN_*, BZR_*, HG_*, GIT_* or URL options.
 # The URL option may refer locally to a directory or source tarball,
 # or refer to a remote tarball (e.g. http://.../src.tgz).
 #
@@ -731,6 +733,7 @@ function(_ep_add_download_command name)
   get_property(svn_repository TARGET ${name} PROPERTY _EP_SVN_REPOSITORY)
   get_property(bzr_repository TARGET ${name} PROPERTY _EP_BZR_REPOSITORY)
   get_property(hg_repository TARGET ${name} PROPERTY _EP_HG_REPOSITORY)
+  get_property(git_repository TARGET ${name} PROPERTY _EP_GIT_REPOSITORY)
   get_property(url TARGET ${name} PROPERTY _EP_URL)
 
   # TODO: Perhaps file:// should be copied to download dir before extraction.
@@ -843,6 +846,35 @@ function(_ep_add_download_command name)
 		set(cmd ${Mercurial_EXECUTABLE} clone ${hg_repository} ${src_name})
 	endif()
     list(APPEND depends ${srcstamp_dir}/${name}-hginfo.txt)  
+
+  elseif(git_repository)
+    find_package(Git)
+    if(NOT Git_EXECUTABLE)
+      message(FATAL_ERROR "error: could not find git for checkout of ${name}")
+    endif()
+
+    get_property(git_revision TARGET ${name} PROPERTY _EP_GIT_REVISION)
+
+    set(repository ${git_repository})
+    set(module)
+    set(tag ${git_revision})
+    configure_file(
+      "${CMAKE_ROOT}/Modules/RepositoryInfo.txt.in"
+      "${srcstamp_dir}/${name}-gitinfo.txt"
+      @ONLY
+      )
+
+    get_filename_component(src_name "${source_dir}" NAME)
+    get_filename_component(work_dir "${source_dir}" PATH)
+    set(comment "Performing download step (Git checkout) for '${name}'")
+	if(git_revision)
+		message("UNHANDLED git_revision-->${git_revision}<---")
+		set(cmd ${Git_EXECUTABLE} clone ${git_repository} ${src_name})
+	else()
+		set(cmd ${Git_EXECUTABLE} clone ${git_repository} ${src_name})
+	endif()
+    list(APPEND depends ${srcstamp_dir}/${name}-gitinfo.txt)
+
   elseif(url)
     get_filename_component(work_dir "${source_dir}" PATH)
     set(repository "external project URL")
@@ -882,7 +914,7 @@ function(_ep_add_download_command name)
       list(APPEND cmd ${CMAKE_COMMAND} -P ${srcstamp_dir}/extract-${name}.cmake)
     endif()
   else()
-    message(SEND_ERROR "error: no download info for '${name}' -- please specify existing SOURCE_DIR or one of URL, CVS_REPOSITORY and CVS_MODULE, SVN_REPOSITORY, BZR_REPOSITORY, HG_REPOSITORY or DOWNLOAD_COMMAND")
+    message(SEND_ERROR "error: no download info for '${name}' -- please specify existing SOURCE_DIR or one of URL, CVS_REPOSITORY and CVS_MODULE, SVN_REPOSITORY, BZR_REPOSITORY, HG_REPOSITORY, GIT_REPOSITORY or DOWNLOAD_COMMAND")
   endif()
 
   ExternalProject_Add_Step(${name} download
@@ -904,6 +936,7 @@ function(_ep_add_update_command name)
   get_property(svn_repository TARGET ${name} PROPERTY _EP_SVN_REPOSITORY)
   get_property(bzr_repository TARGET ${name} PROPERTY _EP_BZR_REPOSITORY)
   get_property(hg_repository TARGET ${name} PROPERTY _EP_HG_REPOSITORY)
+  get_property(git_repository TARGET ${name} PROPERTY _EP_GIT_REPOSITORY)
 
   set(work_dir)
   set(comment)
@@ -946,6 +979,15 @@ function(_ep_add_update_command name)
     set(comment "Performing update step (Bazaar update) for '${name}'")
     #not sure what does it mean for Bazaar#get_property(svn_revision TARGET ${name} PROPERTY _EP_SVN_REVISION)
     set(cmd ${Mercurial_EXECUTABLE} update )
+    set(always 1)
+  elseif(git_repository)
+    if(NOT Git_EXECUTABLE)
+      message(FATAL_ERROR "error: could not find git for update of ${name}")
+    endif()
+    set(work_dir ${source_dir})
+    set(comment "Performing update step (Git pull) for '${name}'")
+    #not sure what does it mean for Bazaar#get_property(svn_revision TARGET ${name} PROPERTY _EP_SVN_REVISION)
+    set(cmd ${Git_EXECUTABLE} pull )
     set(always 1)
   endif()
 
