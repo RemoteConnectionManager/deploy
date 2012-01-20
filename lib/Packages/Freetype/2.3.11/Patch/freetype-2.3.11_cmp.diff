@@ -1,12 +1,12 @@
 === added file 'CMakeLists.txt'
 --- CMakeLists.txt	1970-01-01 00:00:00 +0000
-+++ CMakeLists.txt	2010-11-15 00:26:36 +0000
-@@ -0,0 +1,38 @@
++++ CMakeLists.txt	2010-11-15 03:24:48 +0000
+@@ -0,0 +1,54 @@
 +project(Freetype C)
 +
 +set(FREETYPE2_MAJOR_VERSION 2)
 +set(FREETYPE2_MINOR_VERSION 3)
-+set(FREETYPE2_PATCH_VERSION 8)
++set(FREETYPE2_PATCH_VERSION 11)
 +
 +set(FREETYPE2_LIB_NAME ${CMAKEPORTS_NAME_PREFIX}freetype${FREETYPE2_MAJOR_VERSION}${FREETYPE2_MINOR_VERSION}${FREETYPE2_PATCH_VERSION})
 +
@@ -40,25 +40,68 @@
 +if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
 +    install(DIRECTORY include/ DESTINATION include PATTERN "internal" EXCLUDE)
 +endif()
++
++# CREATE PKGCONFIG FILES
++# we use the same files like ./configure, so we have to set its vars
++set(prefix      ${CMAKE_INSTALL_PREFIX})
++set(exec_prefix ${CMAKE_INSTALL_PREFIX})
++set(libdir      ${CMAKE_INSTALL_PREFIX}/lib)
++set(includedir  ${CMAKE_INSTALL_PREFIX}/include)
++
++IF(UNIX)
++  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/builds/unix/freetype-config.in
++    ${CMAKE_CURRENT_BINARY_DIR}/freetype-config)
++
++  if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
++      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/freetype-config      DESTINATION bin)
++  endif()
++endif()
+\ No newline at end of file
+
+=== modified file 'builds/unix/freetype-config.in'
+--- builds/unix/freetype-config.in	2010-11-15 00:06:09 +0000
++++ builds/unix/freetype-config.in	2010-11-15 02:38:23 +0000
+@@ -9,13 +9,13 @@
+ # indicate that you have read the license and understand and accept it
+ # fully.
+ 
+-prefix=@prefix@
+-exec_prefix=@exec_prefix@
++prefix="@prefix@"
++exec_prefix="@exec_prefix@"
+ exec_prefix_set=no
+-includedir=@includedir@
+-libdir=@libdir@
+-enable_shared=@build_libtool_libs@
+-wl=@wl@
++includedir="@includedir@"
++libdir="@libdir@"
++enable_shared="@build_libtool_libs@"
++wl="@wl@"
+ hardcode_libdir_flag_spec='@hardcode_libdir_flag_spec@'
+ 
+ usage()
 
 === modified file 'include/freetype/config/ftoption.h'
 --- include/freetype/config/ftoption.h	2010-11-15 00:06:09 +0000
-+++ include/freetype/config/ftoption.h	2010-11-15 00:27:26 +0000
-@@ -227,6 +227,9 @@
++++ include/freetype/config/ftoption.h	2010-11-15 01:01:41 +0000
+@@ -227,7 +227,10 @@
    /*                                                                       */
  /* #define FT_EXPORT(x)      extern x */
  /* #define FT_EXPORT_DEF(x)  x */
-+#if defined(_WIN32) && defined(freetype238_EXPORTS)
+-
++#if defined(_WIN32) && defined(freetype2311_EXPORTS)
 +#define FT_EXPORT(x)      extern __declspec(dllexport)
 +#define FT_EXPORT_DEF(x)  __declspec(dllexport)
- 
++#endif
  
    /*************************************************************************/
+   /*                                                                       */
 
 === added file 'src/CMakeLists.txt'
 --- src/CMakeLists.txt	1970-01-01 00:00:00 +0000
-+++ src/CMakeLists.txt	2010-11-15 00:26:36 +0000
-@@ -0,0 +1,496 @@
++++ src/CMakeLists.txt	2010-11-15 03:15:57 +0000
+@@ -0,0 +1,497 @@
 +
 +####
 +#### Core files
@@ -70,6 +113,7 @@
 +  base/ftinit.c
 +  base/ftdebug.c
 +  base/ftbase.c
++  base/ftobjs.c
 +)
 +
 +####
