@@ -10,5 +10,7 @@ FIND_PROGRAM(
 	Mercurial_EXECUTABLE hg
 	DOC "Mercurial command line client"
 )
-add_external_package_dir(GTK2 2.18.9)
+if(UNIX)
+	add_external_package_dir(GTK2 2.18.9)
+endif()
 add_external_package_dir(Firebreath luigicalori-cmake)
