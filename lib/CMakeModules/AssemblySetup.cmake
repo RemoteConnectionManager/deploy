@@ -173,15 +173,24 @@ function(PackageSetup )
 		endif()
 	endif()
 	set(Package_std_cmake_args -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH:PATH=<INSTALL_DIR> -DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH} -DCMAKE_DEBUG_POSTFIX:STRING=${CMAKE_DEBUG_POSTFIX} ${_f1} ${_f2} ${_f3})
+
+	
 	set(Package_Source_Stamp_Dir ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/stamp )
+	
+	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/src _NATIVE_SOURCE_DIR)
+	file(TO_NATIVE_PATH ${Package_Source_Stamp_Dir} _NATIVE_SRCSTAMP_DIR)
+	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/download _NATIVE_DOWNLOAD_DIR)
 	set(Package_std_source_dirs 
-		SOURCE_DIR ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/src
-		SRCSTAMP_DIR ${Package_Source_Stamp_Dir}
-		DOWNLOAD_DIR ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/download
+		SOURCE_DIR ${_NATIVE_SOURCE_DIR}
+		SRCSTAMP_DIR ${_NATIVE_SRCSTAMP_DIR}
+		DOWNLOAD_DIR ${_NATIVE_DOWNLOAD_DIR}
 	)
+	
+	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${PACKAGE}/build _NATIVE_BINARY_DIR)
+	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX} _NATIVE_INSTALL_DIR)
 	set(Package_std_binary_dirs
-		BINARY_DIR ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${PACKAGE}/build
-		INSTALL_DIR ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}
+		BINARY_DIR ${_NATIVE_BINARY_DIR}
+		INSTALL_DIR ${_NATIVE_INSTALL_DIR}
 	)
 	set(Package_std_dirs ${Package_std_source_dirs} ${Package_std_binary_dirs})
 
@@ -273,4 +282,17 @@ endfunction(PackageUnixConfigureSimpleAdd)
 function(PackageLinuxBinarySimpleAdd URL)
 	PackageBinarySimpleAdd(${URL} ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/Linux_bin_download)
 endfunction(PackageLinuxBinarySimpleAdd)
+
+function(PackagePythonSetupSimpleAdd URL)
+	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX} _install_dir)
+	ExternalProject_Add(
+		${PACKAGE}
+		${Package_std_dirs}
+		URL ${URL}
+		CONFIGURE_COMMAND ""
+		INSTALL_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> ${PYTHON_EXECUTABLE} setup.py build --build-base=<BINARY_DIR> install --prefix=${_install_dir}
+		BUILD_COMMAND ""
+	)
+	message("INSTALL_COMMAND-->${CMAKE_COMMAND} -E chdir <SOURCE_DIR> ${PYTHON_EXECUTABLE} setup.py build --build-base=<BINARY_DIR> install --prefix=${_install_dir}<----")
+endfunction(PackagePythonSetupSimpleAdd)
 
