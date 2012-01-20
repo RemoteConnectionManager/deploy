@@ -29,8 +29,8 @@ set(EXTERNAL_ASSEMBLY_BUILD_SHARED ${EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT})
 # Allow the user to decide if Packages that use Find have to search in environment
 option(EXTERNAL_ASSEMBLY_SEARCH_AND_USE_SYSTEM_MODULES "set to on if you prefer system modules" OFF)
 if(NOT EXTERNAL_ASSEMBLY_SEARCH_AND_USE_SYSTEM_MODULES)
-	set(Package_search_hints NO_SYSTEM_ENVIRONMENT_PATH NO_DEFAULT_PATH)
-	set(Package_search_hints_internal NO_SYSTEM_ENVIRONMENT_PATH)
+	#set(Package_search_hints NO_SYSTEM_ENVIRONMENT_PATH NO_DEFAULT_PATH)
+	set(Package_search_hints NO_SYSTEM_ENVIRONMENT_PATH)
 endif()
 #
 set(Package_list "")
@@ -82,7 +82,7 @@ get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../S
 	endif()
 
 
-	set(Package_Pass_Variables CMAKE_MODULE_PATH CMAKE_DEBUG_POSTFIX BUILD_SHARED_LIBS CMAKE_VERBOSE_MAKEFILE CMAKE_C_FLAGS	CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_CXX_COMPILER CMAKE_C_COMPILER Package_search_hints_internal)
+	set(Package_Pass_Variables CMAKE_PREFIX_PATH CMAKE_MODULE_PATH CMAKE_DEBUG_POSTFIX BUILD_SHARED_LIBS CMAKE_VERBOSE_MAKEFILE CMAKE_C_FLAGS	CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_CXX_COMPILER CMAKE_C_COMPILER Package_search_hints)
 
 
 
@@ -199,7 +199,7 @@ function(PackageSetup )
 
 	set(list_separator "")
 	set(Package_derived_cmake_args "")
-	set(Package_std_cmake_args -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH:PATH=<INSTALL_DIR> )
+	set(Package_std_cmake_args -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> )
 
 	foreach(pass_var ${Package_Pass_Variables})
 		if(DEFINED ${pass_var})
