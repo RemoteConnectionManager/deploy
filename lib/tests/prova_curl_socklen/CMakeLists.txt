@@ -1,0 +1,145 @@
+cmake_minimum_required(VERSION 2.8)
+# For other curl specific tests, use this macro.
+macro(CURL_INTERNAL_TEST CURL_TEST)
+  if("${CURL_TEST}" MATCHES "^${CURL_TEST}$")
+    set(MACRO_CHECK_FUNCTION_DEFINITIONS 
+      "-D${CURL_TEST} ${CURL_TEST_DEFINES} ${CMAKE_REQUIRED_FLAGS}")
+    if(CMAKE_REQUIRED_LIBRARIES)
+      set(CURL_TEST_ADD_LIBRARIES
+        "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
+    endif(CMAKE_REQUIRED_LIBRARIES)
+
+    message(STATUS "Performing Curl Test ${CURL_TEST}")
+    try_compile(${CURL_TEST}
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/CMake/CurlTests.c
+      CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_FUNCTION_DEFINITIONS}
+      "${CURL_TEST_ADD_LIBRARIES}"
+      OUTPUT_VARIABLE OUTPUT)
+    if(${CURL_TEST})
+      set(${CURL_TEST} 1 CACHE INTERNAL "Curl test ${FUNCTION}")
+      message(STATUS "Performing Curl Test ${CURL_TEST} - Success")
+      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
+        "Performing Curl Test ${CURL_TEST} passed with the following output:\n"
+        "${OUTPUT}\n")
+    else(${CURL_TEST})
+      message(STATUS "Performing Curl Test ${CURL_TEST} - Failed")
+      set(${CURL_TEST} "" CACHE INTERNAL "Curl test ${FUNCTION}")
+      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log 
+        "Performing Curl Test ${CURL_TEST} failed with the following output:\n"
+        "${OUTPUT}\n")
+    endif(${CURL_TEST})
+  endif("${CURL_TEST}" MATCHES "^${CURL_TEST}$")
+endmacro(CURL_INTERNAL_TEST) 
+
+macro(CURL_INTERNAL_TEST_RUN CURL_TEST)
+  if("${CURL_TEST}_COMPILE" MATCHES "^${CURL_TEST}_COMPILE$")
+    set(MACRO_CHECK_FUNCTION_DEFINITIONS 
+      "-D${CURL_TEST} ${CMAKE_REQUIRED_FLAGS}")
+    if(CMAKE_REQUIRED_LIBRARIES)
+      set(CURL_TEST_ADD_LIBRARIES
+        "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
+    endif(CMAKE_REQUIRED_LIBRARIES)
+
+    message(STATUS "Performing Curl Test ${CURL_TEST}")
+    try_run(${CURL_TEST} ${CURL_TEST}_COMPILE
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/CMake/CurlTests.c
+      CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_FUNCTION_DEFINITIONS}
+      "${CURL_TEST_ADD_LIBRARIES}"
+      OUTPUT_VARIABLE OUTPUT)
+    if(${CURL_TEST}_COMPILE AND NOT ${CURL_TEST})
+      set(${CURL_TEST} 1 CACHE INTERNAL "Curl test ${FUNCTION}")
+      message(STATUS "Performing Curl Test ${CURL_TEST} - Success")
+    else(${CURL_TEST}_COMPILE AND NOT ${CURL_TEST})
+      message(STATUS "Performing Curl Test ${CURL_TEST} - Failed")
+      set(${CURL_TEST} "" CACHE INTERNAL "Curl test ${FUNCTION}")
+      file(APPEND "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log"
+        "Performing Curl Test ${CURL_TEST} failed with the following output:\n"
+        "${OUTPUT}")
+      if(${CURL_TEST}_COMPILE)
+        file(APPEND 
+          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log" 
+          "There was a problem running this test\n")
+      endif(${CURL_TEST}_COMPILE)
+      file(APPEND "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log" 
+        "\n\n")
+    endif(${CURL_TEST}_COMPILE AND NOT ${CURL_TEST})
+  endif("${CURL_TEST}_COMPILE" MATCHES "^${CURL_TEST}_COMPILE$")
+endmacro(CURL_INTERNAL_TEST_RUN) 
+
+# - Check sizeof a type
+#  CHECK_TYPE_SIZE(TYPE VARIABLE)
+# Check if the type exists and determine size of type.  if the type
+# exists, the size will be stored to the variable.
+#
+#  VARIABLE - variable to store size if the type exists.
+#  HAVE_${VARIABLE} - does the variable exists or not
+
+macro(CHECK_TYPE_SIZE TYPE VARIABLE)
+  set(CMAKE_ALLOW_UNKNOWN_VARIABLE_READ_ACCESS 1)
+  if(NOT DEFINED ${VARIABLE})
+    if("HAVE_${VARIABLE}" MATCHES "^HAVE_${VARIABLE}$")
+      set(CHECK_TYPE_SIZE_TYPE "${TYPE}")
+      set(MACRO_CHECK_TYPE_SIZE_FLAGS 
+        "${CMAKE_REQUIRED_FLAGS}")
+      foreach(def HAVE_SYS_TYPES_H HAVE_STDINT_H HAVE_STDDEF_H)
+        if("${def}")
+          set(MACRO_CHECK_TYPE_SIZE_FLAGS 
+            "${MACRO_CHECK_TYPE_SIZE_FLAGS} -D${def}")
+        endif("${def}")
+      endforeach(def)
+      set(CHECK_TYPE_SIZE_PREMAIN)
+      foreach(def ${CMAKE_EXTRA_INCLUDE_FILES})
+        set(CHECK_TYPE_SIZE_PREMAIN "${CHECK_TYPE_SIZE_PREMAIN}#include \"${def}\"\n")
+      endforeach(def)
+      configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/CMake/CheckTypeSize.c.in"
+        "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CheckTypeSize.c" 
+        IMMEDIATE @ONLY)
+      file(READ 
+        "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CheckTypeSize.c"
+        CHECK_TYPE_SIZE_FILE_CONTENT)
+      message(STATUS "Check size of ${TYPE}")
+      if(CMAKE_REQUIRED_LIBRARIES)
+        set(CHECK_TYPE_SIZE_ADD_LIBRARIES 
+          "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
+      endif(CMAKE_REQUIRED_LIBRARIES)
+      try_run(${VARIABLE} HAVE_${VARIABLE}
+        ${CMAKE_BINARY_DIR}
+        "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CheckTypeSize.c"
+        CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_TYPE_SIZE_FLAGS}
+        "${CHECK_TYPE_SIZE_ADD_LIBRARIES}"
+        OUTPUT_VARIABLE OUTPUT)
+      if(HAVE_${VARIABLE})
+        message(STATUS "Check size of ${TYPE} - done")
+        file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
+          "Determining size of ${TYPE} passed with the following output:\n${OUTPUT}\n\n")
+      else(HAVE_${VARIABLE})
+        message(STATUS "Check size of ${TYPE} - failed")
+        file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log 
+          "Determining size of ${TYPE} failed with the following output:\n${OUTPUT}\nCheckTypeSize.c:\n${CHECK_TYPE_SIZE_FILE_CONTENT}\n\n")
+      endif(HAVE_${VARIABLE})
+    endif("HAVE_${VARIABLE}" MATCHES "^HAVE_${VARIABLE}$")
+  endif(NOT DEFINED ${VARIABLE})
+  set(CMAKE_ALLOW_UNKNOWN_VARIABLE_READ_ACCESS )
+endmacro(CHECK_TYPE_SIZE)
+
+foreach(CURL_TEST
+    HAVE_SOCKLEN_T
+)
+  curl_internal_test(${CURL_TEST})
+  message("test for ${CURL_TEST} resulted in -->${${CURL_TEST}}<--")
+endforeach(CURL_TEST)
+
+check_type_size("int" SIZEOF_INT)
+if(HAVE_SOCKLEN_T)
+  set(CURL_TYPEOF_CURL_SOCKLEN_T "socklen_t")
+  check_type_size("socklen_t" CURL_SIZEOF_CURL_SOCKLEN_T)
+else()
+  set(CURL_TYPEOF_CURL_SOCKLEN_T int)
+  set(CURL_SIZEOF_CURL_SOCKLEN_T ${SIZEOF_INT})
+endif()
+
+
+message("sizeof int->${SIZEOF_INT}<- CURL_SIZEOF_CURL_SOCKLEN_T ->${CURL_SIZEOF_CURL_SOCKLEN_T}<--")
