@@ -4,23 +4,19 @@
 #this imports variables here
 PackageSetup()
 
-FIND_PROGRAM(Nasm_EXECUTABLE nasm
-  DOC "nasm assembler executable"
-  ${Package_search_hints}
-)
 
-if(Nasm_EXECUTABLE)
-	message("found nasm, skipping external")
+if(WIN32)
+	#### here we download the binary package,  sic
+	PackageWindowsBinarySimpleAdd( http://www.nasm.us/pub/nasm/releasebuilds/2.07/win32/nasm-2.07-win32.zip )
 else()
-	message("nasm NOT FOUND, inserting external")
-	PackageSetup()
-
-	if(WIN32)
-		#### here we download the binary package,  sic
-		PackageWindowsBinarySimpleAdd( http://www.nasm.us/pub/nasm/releasebuilds/2.07/win32/nasm-2.07-win32.zip )
-	else()
-		message("Still to implement patch building under linux")
-	endif()
+	set(Package_source_setup
+		URL http://garr.dl.sourceforge.net/project/nasm/nasm%20sources/2.07/nasm-2.07.tar.gz
+		URL_MD5 84d8e009b3d2565a810ab3ddad1f4f63
+		#PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
+	)
+	set(Package_InSource ON)	
+	PackageUnixConfigureAdd()
 endif()
+
 
 
