@@ -1,10 +1,19 @@
 #this imports variables here
 PackageSetup()
 
-set(Package_source_setup
-	GIT_REPOSITORY 	git://scm.bluequartz.net/support-libraries/expat.git
-	UPDATE_COMMAND ""
-)
+FIND_PACKAGE(Git)
+
+if(Git_FOUND)
+	set(Package_source_setup
+		GIT_REPOSITORY 	git://scm.bluequartz.net/support-libraries/expat.git
+		UPDATE_COMMAND ""
+	)
+else()
+	set(Package_source_setup
+		URL http://3d-test.cineca.it/files/ITABC/public/expat_cmake_git_norepo.tgz
+		URL_MD5 a2ebe81d171abfa4913ea103ca25761a
+	)
+endif()
 
 PackageCmakeAdd()
 
