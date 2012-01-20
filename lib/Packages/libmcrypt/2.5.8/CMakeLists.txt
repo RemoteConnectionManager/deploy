@@ -9,7 +9,8 @@ else()
 
 	set(Package_InSource ON)
 	PackageUnixConfigureSimpleAdd(
-		http://sourceforge.net/projects/mcrypt/files/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz/download
+#		http://sourceforge.net/projects/mcrypt/files/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz/download
+		http://garr.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 	)
 endif()
 
