@@ -174,3 +174,12 @@ function(PackageWindowsBinarySimpleAdd URL)
 		)
 endfunction(PackageWindowsBinarySimpleAdd)
 
+function(PackageUnixConfigureSimpleAdd URL)
+		ExternalProject_Add(
+			${PACKAGE}
+			${Package_std_dirs}
+			URL ${URL}
+			CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR>
+		)
+endfunction(PackageUnixConfigureSimpleAdd)
+
