@@ -1,1 +1,1 @@
-set(Package_current_dependencies CairoPixman)
+set(Package_current_dependencies CairoPixman PNG Freetype)
