@@ -9,22 +9,23 @@ if(UNIX)
   endif()
 endif()
 if(MSVC)
- set(Main_target Build_osgviewerCP)
+ set(Main_target Engine_FunCore)
   set(Embed_viewer_targets Build_osg_embed_viewer_2 Build_osg_embed_viewer_1 Build_osg_embed_viewer)
-  set(Core_targets Engine_FunCore)
-  set(Simple_viewer_targets Build_osgviewer  Build_simple_runprocess)
+  set(Core_targets "")
+  set(Simple_viewer_targets Build_osgviewer Build_osgviewerCP Build_simple_runprocess)
 else()
   message("Testing CMAKE_SYSTEM_PROCESSOR -->${CMAKE_SYSTEM_PROCESSOR}")
   if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64) 
     message("skipping main target")
     set(Main_target FunCore)
     set(Core_targets "")
+	set(Simple_viewer_targets "")
   else()
-    set(Main_target nposgviewerCP)
-    set(Core_targets FunCore)
+    set(Main_target FunCore)
+    set(Core_targets "")
+	set(Simple_viewer_targets "nposgviewerCP")
   endif()
   set(Embed_viewer_targets "")
-  set(Simple_viewer_targets "")
 endif()
 set(Copy_targets osg_copy_Release osg_copy_sys_libs)
 set(Targets ${Embed_viewer_targets} ${Core_targets} ${Simple_viewer_targets} ${Copy_targets})
@@ -34,7 +35,7 @@ set(Targets ${Embed_viewer_targets} ${Core_targets} ${Simple_viewer_targets} ${C
 #runtime included MSVC....
 set(Package_additional_cmake_args ${Package_additional_cmake_args} -DSEPARATE_OSG_PLUGIN_DIR:BOOL=OFF -DCORES_COMMON_DIR:BOOL=ON)
 debug_message(Package_std_dirs-->${Package_std_dirs}<--)
-
+message("Main_target-->${Main_target}")
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
@@ -44,7 +45,7 @@ ExternalProject_Add(
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
 		${Package_additional_cmake_args}
-	BUILD_COMMAND ${CMAKE_COMMAND} --build . --config Release --target ${Main_target}
+	BUILD_COMMAND ${CMAKE_COMMAND} --build . --config Release --target ${Main_target} 
 	INSTALL_COMMAND ""
 	${Package_cmake_generator_line}
 	
