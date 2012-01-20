@@ -44,6 +44,7 @@ ExternalProject_Add(
 		-DCURL_STATICLIB:BOOL=${CURL_STATICLIB}
 		#this is for disabling ldap that does break builds under kubuntu
 		${_disable_ldap_flag}
+		${_disable_use_openssl}
 )
 
 
