@@ -1,5 +1,5 @@
 SET(Unzip_FOUND FALSE)
-message("DEBUGDEBUGDEBUG    called FindUnzip parent->${CMAKE_PARENT_LIST_FILE} current->${CMAKE_CURRENT_LIST_FILE}<-")
+debug_message("DEBUGDEBUGDEBUG    called FindUnzip parent->${CMAKE_PARENT_LIST_FILE} current->${CMAKE_CURRENT_LIST_FILE}<-")
 FIND_PROGRAM(
 	Unzip_EXECUTABLE 
 	unzip
