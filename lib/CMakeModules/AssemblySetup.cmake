@@ -352,6 +352,43 @@ function(PackageWindowsBinarySimpleAdd URL)
 endfunction(PackageWindowsBinarySimpleAdd)
 
 
+
+function(PackageBinaryAdd)
+	debug_message("!!!!! building ${PACKAGE} in  ${download_subfolder} with depnds-->${Package_current_dependencies_effective_line}<--")
+	ExternalProject_Add(
+		${PACKAGE}-GetSource
+		SOURCE_DIR ${Package_Source_Dir}
+		DOWNLOAD_DIR ${Package_Download_Dir}
+		STAMP_DIR ${Package_Source_Stamp_Dir}
+		${Package_source_setup}
+		CONFIGURE_COMMAND ""
+		BUILD_COMMAND ""
+		INSTALL_COMMAND ""
+	)
+	if(Package_current_dependencies_effective_line)
+		set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
+	else()
+		set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
+	endif()
+
+	ExternalProject_Add(
+		${PACKAGE}
+		${Package_std_dirs}
+		DOWNLOAD_COMMAND ""
+		INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> <INSTALL_DIR>
+		CONFIGURE_COMMAND ""
+		BUILD_COMMAND ""
+		${Package_current_dependencies_effective_line}
+		STEP_TARGETS install
+	)
+
+
+
+endfunction(PackageBinaryAdd)
+
+
+
+
 function(PackageCmakeAdd)
 
 	ExternalProject_Add(

@@ -1,10 +1,10 @@
 module purge
+module load autoload
 module load profile/advanced
 module load ba
 module load bzr
 module use /plx/userprod/pro3dwe1/BA/modulefiles/
-module load autoload
-module load advanced/tools/cmake
+module load cmake
 
 SCRIPT_PATH="${BASH_SOURCE[0]}";
 if([ -h "${SCRIPT_PATH}" ]) then
@@ -49,7 +49,7 @@ if [ "$ba_compiler" = "" ]; then
     ba_compiler='gnu/4.1.2'
 fi
 if [ "$ba_req_modules" = "" ]; then
-    ba_req_modules_flag='--required-modules bzr'
+    ba_req_modules_flag=''
 else
   ba_req_modules_flag=""
   for mod in $ba_req_modules; do
@@ -64,6 +64,10 @@ fi
 
 if [ "$autopackage_version" = "" ]; then 
   autopackage_version=$ba_module_version
+fi 
+
+if [ "$module_build_setup" = "" ]; then 
+  module_build_setup="module purge\\nmodule load autoload cmake bzr"
 fi 
 
 
@@ -166,6 +170,7 @@ sed --in-place=.orig\
 	-e "s@${ba_hook_configure}@cd $work_dir\\n${configure_command}\\n@" \
         -e "s@${ba_hook_make}@cd $work_dir\\n${make_command}\\n@" \
 	-e "s@${ba_hook_install}@${force_install_command}@" \
+	-e "s@^  # module purge@${module_build_setup}@" \
 	-e "s@^  # module@module@" \
 ${ba_build_dir}/BUILD_SCRIPT 
 
