@@ -35,7 +35,7 @@ ExternalProject_Add(
 	BUILD_COMMAND ""
 )
 file(WRITE ${Package_Source_Dir}/Readme.txt "this is a dummy file to convince ExternalProject_Add that this folder is not empty")
-set(my_external_dep_binary_dir ${Package_Source_Dir}/meshlab/src/external)
+set(my_external_dep_binary_dir ${Package_Source_Dir}/external)
 message("QT_QMAKE_EXECUTABLE-->${QT_QMAKE_EXECUTABLE}<--")
 file(MAKE_DIRECTORY ${my_external_dep_binary_dir})
 
@@ -75,14 +75,14 @@ ExternalProject_Add_Step(
 	  COMMAND  make
 	  DEPENDEES qmake_depends
 	  DEPENDERS configure
-	  WORKING_DIRECTORY <BINARY_DIR>/meshlab/src/external
+	  WORKING_DIRECTORY <BINARY_DIR>/external
 )
 
 ExternalProject_Add_Step(
 	  ${PACKAGE}	qmake_depends	
 	  COMMAND ${QT_QMAKE_EXECUTABLE} -recursive <SOURCE_DIR>/meshlab/src/external/external.pro
 	  DEPENDERS make_depends
-	  WORKING_DIRECTORY <BINARY_DIR>/meshlab/src/external
+	  WORKING_DIRECTORY <BINARY_DIR>/external
 )
 
 ExternalProject_Add_Step(
