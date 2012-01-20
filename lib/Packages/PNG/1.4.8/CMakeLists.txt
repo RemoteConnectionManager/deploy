@@ -21,7 +21,7 @@ else()
 endif()
 set(Package_specific_cmake_args  -DPNG_SHARED:BOOL=${PNG_SHARED} -DPNG_STATIC:BOOL=${PNG_STATIC})
 if(UNIX) 
-    set(Package_specific_cmake_args ${Package_specific_cmake_args} -DPNG_NO_STDIO:BOOL=OFF)
+    set(Package_specific_cmake_args ${Package_specific_cmake_args} -DPNG_NO_STDIO:BOOL=OFF -DM_LIBRARY:STRING=)
 endif()
 ####################################################################
 	
