@@ -1,1 +1,1 @@
-set(Package_default_version 1.8.0.4)
+set(Package_default_version 1.9.2)
