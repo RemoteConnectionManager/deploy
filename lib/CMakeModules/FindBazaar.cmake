@@ -1,7 +1,10 @@
 SET(Bazaar_FOUND FALSE)
  
-FIND_PROGRAM(Bazaar_EXECUTABLE bzr
-  DOC "Bazaar command line client")
+FIND_PROGRAM(
+	Bazaar_EXECUTABLE bzr
+	DOC "Bazaar command line client"
+#disable, as currently it is requirend but there is no external package	${Package_search_hints}
+)
 MARK_AS_ADVANCED(Bazaar_EXECUTABLE)
  
 IF(Bazaar_EXECUTABLE)

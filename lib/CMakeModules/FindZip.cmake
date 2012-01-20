@@ -1,7 +1,10 @@
 SET(zip_FOUND FALSE)
  
-FIND_PROGRAM(zip_EXECUTABLE zip
-  DOC "zip exe")
+FIND_PROGRAM(
+	zip_EXECUTABLE zip
+	DOC "zip exe"
+	${Package_search_hints}
+)
 MARK_AS_ADVANCED(zip_EXECUTABLE)
  
 IF(zip_EXECUTABLE)

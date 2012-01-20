@@ -14,10 +14,15 @@ INCLUDE(FindZLIB)
 IF(ZLIB_FOUND)
   FIND_PATH(PNG_PNG_INCLUDE_DIR png.h
   /usr/local/include/libpng             # OpenBSD
+  ${Package_search_hints}
   )
 
   SET(PNG_NAMES ${PNG_NAMES} png libpng png12 libpng12 libpng12_static)
-  FIND_LIBRARY(PNG_LIBRARY NAMES ${PNG_NAMES} )
+  FIND_LIBRARY(
+	PNG_LIBRARY 
+	NAMES ${PNG_NAMES} 
+	${Package_search_hints}
+	)
 
   IF (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
       # png.h includes zlib.h. Sigh.
