@@ -54,8 +54,11 @@ set(Package_list_added "")
   ENDIF()
 
 
-
-include(ExternalProject)
+if(APPLE)
+  include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
+else()
+  include(ExternalProject)
+endif()
 
 set(EXTERNAL_ASSEMBLY_BASE_BUILD ${CMAKE_BINARY_DIR}/bld)
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install)
@@ -76,13 +79,19 @@ get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../S
 		#http://www.gentoo.org/proj/en/base/amd64/howtos/index.xml?part=1&chap=3
 
 		if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" )
+			if(APPLE)
+				message("ATTENZIONE!!!! uso hack per unix AMD64  !!!!!!!! ")
+			endif()
 			set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
 			set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
 		endif()
 	endif()
 
 
-	set(Package_Pass_Variables CMAKE_PREFIX_PATH CMAKE_MODULE_PATH CMAKE_DEBUG_POSTFIX BUILD_SHARED_LIBS CMAKE_VERBOSE_MAKEFILE CMAKE_C_FLAGS	CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_CXX_COMPILER CMAKE_C_COMPILER Package_search_hints)
+	set(Package_Pass_Variables CMAKE_PREFIX_PATH CMAKE_MODULE_PATH CMAKE_DEBUG_POSTFIX BUILD_SHARED_LIBS CMAKE_VERBOSE_MAKEFILE CMAKE_C_FLAGS	CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_CXX_COMPILER CMAKE_C_COMPILER Package_search_hints )
+	  if(APPLE)
+		set(Package_Pass_Variables ${Package_Pass_Variables} CMAKE_OSX_ARCHITECTURES)
+	  endif()
 
 
 
@@ -234,12 +243,19 @@ function(PackageSetup )
 	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/src _NATIVE_SOURCE_DIR)
 	file(TO_NATIVE_PATH ${Package_Source_Stamp_Dir} _NATIVE_SRCSTAMP_DIR)
 	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/download _NATIVE_DOWNLOAD_DIR)
-	set(Package_std_source_dirs 
-		SOURCE_DIR ${_NATIVE_SOURCE_DIR}
-		SRCSTAMP_DIR ${_NATIVE_SRCSTAMP_DIR}
-		DOWNLOAD_DIR ${_NATIVE_DOWNLOAD_DIR}
-	)
-	
+	if(APPLE)
+		set(Package_std_source_dirs 
+			SOURCE_DIR ${_NATIVE_SOURCE_DIR}
+			#SRCSTAMP_DIR ${_NATIVE_SRCSTAMP_DIR}
+			DOWNLOAD_DIR ${_NATIVE_DOWNLOAD_DIR}
+		)
+	else()
+		set(Package_std_source_dirs 
+			SOURCE_DIR ${_NATIVE_SOURCE_DIR}
+			SRCSTAMP_DIR ${_NATIVE_SRCSTAMP_DIR}
+			DOWNLOAD_DIR ${_NATIVE_DOWNLOAD_DIR}
+		)
+	endif()
 	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${PACKAGE}/build _NATIVE_BINARY_DIR)
 	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX} _NATIVE_INSTALL_DIR)
 	set(Package_std_binary_dirs
