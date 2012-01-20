@@ -6,7 +6,7 @@ if(MSVC)
 
 	PackageWindowsBinarySimpleAdd( http://3d.cineca.it/storage/bazaar_repo/download_cache/gecko-sdk-win32-msvc-1.8.0.4.zip )
 else()
-	PackageLinuxBinarySimpleAdd(http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases/1.8.0.4/sdk/gecko-sdk-i686-pc-linux-gnu-1.8.0.4.tar.bz2)
+	PackageLinuxBinarySimpleAdd(http://www.securehost.com/mirror/mozilla/xulrunner/releases/1.8.0.4/sdk/gecko-sdk-i686-pc-linux-gnu-1.8.0.4.tar.bz2)
 
 endif()
 
