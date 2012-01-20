@@ -139,9 +139,10 @@ function(add_external_package_dir pkg)
 				get_cmake_property(previous_cache_var CACHE_VARIABLES)
 								
 				#find_package(${pkg} ${Package_search_hints}) 
+				string(TOUPPER ${pkg} pkg_upper_name)
 				find_package(${pkg} ) #disable ${Package_search_hints} for packages
 				
-				if(${pkg}_FOUND)
+				if(${pkg_upper_name}_FOUND)
 					debug_message(HERE!!!! found -->${pkg}<-- skipping external)
 					set(my_found 1)
 				else()
