@@ -1,0 +1,29 @@
+diff -Nur src_orig/include/OpenThreads/Version src/include/OpenThreads/Version
+--- src_orig/include/OpenThreads/Version	Mon Feb  2 14:55:51 2009
++++ src/include/OpenThreads/Version	Tue Mar  9 11:11:00 2010
+@@ -18,10 +18,7 @@
+ 
+ extern "C" {
+ 
+-#define OPENTHREADS_MAJOR_VERSION 2
+-#define OPENTHREADS_MINOR_VERSION 4
+-#define OPENTHREADS_PATCH_VERSION 0
+-#define OPENTHREADS_SOVERSION 11
++#include <OpenThreads/Config>
+ 
+ /** OpenThreadsGetVersion() returns the library version number.
+  * Numbering convention : OpenThreads-1.0 will return 1.0 from OpenThreadsGetVersion. */
+diff -Nur src_orig/src/OpenThreads/common/Config.in src/src/OpenThreads/common/Config.in
+--- src_orig/src/OpenThreads/common/Config.in	Mon Oct 27 10:42:58 2008
++++ src/src/OpenThreads/common/Config.in	Tue Mar  9 11:33:00 2010
+@@ -31,4 +31,10 @@
+ #cmakedefine _OPENTHREADS_ATOMIC_USE_MUTEX
+ #cmakedefine OT_LIBRARY_STATIC
+ 
++#define OPENTHREADS_MAJOR_VERSION @OPENTHREADS_MAJOR_VERSION@
++#define OPENTHREADS_MINOR_VERSION @OPENTHREADS_MINOR_VERSION@
++#define OPENTHREADS_PATCH_VERSION @OPENTHREADS_PATCH_VERSION@
++#define OPENTHREADS_SOVERSION @OPENTHREADS_SOVERSION@
++
++
+ #endif
