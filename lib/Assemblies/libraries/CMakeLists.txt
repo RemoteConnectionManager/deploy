@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
+  FIND_PACKAGE(Git)
+  IF(Git_FOUND)
+	MESSAGE("Git exec-->${GIT_EXECUTABLE}<--")
+  ENDIF(Git_FOUND)
   FIND_PACKAGE(Subversion)
   IF(Subversion_FOUND)
 	MESSAGE("svn exec-->${Subversion_SVN_EXECUTABLE}<-->${Subversion_VERSION_SVN}<--")
