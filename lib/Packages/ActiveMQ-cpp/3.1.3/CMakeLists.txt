@@ -9,7 +9,7 @@ else()
 	set(Package_PkgConfig ON)
 	#set(Package_configure_flags --enable-gtk=no)
 	set(Package_source_setup
-		SVN_REPOSITORY https://svn.apache.org/repos/asf/activemq/activemq-cpp/tags/activemq-cpp-3.1.3/
+		SVN_REPOSITORY https://svn.apache.org/repos/asf/activemq/activemq-cpp/tags/activemq-cpp-3.1.3/activemq-cpp
 		UPDATE_COMMAND ""
 	)
 

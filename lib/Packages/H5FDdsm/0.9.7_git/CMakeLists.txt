@@ -14,6 +14,12 @@ set(Package_source_setup
 	UPDATE_COMMAND ""
 )
 
+set(Package_specific_cmake_args 
+	-DH5FD_DSM_BUILD_FORTRAN:BOOL=ON
+	-DH5FD_DSM_BUILD_STEERING:BOOL=ON
+	-DH5FD_DSM_BUILD_TESTING:BOOL=ON
+)
+
 PackageCmakeAdd()
 
 
