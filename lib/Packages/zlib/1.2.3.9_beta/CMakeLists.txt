@@ -21,10 +21,19 @@ endif()
 message("Building ${PACKAGE} with -->-DCMAKE_C_FLAGS=${MY_CMAKE_C_FLAGS}")
 #####################################################################
 
+#these are the patches to apply (order important???)
+PackageWriteMultiPatchFile(tmp     
+	zconf_in_source.diff
+)
+
+file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
+
+
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
 	URL http://zlib.net/current/beta/zlib-1.2.3.9.tar.gz
+	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
