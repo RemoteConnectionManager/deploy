@@ -16,4 +16,8 @@ add_external_package_dir(Apache)
 add_external_package_dir(Subversion 1.6.16 1)
 
 add_external_package_dir(PHP)
+option(USE_WSGI "build mod_wsgi module" OFF)
+if(USE_WSGI)
+  add_external_package_dir(mod_wsgi)
+endif()
 
