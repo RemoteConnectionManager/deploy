@@ -61,7 +61,7 @@ endif()
   set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install/osg)
   set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${EXTERNAL_ASSEMBLY_COMMON_PREFIX}")
   set(CMAKE_FIND_ROOT_PATH "${CMAKE_PREFIX_PATH}" )
-  set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+  set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
 
 add_external_package_dir(osg 3.0.1)
 add_external_package_dir(osgdata svn_head)
