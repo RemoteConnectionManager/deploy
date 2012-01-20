@@ -64,5 +64,5 @@ add_external_package_dir(osgdata svn_head)
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install3)
 
 add_external_package_dir(osg4web B7)
-add_external_package_dir(Firebreath 1.4.beta)
+add_external_package_dir(Firebreath 1.4.2)
 
