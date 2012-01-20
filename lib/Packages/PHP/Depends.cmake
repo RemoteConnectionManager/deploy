@@ -1,1 +1,1 @@
-set(Package_current_dependencies Apache MySQL libmcrypt)
+set(Package_current_dependencies Apache MySQL libmcrypt JPEG PNG)
