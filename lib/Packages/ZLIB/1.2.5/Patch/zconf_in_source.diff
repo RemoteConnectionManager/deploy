@@ -1,0 +1,12 @@
+diff -Nur src_orig/CMakeLists.txt src/CMakeLists.txt
+--- src_orig/CMakeLists.txt	Sun Feb 21 20:32:19 2010
++++ src/CMakeLists.txt	Thu Mar 11 02:22:33 2010
+@@ -76,7 +76,7 @@
+ endif()
+ 
+ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.in
+-               ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h @ONLY)
++               ${CMAKE_CURRENT_BINARY_DIR}/zconf.h @ONLY)
+ include_directories(${CMAKE_CURRENT_BINARY_DIR})
+ 
+ 

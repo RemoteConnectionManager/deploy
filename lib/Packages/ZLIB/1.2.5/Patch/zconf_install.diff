@@ -1,0 +1,12 @@
+diff -Nur src.orig/CMakeLists.txt src/CMakeLists.txt
+--- src.orig/CMakeLists.txt	2010-03-12 00:55:34.657542231 +0100
++++ src/CMakeLists.txt	2010-03-12 01:35:22.527548201 +0100
+@@ -85,7 +85,7 @@
+ #============================================================================
+ 
+ set(ZLIB_PUBLIC_HDRS
+-    zconf.h
++    ${CMAKE_CURRENT_BINARY_DIR}/zconf.h
+     zlib.h
+ )
+ set(ZLIB_PRIVATE_HDRS
