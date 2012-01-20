@@ -39,26 +39,12 @@ set(my_external_dep_binary_dir ${Package_Source_Dir}/external)
 message("QT_QMAKE_EXECUTABLE-->${QT_QMAKE_EXECUTABLE}<--")
 file(MAKE_DIRECTORY ${my_external_dep_binary_dir})
 
-ExternalProject_Add(
-	${PACKAGE}_extdep
-	SOURCE_DIR ${Package_Source_Dir}/meshlab/src/external
-	BINARY_DIR 
-	${Package_current_dependencies_effective_line} ${PACKAGE}_meshlab ${PACKAGE}_vcglib
-	INSTALL_COMMAND ""
-	CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} -recursive <SOURCE_DIR>/meshlab/src/external/external.pro 
-
-	BUILD_COMMAND ""
-
-# 	CMAKE_COMMAND ${CMAKE_COMMAND}
-# 	CMAKE_ARGS 
-# 		${Package_std_cmake_args}
-# 		${Package_add_cmake_args}
-)
 
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
-	${Package_current_dependencies_effective_line} ${PACKAGE}_meshlab ${PACKAGE}_vcglib
+#	${Package_current_dependencies_effective_line} ${PACKAGE}_meshlab ${PACKAGE}_vcglib
+	DEPENDS ${PACKAGE}_meshlab ${PACKAGE}_vcglib
 	INSTALL_COMMAND ""
 	BUILD_COMMAND make -j 8
 	CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} -recursive <SOURCE_DIR>/meshlab/src/meshlab_full.pro
@@ -87,7 +73,7 @@ ExternalProject_Add_Step(
 
 ExternalProject_Add_Step(
 	  ${PACKAGE}	mkdir_depends	
-	  COMMAND ${CMAKE_COMMAND} -E make_directory <BINARY_DIR>/meshlab/src/external
+	  COMMAND ${CMAKE_COMMAND} -E make_directory <BINARY_DIR>/external
 	  WORKING_DIRECTORY <BINARY_DIR>
 )
 
