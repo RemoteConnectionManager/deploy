@@ -81,6 +81,7 @@ get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../S
 	endif()
 
 
+	set(Package_Pass_Variables CMAKE_MODULE_PATH CMAKE_DEBUG_POSTFIX BUILD_SHARED_LIBS CMAKE_VERBOSE_MAKEFILE CMAKE_C_FLAGS	CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_CXX_COMPILER CMAKE_C_COMPILER)
 
 
 
@@ -181,21 +182,20 @@ function(PackageSetup )
 	get_filename_component(PACKAGE ${tmp} NAME)
 	
 
-	set(_f1 -DBUILD_SHARED_LIBS:BOOL=${EXTERNAL_ASSEMBLY_BUILD_SHARED})
-	if(NOT EXTERNAL_ASSEMBLY_BUILD_SHARED)
+#	set(_f1 -DBUILD_SHARED_LIBS:BOOL=${EXTERNAL_ASSEMBLY_BUILD_SHARED})
+#	if(NOT EXTERNAL_ASSEMBLY_BUILD_SHARED)
 		#this is to avoid linking errors on AMD64, basically add -fPIC also to static lib buildslike
 		#relocation R_X86_64_32S
 		#see
 		#http://www.cmake.org/pipermail/cmake/2006-September/011316.html
 		#http://www.gentoo.org/proj/en/base/amd64/howtos/index.xml?part=1&chap=3
 
-		if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" )
-			set(_f2 -DCMAKE_C_FLAGS:STRING=-fPIC ${CMAKE_C_FLAGS})
-			set(_f3 -DCMAKE_CXX_FLAGS:STRING=-fPIC ${CMAKE_CXX_FLAGS})
-		endif()
-	endif()
+#		if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" )
+#			set(_f2 -DCMAKE_C_FLAGS:STRING=-fPIC ${CMAKE_C_FLAGS})
+#			set(_f3 -DCMAKE_CXX_FLAGS:STRING=-fPIC ${CMAKE_CXX_FLAGS})
+#		endif()
+#	endif()
 
-	set(Package_Pass_Variables CMAKE_MODULE_PATH CMAKE_DEBUG_POSTFIX BUILD_SHARED_LIBS CMAKE_VERBOSE_MAKEFILE CMAKE_C_FLAGS	CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_CXX_COMPILER CMAKE_C_COMPILER)
 	set(list_separator "")
 	set(Package_derived_cmake_args "")
 	set(Package_std_cmake_args -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH:PATH=<INSTALL_DIR> )
@@ -212,9 +212,9 @@ function(PackageSetup )
 					string(REPLACE ";" "@@" managed_list "${_tmp}" )
 					message("adding variable -->${pass_var}<-as list->${managed_list}")
 					set(list_separator LIST_SEPARATOR @@)
-					set(def_flag -D${pass_var}:STATIC=${managed_list})
+					set(def_flag -D${pass_var}:CACHE=${managed_list})
 				else()
-					set(def_flag -D${pass_var}:STATIC=${${pass_var}})
+					set(def_flag -D${pass_var}:CACHE=${${pass_var}})
 				endif()
 				list(APPEND Package_std_cmake_args ${def_flag})
 			endif()
