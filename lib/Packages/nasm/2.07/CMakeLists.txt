@@ -13,20 +13,11 @@ if(Nasm_EXECUTABLE)
 	message("found nasm, skipping external")
 else()
 	message("nasm NOT FOUND, inserting external")
+	PackageSetup()
+
 	if(WIN32)
 		#### here we download the binary package,  sic
-		
-		ExternalProject_Add(
-			${PACKAGE}
-			#WARNING!!!! this way  zip file directly expand into install/bin dir == source dir
-			DOWNLOAD_DIR ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/win32_bin_download
-			SOURCE_DIR ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}
-			URL http://www.nasm.us/pub/nasm/releasebuilds/2.07/win32/nasm-2.07-win32.zip
-			INSTALL_COMMAND ""
-			CONFIGURE_COMMAND ""
-			BUILD_COMMAND ""
-		)
-		#### add install step here (copy????)
+		PackageWindowsBinarySimpleAdd( http://www.nasm.us/pub/nasm/releasebuilds/2.07/win32/nasm-2.07-win32.zip )
 	else()
 		message("Still to implement patch building under linux")
 	endif()
