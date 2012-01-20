@@ -2,12 +2,16 @@
 #These options seems to be mutually exclusive, 
 #so depending on the assembly setup decide weather configure static or shared
 ####################################################################
-if(BUILD_SHARED_LIBS)
+if(EXTERNAL_ASSEMBLY_BUILD_SHARED)
     set(PNG_SHARED ON)
     set(PNG_STATIC OFF)
 else()
     set(PNG_SHARED OFF)
     set(PNG_STATIC ON)
+endif()
+set(Package_add_cmake_args -DPNG_SHARED:BOOL=${PNG_SHARED} -DPNG_STATIC:BOOL=${PNG_STATIC})
+if(UNIX) 
+    set(Package_add_cmake_args ${Package_add_cmake_args} -DPNG_NO_STDIO:BOOL=OFF)
 endif()
 ####################################################################
 
@@ -26,8 +30,9 @@ ExternalProject_Add(
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
-		-DPNG_SHARED:BOOL=${PNG_SHARED}
-		-DPNG_STATIC:BOOL=${PNG_STATIC}
+		${Package_add_cmake_args}
+#		-DPNG_SHARED:BOOL=${PNG_SHARED}
+#		-DPNG_STATIC:BOOL=${PNG_STATIC}
 )
 
 
