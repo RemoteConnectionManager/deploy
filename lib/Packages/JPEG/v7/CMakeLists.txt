@@ -18,7 +18,8 @@ ExternalProject_Add(
 	${Package_std_dirs}
 	URL http://www.ijg.org/files/jpegsrc.v7.tar.gz
 	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
-	CMAKE_COMMAND ${CMAKE_COMMAND}
+	#CMAKE_COMMAND ${CMAKE_COMMAND}
+	CMAKE_GENERATOR ${CMAKE_GENERATOR}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
 )
