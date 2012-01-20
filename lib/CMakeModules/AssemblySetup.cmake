@@ -136,7 +136,7 @@ function(add_external_package_dir pkg)
 				else()
 					set(Package_current_dependencies_effective_line "")
 				endif()
-				message("@@@@@@@@add_subdirectory(${Package_source}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg}) with dep line -->${Package_current_dependencies_effective_line}<--")
+				debug_message("@@@@@@@@add_subdirectory(${Package_source}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg}) with dep line -->${Package_current_dependencies_effective_line}<--")
 				add_subdirectory(${Package_source}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg})
 				list(APPEND Package_list_added ${pkg})
 			endif()
@@ -271,12 +271,48 @@ function(PackageWindowsBinarySimpleAdd URL)
 endfunction(PackageWindowsBinarySimpleAdd)
 
 function(PackageUnixConfigureSimpleAdd URL)
+	message("Package_InSource----->${Package_InSource}<---")
+	if(Package_InSource)
+		set(conf_command_body ./configure  --prefix=<INSTALL_DIR>)
+	else()
+		set(conf_command_body <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR>)
+	endif()
+	if(Package_configure_flags)
+		set(conf_command_body ${conf_command_body} ${Package_configure_flags})
+	endif()
+	if(Package_PkgConfig)
+		string(REPLACE ";" "^^" managed_conf_command_body "${conf_command_body}" )
+		set(conf_command CONFIGURE_COMMAND ${CMAKE_COMMAND} -Dmy_binary_dir:PATH=<BINARY_DIR> -Dmy_source_dir:PATH=<SOURCE_DIR> -Dmy_install_dir:PATH=<INSTALL_DIR> -Dmy_configure:STRING=${managed_conf_command_body} -P ${_mymoduledir}/pkgconfig_env.cmake) 
+		set(list_separator LIST_SEPARATOR ^^)
+	else()
+		set(conf_command CONFIGURE_COMMAND ${conf_command_body})
+		set(list_separator "")
+	endif()
+		debug_message("conf_command---->${conf_command}<---")
 		ExternalProject_Add(
 			${PACKAGE}
 			${Package_std_dirs}
 			URL ${URL}
-			CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR>
+			${conf_command}
+			${list_separator}
+			#CONFIGURE_COMMAND  ./configure  --prefix=<INSTALL_DIR>
 		)
+	if(Package_InSource)
+		ExternalProject_Add_Step(${PACKAGE} copy_source
+			COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> <BINARY_DIR>
+			COMMENT "copying <SOURCE_DIR> to <BINARY_DIR>"
+			DEPENDEES download update patch
+			DEPENDERS configure
+		)
+	endif()
+#	if(Package_PkgConfig)
+#		ExternalProject_Add_Step(${PACKAGE} install_pkgconfig
+#			COMMAND ${CMAKE_GENERATOR} install-pkgconfigDATA
+#			COMMENT "installing pkgconfig"
+#			DEPENDEES install
+#		)
+#	endif()
+
 endfunction(PackageUnixConfigureSimpleAdd)
 
 function(PackageUnixConfigureSimpleAddInSource URL)
