@@ -7,6 +7,7 @@ if(WIN32)
 else()
 	#configure based install 
 	set(Package_PkgConfig ON)
+	#set(Package_configure_flags --enable-xlib-xrender=no)
 	set(Package_source_setup
 		URL http://cairographics.org/releases/cairo-1.8.10.tar.gz
 		URL_MD5 b60a82f405f9400bbfdcf850b1728d25
