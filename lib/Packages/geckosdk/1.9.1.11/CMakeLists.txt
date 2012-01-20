@@ -2,11 +2,9 @@ PackageSetup()
 if(MSVC)
 	#### here we download the binary package,  sic
 	
-#	PackageWindowsBinarySimpleAdd( http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases/1.8.0.4/sdk/gecko-sdk-win32-msvc-1.8.0.4.zip )
-
-	PackageWindowsBinarySimpleAdd( http://3d.cineca.it/storage/bazaar_repo/download_cache/gecko-sdk-win32-msvc-1.8.0.4.zip )
+	PackageWindowsBinarySimpleAdd( http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases/1.9.1.11/sdk/xulrunner-1.9.1.11.en-US.win32.sdk.zip )
 else()
-	PackageLinuxBinarySimpleAdd(http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases/1.8.0.4/sdk/gecko-sdk-i686-pc-linux-gnu-1.8.0.4.tar.bz2)
+	PackageLinuxBinarySimpleAdd(http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases/1.9.1.11/sdk/xulrunner-1.9.1.11.en-US.linux-i686.sdk.tar.bz2)
 
 endif()
 
