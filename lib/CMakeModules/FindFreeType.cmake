@@ -28,7 +28,7 @@
 # wants explicit full paths and this trickery doesn't work too well.
 # I'm going to attempt to cut out the middleman and hope 
 # everything still works.
-message("------------- CUSTOM FIND FREETYPE MODULE -------------------")
+message("-------CUSTOM FindFreetype------ with hints-->${Package_search_hints}<--")
 FIND_PATH(FREETYPE_INCLUDE_DIR_ft2build ft2build.h 
   HINTS
   $ENV{FREETYPE_DIR}
@@ -40,6 +40,7 @@ FIND_PATH(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
   /sw/include
   /opt/local/include
   /usr/freeware/include
+  ${Package_search_hints}
 )
 
 FIND_PATH(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h 
@@ -53,6 +54,7 @@ FIND_PATH(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
   /opt/local/include
   /usr/freeware/include
   PATH_SUFFIXES freetype2
+  ${Package_search_hints}
 )
 
 FIND_LIBRARY(FREETYPE_LIBRARY
@@ -66,6 +68,7 @@ FIND_LIBRARY(FREETYPE_LIBRARY
   /usr/X11
   /sw
   /usr/freeware
+  ${Package_search_hints}
 )
 
 # set the user variables
