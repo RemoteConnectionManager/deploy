@@ -417,6 +417,8 @@ function(PackageCmakeAdd)
 		set(make_command "")
 	endif()
 
+	debug_message("Package_specific_cmake_args---->${Package_specific_cmake_args}<---")
+
 	ExternalProject_Add(
 		${PACKAGE}
 		${Package_std_dirs}
