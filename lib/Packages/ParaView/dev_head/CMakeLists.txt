@@ -43,8 +43,6 @@ if(${PACKAGE}_get_data)
 		SOURCE_DIR ${${PACKAGE}_data_root}
 		URL http://www.paraview.org/files/v3.8/ParaViewData-3.8.1.zip
 		URL_MD5 3f3d16ad4ab37798d3e747bfd0492d46
-		DOWNLOAD_DIR ${Package_Download_Dir}
-		STAMP_DIR ${Package_Source_Stamp_Dir}
 		UPDATE_COMMAND ""
 		INSTALL_COMMAND ""
 		CONFIGURE_COMMAND ""
