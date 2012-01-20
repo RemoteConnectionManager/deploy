@@ -1,0 +1,8 @@
+file(TO_NATIVE_PATH ${MY_SOURCE_DIR} MY_SOURCE_NATIVE_DIR)
+file(TO_NATIVE_PATH ${MY_INSTALL_DIR} MY_INSTALL_NATIVE_DIR)
+configure_file(@CMAKE_CURRENT_BINARY_DIR@/configure.bat ${MY_BINARY_DIR}/configure.bat)
+message("--------->configure_file(@CMAKE_CURRENT_BINARY_DIR@/configure.bat ${MY_BINARY_DIR}/configure.bat)<---")
+configure_file(@CMAKE_CURRENT_BINARY_DIR@/build.bat ${MY_BINARY_DIR}/build.bat)
+message("--------->configure_file(@CMAKE_CURRENT_BINARY_DIR@/build.bat ${MY_BINARY_DIR}/build.bat)<---")
+#execute_process(COMMAND @CMAKE_COMMAND@ -E chdir ${MY_INSTALL_DIR} ${MY_BINARY_DIR}/configure.bat)
+execute_process(COMMAND ${MY_BINARY_DIR}/configure.bat)

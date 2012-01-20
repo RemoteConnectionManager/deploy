@@ -5,5 +5,7 @@ if(CMAKE_EXTRA_GENERATOR)
 endif()
 include(../../CMakeModules/AssemblySetup.cmake)
 debug_message("configuring with generator -->${CMAKE_GENERATOR}<--")
-
+get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../../Sources ABSOLUTE)
+get_filename_component(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_SOURCE_DIR}/../../../install/qt ABSOLUTE)
+set(CMAKE_PREFIX_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX})
 add_external_package_dir(QT)
