@@ -12,7 +12,9 @@ else()
 		${Package_std_dirs}
 		URL http://subversion.tigris.org/downloads/subversion-1.6.9.tar.gz
 		#MD5: bb0fe4ccfdd4645ea4581933c6a666b3
-		CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR> --with-apr=<INSTALL_DIR> --with-apr-util=<INSTALL_DIR> --with-sqlite=${EXTERNAL_ASSEMBLY_BASE_SOURCE}/Sqlite/3.6.23/src 
+		CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR>
+--prefix=<INSTALL_DIR> --with-apr=<INSTALL_DIR> --with-apr-util=<INSTALL_DIR>
+--with-sqlite=<INSTALL_DIR> --with-apxs=<INSTALL_DIR>/bin/apxs
 	)
 	
 endif()

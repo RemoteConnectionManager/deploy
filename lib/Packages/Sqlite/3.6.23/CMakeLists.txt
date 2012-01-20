@@ -11,9 +11,8 @@ else()
 		${PACKAGE}
 		${Package_std_dirs}
 		URL http://www.sqlite.org/sqlite-amalgamation-3.6.23.tar.gz
-		INSTALL_COMMAND ""
-		CONFIGURE_COMMAND ""
-		BUILD_COMMAND ""
+		CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR>
+--prefix=<INSTALL_DIR>
 	)
 	
 	
