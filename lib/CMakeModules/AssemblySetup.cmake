@@ -32,6 +32,11 @@ if(NOT EXTERNAL_ASSEMBLY_SEARCH_AND_USE_SYSTEM_MODULES)
 	#set(Package_search_hints NO_SYSTEM_ENVIRONMENT_PATH NO_DEFAULT_PATH)
 	set(Package_search_hints NO_SYSTEM_ENVIRONMENT_PATH)
 endif()
+
+#
+if(UNIX)
+	set(EXTERNAL_ASSEMBLY_BUILD_COMMAND "make;-j;4" CACHE STRING "set this to define a folder for module override")
+endif()
 #
 set(Package_list "")
 set(Package_list_added "")
@@ -53,7 +58,7 @@ set(Package_list_added "")
   include(ExternalProject)
 
 set(EXTERNAL_ASSEMBLY_BASE_BUILD ${CMAKE_BINARY_DIR}/bld)
-set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install)
+set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "set this to the assembly installation")
 if( NOT EXTERNAL_ASSEMBLY_INDIVIDUAL_INSTALL_PACKAGE)
 	set(CMAKE_PREFIX_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX})
 endif()
@@ -244,6 +249,7 @@ function(PackageSetup )
 	
 	set(Package_Source_Stamp_Dir ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/stamp )
 	set(Package_Source_Dir ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/src )
+	set(Package_Download_Dir ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/download )
 	
 	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/src _NATIVE_SOURCE_DIR)
 	file(TO_NATIVE_PATH ${Package_Source_Stamp_Dir} _NATIVE_SRCSTAMP_DIR)
@@ -277,6 +283,7 @@ function(PackageSetup )
 			Package_specific_cmake_args
 			Package_Source_Stamp_Dir 
 			Package_Source_Dir
+			Package_Download_Dir
 			Package_std_source_dirs 
 			Package_std_binary_dirs
 			Package_std_dirs
@@ -350,6 +357,7 @@ function(PackageCmakeAdd)
 	ExternalProject_Add(
 		${PACKAGE}-GetSource
 		SOURCE_DIR ${Package_Source_Dir}
+		DOWNLOAD_DIR ${Package_Download_Dir}
 		STAMP_DIR ${Package_Source_Stamp_Dir}
 		${Package_source_setup}
 		CONFIGURE_COMMAND ""
@@ -364,10 +372,17 @@ function(PackageCmakeAdd)
 		set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
 	endif()
 
+	if(EXTERNAL_ASSEMBLY_BUILD_COMMAND)
+		set(make_command BUILD_COMMAND ${EXTERNAL_ASSEMBLY_BUILD_COMMAND})
+	else()
+		set(make_command "")
+	endif()
+
 	ExternalProject_Add(
 		${PACKAGE}
 		${Package_std_dirs}
-		DOWNLOAD_COMMAND ""	
+		DOWNLOAD_COMMAND ""
+		${make_command}
 		CMAKE_GENERATOR ${CMAKE_GENERATOR}
 		CMAKE_ARGS 
 			${Package_std_cmake_args}
@@ -408,6 +423,7 @@ function(PackageUnixConfigureAdd)
 	ExternalProject_Add(
 		${PACKAGE}-GetSource
 		SOURCE_DIR ${Package_Source_Dir}
+		DOWNLOAD_DIR ${Package_Download_Dir}
 		STAMP_DIR ${Package_Source_Stamp_Dir}
 		${Package_source_setup}
 		UPDATE_COMMAND ""
