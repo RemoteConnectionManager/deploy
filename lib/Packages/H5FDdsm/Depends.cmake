@@ -1,0 +1,1 @@
+set(Package_current_dependencies HDF5)
