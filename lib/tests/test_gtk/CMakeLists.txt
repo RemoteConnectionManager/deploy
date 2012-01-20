@@ -8,5 +8,10 @@ set(CMAKE_FIND_ROOT_PATH "${CMAKE_PREFIX_PATH}" )
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 #set(EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT ON)
 
-add_external_package_dir(GTK2)
+  add_external_package_dir(GTK2)
+  add_external_package_dir(GtkGLExt)
 
+#  set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
+
+add_external_package_dir(osg 3.0.1)
+add_external_package_dir(osgdata svn_head)
