@@ -22,6 +22,7 @@ ExternalProject_Add(
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
 		${Package_additional_cmake_args}
+	${Package_current_dependencies_effective_line}
 )
 #no patch#set(PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${Package_Dir}/Patch/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt)
 
