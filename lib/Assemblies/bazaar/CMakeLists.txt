@@ -6,5 +6,9 @@ endif()
 include(../../CMakeModules/AssemblySetup.cmake)
 debug_message("configuring with generator -->${CMAKE_GENERATOR}<--")
 
+find_package(PythonInterp)
+message("PYTHON_EXECUTABLE-->${PYTHON_EXECUTABLE}<--")
+add_external_package_dir(Python 2.6.5)
+
 add_external_package_dir(Paramiko)
 
