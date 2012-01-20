@@ -8,7 +8,7 @@ autopackage_config_args='-DEXTERNAL_ASSEMBLY_BUILD_COMMAND1:STRING="make;-j;8" -
 #autopackage_config_args='-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_Fortran_COMPILER:STRING=\`which mpif90\` -DCMAKE_C_COMPILER:STRING=\`which mpicc\` -DCMAKE_CXX_COMPILER:STRING=\`which mpicxx\`'
 
 #autopackage_config_args="-D${autopackage_name}_static:bool=OFF"
-ba_module_version=0.9.7
+ba_module_version="0.9.7${module_chain_suffix}"
 autopackage_version=0.9.7_git
 # this is required at runtime and build time
 ba_req_modules="$openmpi_module"

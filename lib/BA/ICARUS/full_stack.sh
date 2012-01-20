@@ -1,7 +1,6 @@
-export ba_compiler='gnu/4.5.2'
-export module_suffix='--gnu--4.5.2'
-export openmpi_module='openmpi/1.4.3--gnu--4.5.2--gnu--4.1.2'
-#export ba_test_mode=false
+export module_chain_suffix='MPI_MULTITHREAD'
+export openmpi_module='openmpi/1.4.3--gnu--4.1.2'
+export work_default_base_dir="/scratch_local/pro3dwe1/build/ba_builds/${module_chain_suffix}"
 
 SCRIPT_PATH="${BASH_SOURCE[0]}";
 if([ -h "${SCRIPT_PATH}" ]) then
@@ -20,6 +19,7 @@ cd `dirname ${SCRIPT_PATH}` > /dev/null
 SCRIPT_PATH=`pwd`;
 popd  > /dev/null
 
-#${SCRIPT_PATH}/../Python/2.7.1.sh
-#${SCRIPT_PATH}/../Qt4/4.7.2_shared.sh
-${SCRIPT_PATH}/../ParaView/3.10.1_qtshared.sh
+
+#${SCRIPT_PATH}/../H5FDdsm/0.9.7.sh
+#${SCRIPT_PATH}/../ParaView/3.10.1_icarus.sh
+${SCRIPT_PATH}/../ICARUS/icarus_plugin.sh
