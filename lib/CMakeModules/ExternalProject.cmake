@@ -223,7 +223,7 @@ function(_ep_write_downloadfile_script script_filename remote local timeout)
   file(WRITE ${script_filename}
 "message(STATUS \"downloading...
      src='${remote}'
-     dst='${local}'\"
+     dst='${local}'
      timeout='${timeout_msg}'\")
 
 if(NOT EXISTS \"${local}\")	 
