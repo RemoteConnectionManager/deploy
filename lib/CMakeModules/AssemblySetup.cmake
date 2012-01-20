@@ -388,7 +388,7 @@ function(PackageCmakeAdd)
 			${Package_std_cmake_args}
 			${Package_specific_cmake_args}
 		${Package_current_dependencies_effective_line} 
-		STEP_TARGETS configure build
+		STEP_TARGETS configure build install
 	)
 endfunction(PackageCmakeAdd)
 
@@ -401,7 +401,11 @@ function(PackageUnixConfigureAdd)
 	if(Package_InSource)
 		set(conf_command_body ./configure  --prefix=<INSTALL_DIR>)
 	else()
-		set(conf_command_body <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR>)
+		if(Package_nosrcdir)
+			set(conf_command_body <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>)
+		else()
+			set(conf_command_body <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR>)
+		endif()
 	endif()
 	if(Package_configure_flags)
 		set(conf_command_body ${conf_command_body} ${Package_configure_flags})
@@ -446,7 +450,7 @@ function(PackageUnixConfigureAdd)
 		${conf_command}
 		${make_command}
 		${list_separator}
-		STEP_TARGETS configure build
+		STEP_TARGETS configure build install
 	)
 	debug_message("
 
@@ -458,7 +462,7 @@ function(PackageUnixConfigureAdd)
 		${conf_command}
 		${make_command}
 		${list_separator}
-		STEP_TARGETS configure build
+		STEP_TARGETS configure build install
 	)
 
 	")
