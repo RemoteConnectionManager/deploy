@@ -4,7 +4,8 @@ PackageSetup()
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
-	GIT_REPOSITORY git://bluequartz.net/tiff.git
+	GIT_REPOSITORY git://scm.bluequartz.net/support-libraries/tiff.git
+	UPDATE_COMMAND ""
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
