@@ -3,7 +3,11 @@ PackageSetup()
 ####################################################################
 #this is to patch a bug in file gzguts.h 
 #equivalent to adding --->#  define snprintf _snprintf
-set(MY_CMAKE_C_FLAGS "/Dsnprintf=_snprintf ${CMAKE_C_FLAGS}")
+if(MSVC)
+	set(MY_CMAKE_C_FLAGS "/Dsnprintf=_snprintf ${CMAKE_C_FLAGS}")
+else()
+	set(MY_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+endif()	
 message("Building ${PACKAGE} with -->-DCMAKE_C_FLAGS=${MY_CMAKE_C_FLAGS}")
 #####################################################################
 
