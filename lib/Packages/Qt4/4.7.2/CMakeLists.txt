@@ -6,7 +6,7 @@ set(QT_CONFIGURE_FLAGS -opensource -confirm-license   -no-qt3support )
 option(${PACKAGE}_static "build   ${PACKAGE} static" OFF)
 
 if(${PACKAGE}_static)
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -static -qt-libpng -qt-zlib  -qt-libtiff)
+	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -static -qt-libpng -qt-zlib  -qt-libtiff -qt-sql-sqlite -nomake examples -nomake demos)
 	message("QT_CONFIGURE_FLAGS-->${QT_CONFIGURE_FLAGS}<--")
 endif()
 
@@ -54,7 +54,7 @@ if(MSVC)
 	)
 else()
 	#skipping configure make and install as required as source
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS}  -fast )
+	#set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS}  -fast )
 	set(Package_configure_flags ${QT_CONFIGURE_FLAGS})
 	set(Package_nosrcdir ON)
 	set(Package_source_setup
