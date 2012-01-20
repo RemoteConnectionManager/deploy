@@ -8,7 +8,8 @@ else()
 	#configure based install 
 	set(Package_PkgConfig ON)
 	PackageUnixConfigureSimpleAdd(
-		http://sourceforge.net/projects/gtkglext/files/gtkglext/1.2.0/gtkglext-1.2.0.tar.gz/download
+		http://mesh.dl.sourceforge.net/project/gtkglext/gtkglext/1.2.0/gtkglext-1.2.0.tar.gz
+
 	)
 endif()
 
