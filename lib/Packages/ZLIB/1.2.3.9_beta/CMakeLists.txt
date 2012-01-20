@@ -24,6 +24,7 @@ message("Building ${PACKAGE} with -->-DCMAKE_C_FLAGS=${MY_CMAKE_C_FLAGS}")
 #these are the patches to apply (order important???)
 PackageWriteMultiPatchFile(tmp     
 	zconf_in_source.diff
+	zconf_install.diff
 )
 
 file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
