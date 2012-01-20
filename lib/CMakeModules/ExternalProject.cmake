@@ -563,22 +563,37 @@ endfunction(_ep_get_configuration_subdir_suffix)
 function(ExternalProject_Add_Step name step)
   set(cmf_dir ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles)
   ExternalProject_Get_Property(${name} stamp_dir)
-
+  message("qui stamp dir -->${stamp_dir}<--")
   _ep_get_configuration_subdir_suffix(cfgdir)
 
-  add_custom_command(APPEND
-    OUTPUT ${cmf_dir}${cfgdir}/${name}-complete
-    DEPENDS ${stamp_dir}${cfgdir}/${name}-${step}
-    )
   _ep_parse_arguments(ExternalProject_Add_Step
                        ${name} _EP_${step}_ "${ARGN}")
+					   
+  get_property(mystamp_set TARGET ${name} PROPERTY _EP_${step}_MYSTAMP SET)
+  
+  if(mystamp_set)
+	get_property(mystamp TARGET ${name} PROPERTY _EP_${step}_MYSTAMP)
+  else()
+	if(${step} STREQUAL "download" OR ${step} STREQUAL "patch" OR ${step} STREQUAL "update")
+		set(mystamp ${stamp_dir}/${name}-src-${step})
+	else()
+		set(mystamp ${stamp_dir}${cfgdir}/${name}-${step})
+		add_custom_command(APPEND
+			OUTPUT ${cmf_dir}${cfgdir}/${name}-complete
+			DEPENDS ${mystamp}
+		)
+	endif()
+	message("qui mystamp dir -->${mystamp}<--")
+	set_property(TARGET ${name} PROPERTY _EP_${step}_MYSTAMP ${mystamp} )
+  endif()
 
   # Steps depending on this step.
   get_property(dependers TARGET ${name} PROPERTY _EP_${step}_DEPENDERS)
   foreach(depender IN LISTS dependers)
+	get_property(mystamp_dep TARGET ${name} PROPERTY _EP_${depender}_MYSTAMP)
     add_custom_command(APPEND
-      OUTPUT ${stamp_dir}${cfgdir}/${name}-${depender}
-      DEPENDS ${stamp_dir}${cfgdir}/${name}-${step}
+      OUTPUT ${mystamp_dep}
+      DEPENDS ${mystamp}
       )
   endforeach()
 
@@ -588,7 +603,8 @@ function(ExternalProject_Add_Step name step)
   # Dependencies on steps.
   get_property(dependees TARGET ${name} PROPERTY _EP_${step}_DEPENDEES)
   foreach(dependee IN LISTS dependees)
-    list(APPEND depends ${stamp_dir}${cfgdir}/${name}-${dependee})
+  	get_property(mystamp_depndee TARGET ${name} PROPERTY _EP_${dependee}_MYSTAMP)
+    list(APPEND depends ${mystamp_depndee})
   endforeach()
 
   # The command to run.
@@ -625,14 +641,14 @@ function(ExternalProject_Add_Step name step)
   # Run every time?
   get_property(always TARGET ${name} PROPERTY _EP_${step}_ALWAYS)
   if(always)
-    set_property(SOURCE ${stamp_dir}${cfgdir}/${name}-${step} PROPERTY SYMBOLIC 1)
+    set_property(SOURCE ${mystamp} PROPERTY SYMBOLIC 1)
     set(touch)
   else()
-    set(touch ${CMAKE_COMMAND} -E touch ${stamp_dir}${cfgdir}/${name}-${step})
+    set(touch ${CMAKE_COMMAND} -E touch ${mystamp})
   endif()
 
   add_custom_command(
-    OUTPUT ${stamp_dir}${cfgdir}/${name}-${step}
+    OUTPUT ${mystamp}
     COMMENT ${comment}
     COMMAND ${command}
     COMMAND ${touch}
@@ -773,7 +789,7 @@ function(_ep_add_download_command name)
     COMMAND ${cmd}
     WORKING_DIRECTORY ${work_dir}
     DEPENDS ${depends}
-    DEPENDEES mkdir
+#luigi    DEPENDEES mkdir
     )
 endfunction(_ep_add_download_command)
 
