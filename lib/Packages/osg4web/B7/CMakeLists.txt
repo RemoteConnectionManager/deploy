@@ -40,7 +40,7 @@ ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
 	${Package_current_dependencies_effective_line}
-	BZR_REPOSITORY http://rvn05.plx.cineca.it:12000/files/virtualrome/bazaar_repo/BrowserEmbed/test_merge/
+	#BZR_REPOSITORY http://rvn05.plx.cineca.it:12000/files/virtualrome/bazaar_repo/BrowserEmbed/test_merge/
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
