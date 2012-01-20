@@ -7,5 +7,5 @@ include(../../CMakeModules/AssemblySetup.cmake)
 debug_message("configuring with generator -->${CMAKE_GENERATOR}<--")
 
 #add_external_package_dir(osg 2.8.3)
-add_external_package_dir(TIFF)
+add_external_package_dir(osgearth 1.4)
 add_external_package_dir(osg4web B7)
