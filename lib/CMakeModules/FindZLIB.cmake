@@ -38,6 +38,7 @@ FIND_LIBRARY(
 	ZLIB_LIBRARY_RELEASE NAMES ${ZLIB_NAMES} 
 	${Package_search_hints}
 )
+message("ZLIB_LIBRARY_RELEASE-->${ZLIB_LIBRARY_RELEASE}<--searched-->${ZLIB_NAMES}<--")
 
 
 

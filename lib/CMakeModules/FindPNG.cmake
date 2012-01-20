@@ -10,6 +10,7 @@
 # None of the above will be defined unles zlib can be found.
 # PNG depends on Zlib
 INCLUDE(FindZLIB)
+message("-------CUSTOM FindPNG------ with hints-->${Package_search_hints}<--")
 
 IF(ZLIB_FOUND)
   FIND_PATH(PNG_PNG_INCLUDE_DIR png.h
@@ -17,7 +18,7 @@ IF(ZLIB_FOUND)
   ${Package_search_hints}
   )
 
-  SET(PNG_NAMES ${PNG_NAMES} png libpng png12 libpng12 libpng12_static)
+  SET(PNG_NAMES ${PNG_NAMES} png12  png libpng  libpng12 libpng12_static)
   FIND_LIBRARY(
 	PNG_LIBRARY 
 	NAMES ${PNG_NAMES} 

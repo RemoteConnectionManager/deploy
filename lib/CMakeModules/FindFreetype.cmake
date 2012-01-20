@@ -56,7 +56,7 @@ FIND_PATH(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
 )
 
 FIND_LIBRARY(FREETYPE_LIBRARY
-  NAMES freetype libfreetype freetype219 freetype238
+  NAMES freetype238 freetype219 freetype libfreetype  
   HINTS
   $ENV{FREETYPE_DIR}
   PATH_SUFFIXES lib64 lib
@@ -73,6 +73,7 @@ IF(FREETYPE_INCLUDE_DIR_ft2build AND FREETYPE_INCLUDE_DIR_freetype2)
   SET(FREETYPE_INCLUDE_DIRS "${FREETYPE_INCLUDE_DIR_ft2build};${FREETYPE_INCLUDE_DIR_freetype2}")
 ENDIF(FREETYPE_INCLUDE_DIR_ft2build AND FREETYPE_INCLUDE_DIR_freetype2)
 SET(FREETYPE_LIBRARIES "${FREETYPE_LIBRARY}")
+
 
 # handle the QUIETLY and REQUIRED arguments and set FREETYPE_FOUND to TRUE if 
 # all listed variables are TRUE
