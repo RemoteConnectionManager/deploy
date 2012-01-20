@@ -1,3 +1,4 @@
+
 # - Create custom targets to build projects in external trees
 # The 'ExternalProject_Add' function creates a custom target to drive
 # download, update/patch, configure, build, install and test steps of an
@@ -212,6 +213,7 @@ function(_ep_write_downloadfile_script script_filename remote local timeout)
      src='${remote}'
      dst='${local}'\")
 
+if(NOT EXISTS \"${local}\")	 
 file(DOWNLOAD
   \"${remote}\"
   \"${local}\"
@@ -219,18 +221,45 @@ file(DOWNLOAD
   STATUS status
   LOG log)
 
-list(GET status 0 status_code)
-list(GET status 1 status_string)
+  file(READ ${local} read_stuff LIMIT 20000 )
+  string(LENGTH \"\${read_stuff}\" bytes_read)
 
-if(NOT status_code EQUAL 0)
-  message(FATAL_ERROR \"error: downloading '${remote}' failed
-  status_code: \${status_code}
-  status_string: \${status_string}
-  log: \${log}
-\")
-endif()
+  if(bytes_read LESS 1000)
+	message(STATUS \"error: downloading '${remote}' failed
+	TOO FEW BYTES READ: \${bytes_read}
+	status_code: \${status_code}
+	status_string: \${status_string}
+	log: \${log}
+	\") 
+	file(REMOVE \"${local}\")
+	execute_process(COMMAND ${Wget} -O \"${local}\" \"${remote}\"
+		RESULT_VARIABLE status_code
+		OUTPUT_VARIABLE log)
+	if(NOT status_code EQUAL 0)
+		message(FATAL_ERROR \"error: wget downloading '${remote}' failed
+			status_code: \${status_code}
+			log: \${log}
+		\")
+	endif()
+  else()
+	list(GET status 0 status_code)
+	list(GET status 1 status_string)
+
+	if(NOT status_code EQUAL 0)
+		message(FATAL_ERROR \"error: downloading '${remote}' failed
+			status_code: \${status_code}
+			status_string: \${status_string}
+			log: \${log}
+		\")
+	endif()
+  endif()
+  
+
 
 message(STATUS \"downloading... done\")
+else()
+message(STATUS \"Found ->${local}<-- Skipping download\")
+endif()
 "
 )
 
