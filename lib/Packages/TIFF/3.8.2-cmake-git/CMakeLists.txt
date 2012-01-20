@@ -1,5 +1,10 @@
 #this imports variables here
+#here we unser debug postfix as the debug versioning is set up inside the package cmake
+
+set(CMAKE_DEBUG_POSTFIX)
+
 PackageSetup()
+
 
 ExternalProject_Add(
 	${PACKAGE}
