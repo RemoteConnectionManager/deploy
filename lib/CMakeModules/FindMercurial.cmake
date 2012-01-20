@@ -3,7 +3,7 @@ SET(Mercurial_FOUND FALSE)
 FIND_PROGRAM(
 	Mercurial_EXECUTABLE hg
 	DOC "Mercurial command line client"
-	${Package_search_hints}
+	#always prefer system path ${Package_search_hints}
 )
 MARK_AS_ADVANCED(Mercurial_EXECUTABLE)
  
