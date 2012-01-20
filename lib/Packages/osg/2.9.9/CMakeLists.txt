@@ -25,7 +25,7 @@ ExternalProject_Add(
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
-		-DBUILD_OSG_EXAMPLES:BOOL=ON
+#		-DBUILD_OSG_EXAMPLES:BOOL=ON
 	${Package_current_dependencies_effective_line}
 )
 
