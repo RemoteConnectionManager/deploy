@@ -6,4 +6,8 @@ endif()
 include(../../CMakeModules/AssemblySetup.cmake)
 debug_message("configuring with generator -->${CMAKE_GENERATOR}<--")
 
+FIND_PROGRAM(
+	Mercurial_EXECUTABLE hg
+	DOC "Mercurial command line client"
+)
 add_external_package_dir(Firebreath latest)
