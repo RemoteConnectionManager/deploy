@@ -1,8 +1,10 @@
+set(ENV{PATH} "${my_install_dir}/bin:$ENV{PATH}")
 message("
 binary_dir--->${my_binary_dir}<--
 source_dir--->${my_source_dir}<--
 install_dir--->${my_install_dir}<--
 my_configure-->${my_configure}<--
+PATH-->$ENV{PATH}<--
 ")
 set(ENV{PKG_CONFIG_PATH} ${my_install_dir}/lib/pkgconfig)
 set(ENV{LD_LIBRARY_PATH} ${my_install_dir}/lib)
