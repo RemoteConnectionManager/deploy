@@ -1,0 +1,5 @@
+if(UNIX)
+	set(Package_current_dependencies Bzip2)
+else()
+	set(Package_current_dependencies unzip)
+endif()
