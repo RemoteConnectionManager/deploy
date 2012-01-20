@@ -64,6 +64,24 @@ set(CMAKE_PREFIX_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX})
 get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../Sources ABSOLUTE)
 
 
+#set up initial flags
+
+	set(BUILD_SHARED_LIBS ${EXTERNAL_ASSEMBLY_BUILD_SHARED})
+	if(NOT EXTERNAL_ASSEMBLY_BUILD_SHARED)
+		#this is to avoid linking errors on AMD64, basically add -fPIC also to static lib buildslike
+		#relocation R_X86_64_32S
+		#see
+		#http://www.cmake.org/pipermail/cmake/2006-September/011316.html
+		#http://www.gentoo.org/proj/en/base/amd64/howtos/index.xml?part=1&chap=3
+
+		if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" )
+			set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+			set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
+		endif()
+	endif()
+
+
+
 
 
 #################################################################################
@@ -176,7 +194,38 @@ function(PackageSetup )
 			set(_f3 -DCMAKE_CXX_FLAGS:STRING=-fPIC ${CMAKE_CXX_FLAGS})
 		endif()
 	endif()
-	set(Package_std_cmake_args -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH:PATH=<INSTALL_DIR> -DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH} -DCMAKE_DEBUG_POSTFIX:STRING=${CMAKE_DEBUG_POSTFIX} ${_f1} ${_f2} ${_f3})
+
+	set(Package_Pass_Variables CMAKE_MODULE_PATH CMAKE_DEBUG_POSTFIX BUILD_SHARED_LIBS CMAKE_VERBOSE_MAKEFILE CMAKE_C_FLAGS	CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_CXX_COMPILER CMAKE_C_COMPILER)
+	set(list_separator "")
+	set(Package_derived_cmake_args "")
+	set(Package_std_cmake_args -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH:PATH=<INSTALL_DIR> )
+
+	foreach(pass_var ${Package_Pass_Variables})
+		if(DEFINED ${pass_var})
+			if(NOT ${pass_var} STREQUAL "")
+				set(pass_var_len 0)
+				set(_tmp ${${pass_var}})
+				message("variable -->${pass_var}<-->${_tmp}")
+				list(LENGTH _tmp pass_var_len)
+				message("length of -->${pass_var}<-->${pass_var_len}")
+				if(pass_var_len GREATER 1)
+					string(REPLACE ";" "@@" managed_list "${_tmp}" )
+					message("adding variable -->${pass_var}<-as list->${managed_list}")
+					set(list_separator LIST_SEPARATOR @@)
+					set(def_flag -D${pass_var}:STATIC=${managed_list})
+				else()
+					set(def_flag -D${pass_var}:STATIC=${${pass_var}})
+				endif()
+				list(APPEND Package_std_cmake_args ${def_flag})
+			endif()
+		endif()
+	endforeach()
+	
+	
+
+	
+
+#	set(Package_std_cmake_args -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH:PATH=<INSTALL_DIR> -DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH} -DCMAKE_DEBUG_POSTFIX:STRING=${CMAKE_DEBUG_POSTFIX} ${_f1} ${_f2} ${_f3})
 
 	
 	set(Package_Source_Stamp_Dir ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/stamp )
@@ -196,7 +245,7 @@ function(PackageSetup )
 		BINARY_DIR ${_NATIVE_BINARY_DIR}
 		INSTALL_DIR ${_NATIVE_INSTALL_DIR}
 	)
-	set(Package_std_dirs ${Package_std_source_dirs} ${Package_std_binary_dirs})
+	set(Package_std_dirs ${Package_std_source_dirs} ${Package_std_binary_dirs} ${list_separator})
 
 	debug_message("Processing Package ${PACKAGE} in-->${Package_Dir}")
 	if(ARGN)
@@ -285,9 +334,9 @@ function(PackageUnixConfigureSimpleAdd URL)
 		set(conf_command_body ${conf_command_body} ${Package_configure_flags})
 	endif()
 	if(Package_PkgConfig)
-		string(REPLACE ";" "^^" managed_conf_command_body "${conf_command_body}" )
+		string(REPLACE ";" "@@" managed_conf_command_body "${conf_command_body}" )
 		set(conf_command CONFIGURE_COMMAND ${CMAKE_COMMAND} -Dmy_binary_dir:PATH=<BINARY_DIR> -Dmy_source_dir:PATH=<SOURCE_DIR> -Dmy_install_dir:PATH=<INSTALL_DIR> -Dmy_configure:STRING=${managed_conf_command_body} -P ${_mymoduledir}/pkgconfig_env.cmake) 
-		set(list_separator LIST_SEPARATOR ^^)
+		set(list_separator LIST_SEPARATOR @@)
 	else()
 		set(conf_command CONFIGURE_COMMAND ${conf_command_body})
 		set(list_separator "")
