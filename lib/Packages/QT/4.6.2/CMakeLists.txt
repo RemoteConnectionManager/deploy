@@ -32,7 +32,10 @@ if(MSVC)
 		${Package_std_dirs}
 		URL http://get.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.6.2.zip
 		CONFIGURE_COMMAND ${CMAKE_COMMAND} -DMY_SOURCE_DIR:PATH=<SOURCE_DIR> -DMY_BINARY_DIR:PATH=<BINARY_DIR> -DMY_INSTALL_DIR:PATH=<INSTALL_DIR> -P ${CMAKE_CURRENT_BINARY_DIR}/configure.cmake 
-		BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <BINARY_DIR> build.bat
+#		BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <BINARY_DIR> build.bat
+#		BUILD_COMMAND build.bat
+#		BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <INSTALL_DIR> <BINARY_DIR>/build.bat
+		BUILD_COMMAND <BINARY_DIR>/build.bat
 		INSTALL_COMMAND ""
 #		CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR>
 
