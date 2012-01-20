@@ -1,1 +1,1 @@
-set(Package_current_dependencies Apache MySQL)
+set(Package_current_dependencies Apache MySQL libmcrypt)

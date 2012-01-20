@@ -279,6 +279,22 @@ function(PackageUnixConfigureSimpleAdd URL)
 		)
 endfunction(PackageUnixConfigureSimpleAdd)
 
+function(PackageUnixConfigureSimpleAddInSource URL)
+		ExternalProject_Add(
+			${PACKAGE}
+			${Package_std_dirs}
+			URL ${URL}
+			CONFIGURE_COMMAND  ./configure  --prefix=<INSTALL_DIR>
+		)
+		ExternalProject_Add_Step(${PACKAGE} copy_source
+			COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> <BINARY_DIR>
+			COMMENT "copying <SOURCE_DIR> to <BINARY_DIR>"
+			DEPENDEES download update patch
+			DEPENDERS configure
+		)
+endfunction(PackageUnixConfigureSimpleAddInSource)
+
+
 function(PackageLinuxBinarySimpleAdd URL)
 	PackageBinarySimpleAdd(${URL} ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/Linux_bin_download)
 endfunction(PackageLinuxBinarySimpleAdd)

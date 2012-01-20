@@ -11,7 +11,7 @@ else()
 		${PACKAGE}
 		${Package_std_dirs}
 		URL http://it.php.net/get/php-5.2.13.tar.gz/from/this/mirror
-		CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR> --with-apxs2=<INSTALL_DIR>/bin/apxs --with-mysql=<INSTALL_DIR> --disable-cgi --with-zlib --with-gettext
+		CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR> --with-apxs2=<INSTALL_DIR>/bin/apxs --with-mysql=<INSTALL_DIR> --disable-cgi --with-zlib --with-gettext --with-mcrypt=<INSTALL_DIR>
 	)
 	
 endif()
