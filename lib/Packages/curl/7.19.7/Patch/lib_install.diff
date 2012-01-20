@@ -1,0 +1,41 @@
+diff -Nur curl-7.19.7/lib/CMakeLists.txt src/lib/CMakeLists.txt
+--- curl-7.19.7/lib/CMakeLists.txt	Wed Jul 22 20:09:53 2009
++++ src/lib/CMakeLists.txt	Sun Feb 21 20:40:56 2010
+@@ -122,3 +122,36 @@
+     set_target_properties(${LIB_NAME} PROPERTIES IMPORT_SUFFIX "_imp.lib")
+   endif()
+ endif()
++
++#INSTAL first cut
++
++set(INSTALL_INCDIR include)
++set(INSTALL_BINDIR bin)
++
++#this is a placelholder to use under linux to diff 32/64 os versions
++set(LIB_POSTFIX "" )
++
++if(WIN32)
++    set(INSTALL_LIBDIR bin)
++    set(INSTALL_ARCHIVEDIR lib)
++else()
++    set(INSTALL_LIBDIR lib${LIB_POSTFIX})
++    set(INSTALL_ARCHIVEDIR lib${LIB_POSTFIX})
++endif()
++
++
++install(
++    TARGETS ${LIB_NAME}
++    RUNTIME DESTINATION bin COMPONENT libcurl
++    LIBRARY DESTINATION lib COMPONENT libcurl
++    ARCHIVE DESTINATION ${INSTALL_ARCHIVEDIR} COMPONENT libcurl-dev
++)
++
++file(GLOB HEADERS_TO_INSTALL "${CMAKE_SOURCE_DIR}/include/curl/*.h")
++list(APPEND HEADERS_TO_INSTALL ${CURL_BINARY_DIR}/include/curl/curlbuild.h)
++message("installing --> ${HEADERS_TO_INSTALL}" )
++INSTALL(
++    FILES        ${HEADERS_TO_INSTALL}
++    DESTINATION ${INSTALL_INCDIR}/curl
++    COMPONENT libcurl-dev
++)
+\ No newline at end of file
