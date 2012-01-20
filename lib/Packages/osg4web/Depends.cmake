@@ -1,1 +1,1 @@
-set(Package_current_dependencies md5deep osg zip)
+set(Package_current_dependencies md5deep osg zip geckosdk)
