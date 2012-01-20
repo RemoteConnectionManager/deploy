@@ -71,7 +71,7 @@ echo "author-->${ba_author}"
 echo "category-->${ba_category}"
 echo "compiler-->${ba_compiler}"
  configfile=`\
-   ba create general.name=$ba_module_name \
+   ba create -f general.name=$ba_module_name \
 	$ba_req_modules_flag \
 	build.module.modulefile_schema=single \
  	build.minor_release_support=False general.version=$ba_module_version \
@@ -120,7 +120,15 @@ else
   build_source="${ba_default_download}\\ncd \$BA_PKG_SOURCE_DIR\\n bzr revno > $ba_work_dir/REVISION.txt"
 fi
 
-configure_command="cmake \${BA_PKG_SOURCE_DIR}/Assemblies/auto_package ${autopackage_config_args} -DAUTO_PACKAGE:STRING=${autopackage_name} -DAUTO_PACKAGE_VERSION:STRING=${autopackage_version} -DEXTERNAL_ASSEMBLY_COMMON_PREFIX:PATH=${ba_prefix_dir}"
+if [ "$autopackage_assembly" = "" ]; then
+  configure_command="cmake \${BA_PKG_SOURCE_DIR}/Assemblies/auto_package ${autopackage_config_args} -DAUTO_PACKAGE:STRING=${autopackage_name} -DAUTO_PACKAGE_VERSION:STRING=${autopackage_version} -DEXTERNAL_ASSEMBLY_COMMON_PREFIX:PATH=${ba_prefix_dir}"
+else
+  configure_command="cmake \${BA_PKG_SOURCE_DIR}/Assemblies/${autopackage_assembly} ${autopackage_config_args}  -DEXTERNAL_ASSEMBLY_COMMON_PREFIX:PATH=${ba_prefix_dir}"
+fi
+
+if [ "$make_command" = "" ]; then
+  make_command="make -j 8"
+fi
 
 force_install_command="cd $work_dir\\nrm bld/${autopackage_name}/${autopackage_name}-prefix/src/${autopackage_name}-stamp/${autopackage_name}-install\\nmake ${autopackage_name}-install"
 
@@ -156,7 +164,7 @@ sed --in-place=.orig\
 	-e "s@${ba_hook_set_source}@BA_PKG_SOURCE_DIR=${source_dir}@" \
 	-e "s@${ba_hook_prepare_source}@${build_source}\\n@" \
 	-e "s@${ba_hook_configure}@cd $work_dir\\n${configure_command}\\n@" \
-        -e "s@${ba_hook_make}@cd $work_dir\\nmake -j 8\\n@" \
+        -e "s@${ba_hook_make}@cd $work_dir\\n${make_command}\\n@" \
 	-e "s@${ba_hook_install}@${force_install_command}@" \
 	-e "s@^  # module@module@" \
 ${ba_build_dir}/BUILD_SCRIPT 
@@ -174,7 +182,7 @@ if [ "$ba_download_url" = "" ]; then
   echo "setting download url to -->${ba_download_url}"
 fi
 
- ba postprocess -i $configfile general.description.homepage_url="${ba_home_url}" general.description.download_url="${ba_download_url}" general.description.short="${ba_short_desc}" general.description.long="${ba_long_desc}" general.license.license_type="${ba_license}"
+ ba postprocess -i $configfile -f general.description.homepage_url="${ba_home_url}" general.description.download_url="${ba_download_url}" general.description.short="${ba_short_desc}" general.description.long="${ba_long_desc}" general.license.license_type="${ba_license}"
 
 sed --in-place=.orig\
 	-e "s@# ba_modules_prereq@ba_modules_prereq@" \
