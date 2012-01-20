@@ -9,8 +9,10 @@ else()
 	set(Package_PkgConfig ON)
 	set(Package_configure_flags --with-apr=<INSTALL_DIR>)
 	set(Package_source_setup
-		URL http://it.apache.contactlab.it//activemq/activemq-cpp/source/activemq-cpp-library-3.2.5-src.tar.gz
-		URL_MD5 47341f057cee34997ca826f526e3f681
+		SVN_REPOSITORY https://svn.apache.org/repos/asf/activemq/activemq-cpp/tags/activemq-cpp-3.2.5/activemq-cpp/
+		UPDATE_COMMAND ""
+#		URL http://it.apache.contactlab.it//activemq/activemq-cpp/source/activemq-cpp-library-3.2.5-src.tar.gz
+#		URL_MD5 cfce3b8dad5a178735b0fd466b6aa80c
 	)
 
 	PackageUnixConfigureAdd()

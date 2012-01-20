@@ -32,7 +32,7 @@ if(${PACKAGE}_python)
 		endif()
 		set(Package_specific_cmake_args ${Package_specific_cmake_args} -DCMAKE_FIND_ROOT_PATH:PATH=${PYTHON_MY_BASE_DIR})
 	endif()
-	set(Package_specific_cmake_args ${Package_specific_cmake_args} -DPARAVIEW_ENABLE_PYTHON:BOOL=ON)
+	set(Package_specific_cmake_args ${Package_specific_cmake_args} -DPARAVIEW_ENABLE_PYTHON:BOOL=ON -DPARAVIEW_INSTALL_DEVELOPMENT=ON -DHDF5_ENABLE_PARALLEL=ON)
 endif()
 
 if(${PACKAGE}_get_data)

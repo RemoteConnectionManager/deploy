@@ -13,5 +13,7 @@ ba_long_desc="paraview visualizationj application and library"
 ba_license="unknown"
 make_command="make"
 
-source ../setup.sh
+tmp=`dirname $0`
+base=`dirname $tmp`
+source $base/setup.sh
 
