@@ -58,5 +58,5 @@ add_external_package_dir(osg)
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install3)
 
 add_external_package_dir(osg4web B7)
-add_external_package_dir(Firebreath 1.3.0)
+add_external_package_dir(Firebreath 1.4.beta)
 
