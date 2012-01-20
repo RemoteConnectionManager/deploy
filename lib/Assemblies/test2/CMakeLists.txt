@@ -18,6 +18,9 @@ add_external_package_dir(png 1.2.41)
 add_external_package_dir(jpeg v7)
 add_external_package_dir(freetype 2.3.8)
 add_external_package_dir(curl 7.19.7)
+
+#reset the hint on building shared versus static
+set(EXTERNAL_ASSEMBLY_BUILD_SHARED ON)
 add_external_package_dir(osg svn_head)
 #add_subdirectory(../../Packages/jpeg/v7 ${EXTERNAL_ASSEMBLY_BASE_BUILD}/jpeg)
 

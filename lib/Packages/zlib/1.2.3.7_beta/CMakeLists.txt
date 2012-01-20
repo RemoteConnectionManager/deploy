@@ -12,11 +12,11 @@ else()
 #http://www.cmake.org/pipermail/cmake/2006-September/011316.html
 #http://www.gentoo.org/proj/en/base/amd64/howtos/index.xml?part=1&chap=3
 
-	if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
-		set(MY_CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
-	else()
-		set(MY_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-	endif()
+#old#	if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+#old#		set(MY_CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+#old#	else()
+#old#		set(MY_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+#old#	endif()
 endif()	
 message("Building ${PACKAGE} with -->-DCMAKE_C_FLAGS=${MY_CMAKE_C_FLAGS}")
 #####################################################################

@@ -11,7 +11,8 @@ ELSE(USER_MODULE_PATH)
 ENDIF(USER_MODULE_PATH)
 
 # Allow the user to toggle between static/shared builds
-option(EXTERNAL_ASSEMBLY_BUILD_SHARED OFF)
+option(EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT OFF)
+set(EXTERNAL_ASSEMBLY_BUILD_SHARED ${EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT})
 #
 
 
@@ -66,7 +67,20 @@ function(PackageSetup )
 	get_filename_component(PACKAGE ${tmp} NAME)
 	
 
-	set(Package_std_cmake_args -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH:PATH=<INSTALL_DIR> -DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH} -DCMAKE_DEBUG_POSTFIX:STRING=${CMAKE_DEBUG_POSTFIX} -DBUILD_SHARED_LIBS:BOOL=${EXTERNAL_ASSEMBLY_BUILD_SHARED} )
+	set(Package_shared_static_cmake_args -DBUILD_SHARED_LIBS:BOOL=${EXTERNAL_ASSEMBLY_BUILD_SHARED})
+	if(NOT EXTERNAL_ASSEMBLY_BUILD_SHARED)
+		#this is to avoid linking errors on AMD64, basically add -fPIC also to static lib buildslike
+		#relocation R_X86_64_32S
+		#see
+		#http://www.cmake.org/pipermail/cmake/2006-September/011316.html
+		#http://www.gentoo.org/proj/en/base/amd64/howtos/index.xml?part=1&chap=3
+
+		if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" )
+			set(Package_shared_static_cmake_args "${Package_shared_static_cmake_args} -DCMAKE_C_FLAGS:STRING=-fPIC ${CMAKE_C_FLAGS}")
+			set(Package_shared_static_cmake_args "${Package_shared_static_cmake_args} -DCMAKE_CXX_FLAGS:STRING=-fPIC ${CMAKE_CXX_FLAGS}")
+		endif()
+	endif()
+	set(Package_std_cmake_args "-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH:PATH=<INSTALL_DIR> -DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH} -DCMAKE_DEBUG_POSTFIX:STRING=${CMAKE_DEBUG_POSTFIX} ${Package_shared_static_cmake_args}")
 	set(Package_Source_Stamp_Dir ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/stamp )
 	set(Package_std_source_dirs 
 		SOURCE_DIR ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/src
