@@ -7,6 +7,7 @@
 # $GECKOSDK_DIR is an environment variable that would
 # correspond to the ./configure --prefix=$GECKOSDK_DIR
 
+message("-------CUSTOM FindGeckoSDK------ with hints-->${Package_search_hints}<--")
 
 FIND_PATH(GeckoSDK_INCLUDE_DIR nspr.h	
 		${GeckoSDK_ROOT}/include
@@ -203,7 +204,7 @@ MARK_AS_ADVANCED(GeckoSDK_NSPR4_LIBRARY  GeckoSDK_PLDS4_LIBRARY GeckoSDK_PLC4_LI
 
 SET(GeckoSDK_FOUND "NO")
 IF(GeckoSDK_NSPR4_LIBRARY AND GeckoSDK_XPCOM_LIBRARY AND GeckoSDK_INCLUDE_DIR AND GeckoSDK_IDL_DIR AND GeckoSDK_XPIDL_EXECUTABLE)
-    SET(GECKOSDK_FOUND "YES")
+    SET(GeckoSDK_FOUND "YES")
 ENDIF(GeckoSDK_NSPR4_LIBRARY AND GeckoSDK_XPCOM_LIBRARY AND GeckoSDK_INCLUDE_DIR AND GeckoSDK_IDL_DIR AND GeckoSDK_XPIDL_EXECUTABLE)
 
 
