@@ -1,0 +1,6 @@
+call @_vcvars@ @CMAKE_SYSTEM_PROCESSOR@
+cd ${MY_BINARY_NATIVE_DIR}\source_copy\win
+nmake -f makefile.vc install INSTALLDIR=${MY_INSTALL_NATIVE_DIR}
+set result=%ERRORLEVEL%
+exit \b %result%
+
