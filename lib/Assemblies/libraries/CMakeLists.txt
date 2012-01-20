@@ -1,4 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
+
+  FIND_PACKAGE(Subversion)
+  IF(Subversion_FOUND)
+	MESSAGE("svn exec-->${Subversion_SVN_EXECUTABLE}<-->${Subversion_VERSION_SVN}<--")
+  ENDIF(Subversion_FOUND)
+
+
 if(CMAKE_EXTRA_GENERATOR)
 	message("WARNING: resetting CMAKE_GENERATOR from ->${CMAKE_GENERATOR}<- to --->${CMAKE_EXTRA_GENERATOR}<-")
 	set(CMAKE_GENERATOR ${CMAKE_EXTRA_GENERATOR})
@@ -7,9 +14,11 @@ include(../../CMakeModules/AssemblySetup.cmake)
 debug_message("configuring with generator -->${CMAKE_GENERATOR}<--")
 
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install1)
-set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/install1;${CMAKE_BINARY_DIR}/install2;${CMAKE_BINARY_DIR}/install3" )
-set(CMAKE_FIND_ROOT_PATH "${CMAKE_BINARY_DIR}/install1;${CMAKE_BINARY_DIR}/install2;${CMAKE_BINARY_DIR}/install3" )
+set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/install1;${CMAKE_BINARY_DIR}/install_boost;${CMAKE_BINARY_DIR}/install2;${CMAKE_BINARY_DIR}/install3" )
+set(CMAKE_FIND_ROOT_PATH "${CMAKE_PREFIX_PATH}" )
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+find_package(Boost)
+message("Boost-->${Boost_FOUND}")
 #find_package(Threads REQUIRED)
 #message("thread-->${Threads_FOUND}")
 add_external_package_dir(ZLIB)
@@ -29,11 +38,17 @@ else()
   add_external_package_dir(PNG)
 endif()
 
+set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install_boost)
+add_external_package_dir(Boost cmake_1.44.0)
+
+
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install2)
 
 add_external_package_dir(osg)
+#add_external_package_dir(osgdata svn_head)
 
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install3)
 
 add_external_package_dir(osg4web B7)
 add_external_package_dir(Firebreath 1.3.0)
+
