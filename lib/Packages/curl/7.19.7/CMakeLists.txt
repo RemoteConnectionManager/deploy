@@ -23,6 +23,14 @@ if(LDAP_FOUND)
 else()
 	set(_disable_ldap_flag "-DCURL_DISABLE_LDAP:BOOL=ON")
 endif()  
+
+FIND_PACKAGE(OpenSSL)
+if(OPENSSL_FOUND)
+	message("WARNING!!!!! forcing OPENSSL disabling   ")
+	set(_disable_use_openssl "-DCURL_USE_OPENSSL:BOOL=OFF")
+else()
+	set(_disable_use_openssl "")
+endif()  
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
