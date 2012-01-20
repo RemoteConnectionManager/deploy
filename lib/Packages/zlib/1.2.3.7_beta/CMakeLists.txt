@@ -6,7 +6,17 @@ PackageSetup()
 if(MSVC)
 	set(MY_CMAKE_C_FLAGS "/Dsnprintf=_snprintf ${CMAKE_C_FLAGS}")
 else()
-	set(MY_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+#this is to avoid linking errors on AMD64, basically add -fPIC also to static lib buildslike
+#relocation R_X86_64_32S
+#see
+#http://www.cmake.org/pipermail/cmake/2006-September/011316.html
+#http://www.gentoo.org/proj/en/base/amd64/howtos/index.xml?part=1&chap=3
+
+	if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+		set(MY_CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+	else()
+		set(MY_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+	endif()
 endif()	
 message("Building ${PACKAGE} with -->-DCMAKE_C_FLAGS=${MY_CMAKE_C_FLAGS}")
 #####################################################################
