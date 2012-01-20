@@ -18,7 +18,7 @@ IF(ZLIB_FOUND)
   ${Package_search_hints}
   )
 
-  SET(PNG_NAMES ${PNG_NAMES} png12  png libpng  libpng12 libpng12_static)
+  SET(PNG_NAMES ${PNG_NAMES} png12  png libpng  libpng12 libpng12_static libpng14 libpng14_static)
   FIND_LIBRARY(
 	PNG_LIBRARY 
 	NAMES ${PNG_NAMES} 
