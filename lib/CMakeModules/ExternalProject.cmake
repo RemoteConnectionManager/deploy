@@ -268,7 +268,8 @@ endfunction(_ep_write_downloadfile_script)
 
 function(_ep_write_extractfile_script script_filename filename tmp directory)
   set(args "")
-
+  set (compression_type "tar")
+  
   if(filename MATCHES ".tar$")
     set(args xf)
   endif()
@@ -281,9 +282,36 @@ function(_ep_write_extractfile_script script_filename filename tmp directory)
     set(args xfz)
   endif()
 
-  if(args STREQUAL "")
-    message(SEND_ERROR "error: do not know how to extract '${filename}' -- known types are .tar, .tgz and .tar.gz")
-    return()
+  if(filename MATCHES ".zip$")
+	FIND_PROGRAM(UNZIP_EXECUTABLE unzip)
+	if(UNZIP_EXECUTABLE)
+		set (compression_type "zip")
+	endif()
+  endif()
+
+  if(compression_type STREQUAL "tar")  
+    if(args STREQUAL "")
+      message(SEND_ERROR "error: do not know how to extract '${filename}' -- known types are .tar, .tgz and .tar.gz")
+      return()
+	else()
+	
+
+	  string(CONFIGURE "
+message(STATUS \"extracting... [tar @args@]\")
+execute_process(COMMAND \${CMAKE_COMMAND} -E tar @args@ \${filename}
+	WORKING_DIRECTORY \${ut_dir}
+	RESULT_VARIABLE rv)
+"
+	UNPACK_LINE @ONLY)
+    endif()
+  else()
+	  string(CONFIGURE "
+message(STATUS \"extracting... [zip ]\")
+execute_process(COMMAND @UNZIP_EXECUTABLE@ \${filename}
+	WORKING_DIRECTORY \${ut_dir}
+	RESULT_VARIABLE rv)
+"
+	UNPACK_LINE @ONLY)
   endif()
 
   file(WRITE ${script_filename}
@@ -308,10 +336,11 @@ file(MAKE_DIRECTORY \"\${ut_dir}\")
 
 # Extract it:
 #
-message(STATUS \"extracting... [tar ${args}]\")
-execute_process(COMMAND \${CMAKE_COMMAND} -E tar ${args} \${filename}
-  WORKING_DIRECTORY \${ut_dir}
-  RESULT_VARIABLE rv)
+#message(STATUS \"extracting... [tar ${args}]\")
+#execute_process(COMMAND \${CMAKE_COMMAND} -E tar ${args} \${filename}
+#  WORKING_DIRECTORY \${ut_dir}
+#  RESULT_VARIABLE rv)
+${UNPACK_LINE}
 
 if(NOT rv EQUAL 0)
   message(STATUS \"extracting... [error clean up]\")
