@@ -18,9 +18,13 @@ else()
 	#configure based install like ./configure --prefix=/tmp/md5deep
 	ExternalProject_Add(
 		${PACKAGE}
-		${Package_std_dirs}
+		${Package_std_binary_dirs}
 		#SHA256 a6a29f9892fa3a4a48bee0da341fd5dad5cdcdc2aecc521b28cf0b652bb3c415 
 		URL http://switch.dl.sourceforge.net/project/md5deep/md5deep/md5deep-3.5.1/md5deep-3.5.1.tar.gz
+		DOWNLOAD_DIR ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/download
+		SOURCE_DIR ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${PACKAGE}/build
+		BUILD_IN_SOURCE 1
+		CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
 	)
 endif()
 
