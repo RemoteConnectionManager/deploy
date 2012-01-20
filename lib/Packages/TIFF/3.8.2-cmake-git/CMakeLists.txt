@@ -5,33 +5,49 @@ set(CMAKE_DEBUG_POSTFIX)
 
 PackageSetup()
 
-ExternalProject_Add(
-	${PACKAGE}-GetSource
-	SOURCE_DIR ${Package_Source_Dir}
-	STAMP_DIR ${Package_Source_Stamp_Dir}
-	GIT_REPOSITORY git://scm.bluequartz.net/support-libraries/tiff.git
-	UPDATE_COMMAND ""
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ""
-)
+FIND_PACKAGE(Git)
 
-if(Package_current_dependencies_effective_line)
-	set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
+if(Git_FOUND)
+	set(Package_source_setup
+		GIT_REPOSITORY git://scm.bluequartz.net/support-libraries/tiff.git
+		UPDATE_COMMAND ""
+	)
 else()
-	set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
+	set(Package_source_setup
+		URL http://3d-test.cineca.it/files/ITABC/public/cmake_packages/tiff3.8.2_cmake_git_norepo.tgz
+		URL_MD5 a2ebe81d171abfa4913ea103ca25761a
+	)
 endif()
 
-ExternalProject_Add(
-	${PACKAGE}
-	${Package_std_dirs}
-	DOWNLOAD_COMMAND ""	
-	CMAKE_GENERATOR ${CMAKE_GENERATOR}
-	CMAKE_ARGS 
-		${Package_std_cmake_args}
-	${Package_current_dependencies_effective_line} 
-	STEP_TARGETS configure build
-)
+PackageCmakeAdd()
+
+# ExternalProject_Add(
+# 	${PACKAGE}-GetSource
+# 	SOURCE_DIR ${Package_Source_Dir}
+# 	STAMP_DIR ${Package_Source_Stamp_Dir}
+# 	GIT_REPOSITORY git://scm.bluequartz.net/support-libraries/tiff.git
+# 	UPDATE_COMMAND ""
+# 	CONFIGURE_COMMAND ""
+# 	BUILD_COMMAND ""
+# 	INSTALL_COMMAND ""
+# )
+# 
+# if(Package_current_dependencies_effective_line)
+# 	set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
+# else()
+# 	set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
+# endif()
+# 
+# ExternalProject_Add(
+# 	${PACKAGE}
+# 	${Package_std_dirs}
+# 	DOWNLOAD_COMMAND ""	
+# 	CMAKE_GENERATOR ${CMAKE_GENERATOR}
+# 	CMAKE_ARGS 
+# 		${Package_std_cmake_args}
+# 	${Package_current_dependencies_effective_line} 
+# 	STEP_TARGETS configure build
+# )
 
 
 
