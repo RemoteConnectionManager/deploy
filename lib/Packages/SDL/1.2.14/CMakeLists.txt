@@ -7,6 +7,10 @@ if(WIN32)
 else()
 	#configure based install 
 	set(Package_PkgConfig ON)
+
+	set(Package_configure_flags "")
+	PackageUnixAddCmakeVarsToConfigureFlags()
+
 	PackageUnixConfigureSimpleAdd(
 		http://www.libsdl.org/release/SDL-1.2.14.tar.gz
 	)
