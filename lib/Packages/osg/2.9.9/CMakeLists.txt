@@ -15,7 +15,11 @@ PackageWriteMultiPatchFile(tmp
 )
 file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
 
-
+if(UNIX)
+  set(make_command BUILD_COMMAND make --jobs 4)
+else()
+  set(make_command "")
+endif()
 
 ExternalProject_Add(
 	${PACKAGE}
@@ -26,6 +30,7 @@ ExternalProject_Add(
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
 #		-DBUILD_OSG_EXAMPLES:BOOL=ON
+	${make_command}
 	${Package_current_dependencies_effective_line}
 )
 
