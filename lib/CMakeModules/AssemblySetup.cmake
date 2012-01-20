@@ -432,7 +432,7 @@ function(PackageUnixConfigureAdd)
 		${list_separator}
 		STEP_TARGETS configure build
 	)
-	message("
+	debug_message("
 
 	ExternalProject_Add(
 		${PACKAGE}
