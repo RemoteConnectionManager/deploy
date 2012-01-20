@@ -21,7 +21,7 @@ if(NOT EXTERNAL_ASSEMBLY_ENVIRONMENT_FIND)
 	set(Package_search_hints NO_SYSTEM_ENVIRONMENT_PATH)
 endif()
 #
-
+set(Package_list "")
   
 
 
@@ -51,25 +51,162 @@ set(CMAKE_PREFIX_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX})
 #here we want the sources to accumulate
 get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../Sources ABSOLUTE)
 
+
+
+
+
+#################################################################################
+#this function really resolve a dependency, either find something or insert external
+#################################################################################
+function(add_external_package_dir pkg)
+	set(_inserted 0)
+	get_filename_component(Package_source ${CMAKE_SOURCE_DIR}/../../Packages/${pkg} ABSOLUTE)
+	message("WARNING testing  for ${pkg}  in folder -->${Package_source}<-- ARGV1-->${ARGV1}<--ARGC-->${ARGC}<--")
+	if(ARGC GREATER 1)
+		set(ver ${ARGV1})
+	else()
+		file(GLOB versions RELATIVE ${Package_source} "${Package_source}/*")
+		list(SORT versions)
+		message("available versions for package ${pkg} in folder -->${Package_source}<-->${versions}")
+		list(GET versions 0 ver)
+	endif()
+	list(FIND Package_list ${pkg} pkg_found)
+	if(pkg_found LESS 0)
+		if(EXISTS ${Package_source}/${ver})
+			message("########### handling package ${pkg} --->${Package_list}<--")
+			unset(mymodulefile CACHE)
+			find_file(
+				mymodulefile 
+				NAMES Find${pkg}.cmake ${pkg}Config.cmake
+				PATHS ${CMAKE_MODULE_PATH} ${CMAKE_ROOT}/Modules 
+			)
+			message("mymodulefile-->${mymodulefile}<--")
+			set(my_found 0)
+			if(mymodulefile)
+				get_cmake_property(previous_cache_var CACHE_VARIABLES)
+				find_package(${pkg} ${Package_search_hints})
+				if(${pkg}_FOUND)
+					message(HERE!!!! found -->${pkg}<-- skipping external)
+					set(my_found 1)
+				else()
+					get_cmake_property(current_cache_var CACHE_VARIABLES)
+					list(REMOVE_ITEM current_cache_var ${previous_cache_var})
+					foreach(v ${current_cache_var})
+						message("unset cache var ->${v}<-->${${v}}<-")
+						unset(${v} CACHE)
+					endforeach()
+				endif()
+			else()
+				message("NOT FOUND module ->${pkg}<- in files Find${pkg}.cmake ${pkg}Config.cmake in paths ${CMAKE_MODULE_PATH} ${CMAKE_ROOT}/Modules")
+			endif()
+			if(NOT my_found)
+				set(Package_current_dependencies_effective "")
+				if(EXISTS ${Package_source}/Depends.cmake)
+					set(Package_current_dependencies "")
+					include(${Package_source}/Depends.cmake)
+					message("WARNING!!!!########## handling deps for ${pkg} -->${Package_current_dependencies}<--")
+					foreach(mymodule ${Package_current_dependencies})
+						add_external_package_dir(${mymodule})
+						if(Package_added_recursive)
+							set(Package_current_dependencies_effective "${Package_current_dependencies_effective} ${mymodule}")
+						endif()
+					endforeach()
+				endif()
+				if(Package_current_dependencies_effective)
+					set(Package_current_dependencies_effective_line "DEPENDS ${Package_current_dependencies_effective}")
+				else()
+					set(Package_current_dependencies_effective_line "")
+				endif()
+				message("@@@@@@@@add_subdirectory(${Package_source}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg}) with dep line -->${Package_current_dependencies_effective_line}<--")
+				set(_inserted 1)
+				add_subdirectory(${Package_source}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg})
+			endif()
+		endif()
+		list(APPEND Package_list ${pkg})
+	endif()
+	set(Package_list ${Package_list}  PARENT_SCOPE)
+	set(Package_added_recursive ${_inserted}  PARENT_SCOPE)
+endfunction(add_external_package_dir)
+
+
 #################################################################################
 #this function add ann external package
 #################################################################################
-function(add_external_package_dir pkg ver)
-	if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg})
-		if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/Include.cmake)
-			include(${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/Include.cmake)
-			Package_Handle(${ver})
-		else()
-			if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/${ver})
-				add_subdirectory(${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg})
-			else()
-				message("NOT FOUND Version ${ver} of Package  ${pkg} in ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}")
-			endif()
-		endif()
+function(add_external_package_dir_old pkg)
+	message("WARNING testing  for ${pkg}  ARGV1-->${ARGV1}<--ARGC-->${ARGC}<--")
+	if(ARGC GREATER 1)
+		set(ver ${ARGV1})
 	else()
-		message("NOT FOUND Package ${pkg} in ${CMAKE_SOURCE_DIR}/../../Packages")
+		get_filename_component(Package_source ${CMAKE_SOURCE_DIR}/../../Packages/${pkg} ABSOLUTE)
+		file(GLOB versions RELATIVE ${Package_source} "${Package_source}/*")
+		list(SORT versions)
+		message("available versions for package ${pkg} in folder -->${Package_source}<-->${versions}")
+		list(GET versions 0 ver)
 	endif()
-endfunction(add_external_package_dir)
+	list(FIND Package_list ${pkg} pkg_found)
+	if(pkg_found LESS 0)
+		message("########### handling package ${pkg} --->${Package_list}<--")
+		if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg})
+			if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/Include.cmake)
+				include(${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/Include.cmake)
+				Package_Handle(${ver})
+			else()
+				if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/Depends.cmake)
+					set(Package_current_dependencies "")
+					include(${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/Depends.cmake)
+					message("WARNING!!!!########## handling deps for ${pkg} -->${Package_current_dependencies}<--")
+					set(Package_current_dependencies_effective "")
+					foreach(mymodule ${Package_current_dependencies})
+						unset(mymodulefile CACHE)
+						find_file(
+							mymodulefile 
+							NAMES Find${mymodule}.cmake ${mymodule}Config.cmake
+							PATHS ${CMAKE_MODULE_PATH} ${CMAKE_ROOT}/Modules 
+						)
+						message("mymodulefile-->${mymodulefile}<--")
+						set(my_found 0)
+						if(mymodulefile)
+							get_cmake_property(previous_cache_var CACHE_VARIABLES)
+							find_package(${mymodule} ${Package_search_hints})
+							if(${mymodule}_FOUND)
+								message(HERE!!!! found -->${mymodule}<-- skipping external)
+								set(my_found 1)
+							else()
+								get_cmake_property(current_cache_var CACHE_VARIABLES)
+								list(REMOVE_ITEM current_cache_var ${previous_cache_var})
+								foreach(v ${current_cache_var})
+									message("unset cache var ->${v}<-->${${v}}<-")
+									unset(${v} CACHE)
+								endforeach()
+							endif()
+						else()
+							message("NOT FOUND module ->${mymodule}<- in files Find${mymodule}.cmake ${mymodule}Config.cmake in paths ${CMAKE_MODULE_PATH} ${CMAKE_ROOT}/Modules")
+						endif()
+						if(NOT my_found)
+							message("DEBUG-----add_external_package_dir_old(${mymodule})")
+							add_external_package_dir_old(${mymodule})
+							set(Package_current_dependencies_effective "${Package_current_dependencies_effective} ${mymodule}")
+						endif()
+					endforeach()
+				endif()
+				if(EXISTS ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/${ver})
+					list(APPEND Package_list ${pkg})
+					if(Package_current_dependencies_effective)
+						set(Package_current_dependencies_effective_line "DEPENDS ${Package_current_dependencies_effective}")
+					else()
+						set(Package_current_dependencies_effective_line "")
+					endif()
+					add_subdirectory(${CMAKE_SOURCE_DIR}/../../Packages/${pkg}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg})
+				else()
+					message("NOT FOUND Version ${ver} of Package  ${pkg} in ${CMAKE_SOURCE_DIR}/../../Packages/${pkg}")
+				endif()
+			endif()
+		else()
+			message("NOT FOUND Package ${pkg} in ${CMAKE_SOURCE_DIR}/../../Packages")
+		endif()
+	endif()
+	set(Package_list ${Package_list}  PARENT_SCOPE)
+endfunction(add_external_package_dir_old)
 
 #################################################################################
 #this function get setup variables into package cmakelists when called with the list of used vars
@@ -162,6 +299,7 @@ function(PackageWriteMultiPatchFile outvar)
 endfunction(PackageWriteMultiPatchFile)
 
 function(PackageWindowsBinarySimpleAdd URL)
+		message("!!!!! building ${PACKAGE} as win32 bin external with depnds-->${Package_current_dependencies_effective_line}<--")
 		ExternalProject_Add(
 			${PACKAGE}
 			#WARNING!!!! this way  zip file directly expand into install/bin dir == source dir
@@ -171,6 +309,8 @@ function(PackageWindowsBinarySimpleAdd URL)
 			INSTALL_COMMAND ""
 			CONFIGURE_COMMAND ""
 			BUILD_COMMAND ""
+			${Package_current_dependencies_effective_line}
+
 		)
 endfunction(PackageWindowsBinarySimpleAdd)
 
