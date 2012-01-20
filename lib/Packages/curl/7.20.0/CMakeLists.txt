@@ -7,7 +7,7 @@ else()
     set(CURL_STATICLIB ON)
 endif()
 
-#these are the patches to apply (order important???)
+#these are the patches to apply (order important!!!)
 PackageWriteMultiPatchFile(tmp     
 	lib_install.diff
     override_modules.diff
@@ -23,6 +23,10 @@ if(LDAP_FOUND)
 else()
 	set(_disable_ldap_flag "-DCURL_DISABLE_LDAP:BOOL=ON")
 endif()  
+
+message("WARNING!!!!! forcing OPENSSL disabling   ")
+set(_disable_use_openssl "-DCMAKE_USE_OPENSSL:BOOL=OFF")
+
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
@@ -36,6 +40,7 @@ ExternalProject_Add(
 		-DCURL_STATICLIB:BOOL=${CURL_STATICLIB}
 		#this is for disabling ldap that does break builds under kubuntu
 		${_disable_ldap_flag}
+		${_disable_use_openssl}
 )
 
 
