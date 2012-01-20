@@ -6,9 +6,9 @@ set(Package_additional_cmake_args "")
 #this instruct the packaging to put OSG plugins in the same folder as other dll's : 
 #the reason seem that, dpending on OSG version and platform deploymen, the plugins (curl) was not able to find
 #runtime included MSVC....
-set(Package_additional_cmake_args ${Package_additional_cmake_args} -DSEPARATE_OSG_PLUGIN_DIR:BOOL=OFF)
+set(Package_additional_cmake_args ${Package_additional_cmake_args} -DSEPARATE_OSG_PLUGIN_DIR:BOOL=OFF -DCORES_COMMON_DIR:BOOL=ON)
 
-message("--->
+debug_message("--->
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
@@ -38,9 +38,27 @@ ExternalProject_Add(
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
 		${Package_additional_cmake_args}
+	BUILD_COMMAND ${CMAKE_COMMAND} --build . --config Release --target Build_simple_runprocess
+	INSTALL_COMMAND ""
 	
 )
-#no patch#set(PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${Package_Dir}/Patch/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt)
-
-#include(SimpleExternalProject)
-
+set(embed_viewer_targets Build_osg_embed_viewer_2 Build_osg_embed_viewer_1 Build_osg_embed_viewer)
+set(cores Engine_FunCore)
+set(simple_viewer Build_osgviewer Build_osgviewerCP)
+set(copy_targets osg_copy_Release osg_copy_sys_libs)
+set(targets ${embed_viewer_targets} ${cores} ${simple_viewer} ${copy_targets})
+	ExternalProject_Add_Step(
+		${PACKAGE}	xpi	
+		COMMAND ${CMAKE_COMMAND} --build . --config Release --target build_xpi
+		DEPENDEES ${targets}
+		WORKING_DIRECTORY <BINARY_DIR>
+	)
+foreach(t ${targets})
+	ExternalProject_Add_Step(
+		${PACKAGE}	${t}
+		COMMAND ${CMAKE_COMMAND} --build . --config Release --target ${t}
+		DEPENDEES build
+		DEPENDERS xpi
+		WORKING_DIRECTORY <BINARY_DIR>
+	)
+endforeach()
