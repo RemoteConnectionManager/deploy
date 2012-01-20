@@ -1,1 +1,1 @@
-set(Package_current_dependencies zlib png jpeg freetype curl)
+set(Package_current_dependencies ZLIB PNG JPEG Freetype CURL)

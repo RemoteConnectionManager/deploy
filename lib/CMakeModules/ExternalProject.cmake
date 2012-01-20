@@ -294,6 +294,17 @@ function(_ep_write_extractfile_script script_filename filename tmp directory)
 	endif()
   endif()
 
+  if(filename MATCHES "tar.bz2$")
+	FIND_PROGRAM(
+	    Bunzip2_EXECUTABLE 
+	    bunzip2
+	    DOC "bunzip2 exe"
+	)
+	if(Bunzip2_EXECUTABLE)
+		set (compression_type "bzip2")
+	endif()
+  endif()
+
   if(compression_type STREQUAL "tar")  
     if(args STREQUAL "")
       message(SEND_ERROR "error: do not know how to extract '${filename}' -- known types are .tar, .tgz and .tar.gz")
@@ -310,6 +321,7 @@ execute_process(COMMAND \${CMAKE_COMMAND} -E tar @args@ \${filename}
 	UNPACK_LINE @ONLY)
     endif()
   else()
+    if(compression_type STREQUAL "zip")  
 	  string(CONFIGURE "
 message(STATUS \"extracting... [zip ]\")
 execute_process(COMMAND @UNZIP_EXECUTABLE@ \${filename}
@@ -317,6 +329,21 @@ execute_process(COMMAND @UNZIP_EXECUTABLE@ \${filename}
 	RESULT_VARIABLE rv)
 "
 	UNPACK_LINE @ONLY)
+    else()
+      if(compression_type STREQUAL "bzip2")
+	  string(CONFIGURE "
+message(STATUS \"uncompressing... [bzip2 ]\")
+execute_process(COMMAND @Bunzip2_EXECUTABLE@ \${filename} -c -f \${tmp}/unzipped.tar
+	WORKING_DIRECTORY \${ut_dir}
+	RESULT_VARIABLE rv)
+message(STATUS \"untar... \${tmp}/unzipped.tar\")
+execute_process(COMMAND \${CMAKE_COMMAND} -E tar xf \${tmp}/unzipped.tar
+	WORKING_DIRECTORY \${ut_dir}
+	RESULT_VARIABLE rv)
+"
+	UNPACK_LINE @ONLY)
+      endif()
+    endif()
   endif()
 
   file(WRITE ${script_filename}
@@ -800,7 +827,7 @@ function(_ep_add_download_command name)
       if("${url}" MATCHES "^[a-z]+://")
         # TODO: Should download and extraction be different steps?
         string(REGEX MATCH "[^/]*$" fname "${url}")
-        if(NOT "${fname}" MATCHES "\\.(zip|tar|tgz|tar\\.gz)$")
+        if(NOT "${fname}" MATCHES "\\.(zip|tar|tgz|tar\\.gz|tar\\.bz2)$")
           message(FATAL_ERROR "Could not extract tarball filename from url:\n  ${url}")
         endif()
         set(file ${download_dir}/${fname})

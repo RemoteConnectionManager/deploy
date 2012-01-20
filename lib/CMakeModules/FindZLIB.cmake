@@ -1,7 +1,7 @@
 # - Find zlib
 # Find the native ZLIB headers and libraries.
 
-message("-------CUSTOM FindZLIB------")
+message("-------CUSTOM FindZLIB------ with hints-->${Package_search_hints}<--")
 #This find look also for debug library
 #old#INCLUDE(SelectLibraryConfigurations)
 
@@ -21,7 +21,7 @@ ENDIF (ZLIB_INCLUDE_DIR)
 
 FIND_PATH(
 	ZLIB_INCLUDE_DIR zlib.h
-#	${Package_search_hints}
+	${Package_search_hints}
 )
 
 SET(ZLIB_NAMES z zlib zdll)
@@ -31,12 +31,12 @@ endforeach()
 
 FIND_LIBRARY(
 	ZLIB_LIBRARY_DEBUG NAMES ${ZLIB_SEARCH_DEBUG_NAMES} 
-#	${Package_search_hints}
+	${Package_search_hints}
 )
 message("ZLIB_LIBRARY_DEBUG-->${ZLIB_LIBRARY_DEBUG}<--searched-->${ZLIB_SEARCH_DEBUG_NAMES}<--")
 FIND_LIBRARY(
 	ZLIB_LIBRARY_RELEASE NAMES ${ZLIB_NAMES} 
-#	${Package_search_hints}
+	${Package_search_hints}
 )
 
 

@@ -1,4 +1,6 @@
 #this imports variables here
+#override default as we force osg shared build
+set(EXTERNAL_ASSEMBLY_BUILD_SHARED ON)
 PackageSetup()
 
 #these are the patches to apply (order important???)

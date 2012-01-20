@@ -16,9 +16,9 @@ set(EXTERNAL_ASSEMBLY_BUILD_SHARED ${EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT})
 #
 
 # Allow the user to decide if Packages that use Find have to search in environment
-option(EXTERNAL_ASSEMBLY_ENVIRONMENT_FIND ON)
-if(NOT EXTERNAL_ASSEMBLY_ENVIRONMENT_FIND)
-	set(Package_search_hints NO_SYSTEM_ENVIRONMENT_PATH)
+option(EXTERNAL_ASSEMBLY_SEARCH_AND_USE_SYSTEM_MODULES "set to on if you prefer system modules" OFF)
+if(NOT EXTERNAL_ASSEMBLY_SEARCH_AND_USE_SYSTEM_MODULES)
+	set(Package_search_hints NO_SYSTEM_ENVIRONMENT_PATH NO_DEFAULT_PATH)
 endif()
 #
 set(Package_list "")
@@ -91,7 +91,7 @@ function(add_external_package_dir pkg)
 				get_cmake_property(previous_cache_var CACHE_VARIABLES)
 								
 				#find_package(${pkg} ${Package_search_hints}) #disable ${Package_search_hints} for packages
-				find_package(${pkg})
+				find_package(${pkg} )
 				
 				if(${pkg}_FOUND)
 					message(HERE!!!! found -->${pkg}<-- skipping external)
@@ -306,6 +306,23 @@ function(PackageWriteMultiPatchFile outvar)
 
 endfunction(PackageWriteMultiPatchFile)
 
+function(PackageBinarySimpleAdd URL download_subfolder)
+	message("!!!!! building ${PACKAGE} in  ${download_subfolder} with depnds-->${Package_current_dependencies_effective_line}<--")
+	ExternalProject_Add(
+		${PACKAGE}
+		#WARNING!!!! this way  zip file directly expand into install/bin dir == source dir
+		DOWNLOAD_DIR ${download_subfolder}
+		SOURCE_DIR ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}
+		URL ${URL}
+		INSTALL_COMMAND ""
+		CONFIGURE_COMMAND ""
+		BUILD_COMMAND ""
+		${Package_current_dependencies_effective_line}
+
+	)
+endfunction(PackageBinarySimpleAdd)
+
+
 function(PackageWindowsBinarySimpleAdd URL)
 		message("!!!!! building ${PACKAGE} as win32 bin external with depnds-->${Package_current_dependencies_effective_line}<--")
 		ExternalProject_Add(
@@ -330,4 +347,8 @@ function(PackageUnixConfigureSimpleAdd URL)
 			CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR>
 		)
 endfunction(PackageUnixConfigureSimpleAdd)
+
+function(PackageLinuxBinarySimpleAdd URL)
+	PackageBinarySimpleAdd(${URL} ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/Linux_bin_download)
+endfunction(PackageLinuxBinarySimpleAdd)
 

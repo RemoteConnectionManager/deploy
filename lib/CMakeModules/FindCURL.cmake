@@ -6,7 +6,11 @@
 #  CURL_FOUND        - True if curl found.
 
 # Look for the header file.
-FIND_PATH(CURL_INCLUDE_DIR NAMES curl/curl.h curl/curlbuild.h)
+FIND_PATH(
+  CURL_INCLUDE_DIR 
+  NAMES curl/curl.h curl/curlbuild.h
+  ${Package_search_hints}
+)
 MARK_AS_ADVANCED(CURL_INCLUDE_DIR)
 
 # Look for the library.
@@ -17,9 +21,17 @@ foreach(_l ${CURL_NAMES})
 endforeach()
 
 
-FIND_LIBRARY(CURL_LIBRARY_DEBUG NAMES ${CURL_SEARCH_DEBUG_NAMES} )
+FIND_LIBRARY(
+  CURL_LIBRARY_DEBUG 
+  NAMES ${CURL_SEARCH_DEBUG_NAMES} 
+  ${Package_search_hints}
+)
 message("CURL_LIBRARY_DEBUG-->${CURL_LIBRARY_DEBUG}<--searched-->${CURL_SEARCH_DEBUG_NAMES}<--")
-FIND_LIBRARY(CURL_LIBRARY_RELEASE NAMES ${CURL_NAMES} )
+FIND_LIBRARY(
+  CURL_LIBRARY_RELEASE 
+  NAMES ${CURL_NAMES} 
+  ${Package_search_hints}
+)
 
 
 #####################################################################################

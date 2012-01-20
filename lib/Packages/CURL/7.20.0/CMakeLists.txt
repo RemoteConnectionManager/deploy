@@ -31,9 +31,9 @@ ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
 	URL http://curl.haxx.se/download/curl-7.20.0.tar.gz
+	${Package_current_dependencies_effective_line}
 	#old#PATCH_COMMAND ${CMAKE_COMMAND} -E copy "${Package_Dir}/Patch/lib/CMakeLists.txt" <SOURCE_DIR>/lib/CMakeLists.txt
 	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
-	DEPENDS zlib
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}

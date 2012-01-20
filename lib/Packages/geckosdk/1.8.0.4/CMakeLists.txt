@@ -4,7 +4,8 @@ if(MSVC)
 	
 	PackageWindowsBinarySimpleAdd( http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases/1.8.0.4/sdk/gecko-sdk-win32-msvc-1.8.0.4.zip )
 else()
-	message("Warning--> ${PACKAGE} ${VERSION} only available in MSVC")
+	PackageLinuxBinarySimpleAdd(http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases/1.8.0.4/sdk/gecko-sdk-i686-pc-linux-gnu-1.8.0.4.tar.bz2)
+
 endif()
 
 ##from http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases

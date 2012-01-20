@@ -18,7 +18,7 @@ ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
 	URL http://downloads.sourceforge.net/project/libpng/00-libpng-stable/1.2.41/libpng-1.2.41.tar.gz
-	DEPENDS zlib
+	${Package_current_dependencies_effective_line}
 
 	#This patch commands change the name of scripts/libpng.pc.in to scripts/libpng-pc.in as it breaks the cmake command
 	PATCH_COMMAND ${CMAKE_COMMAND} -E rename <SOURCE_DIR>/scripts/libpng.pc.in <SOURCE_DIR>/scripts/libpng-pc.in
