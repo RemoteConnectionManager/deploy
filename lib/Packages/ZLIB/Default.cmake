@@ -1,1 +1,1 @@
-set(Package_default_version 1.2.3.9_beta)
+set(Package_default_version 1.2.4)
