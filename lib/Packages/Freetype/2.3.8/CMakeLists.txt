@@ -21,7 +21,7 @@ ExternalProject_Add(
 	${Package_std_dirs}
 	URL http://downloads.sourceforge.net/freetype/freetype-2.3.8.tar.gz
 	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
-	CMAKE_COMMAND ${CMAKE_COMMAND}
+	#CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
 		-DCMP_ARCHIVE_OUTPUT_DIRECTORY:PATH=${CMP_ARCHIVE_OUTPUT_DIRECTORY}
