@@ -47,6 +47,7 @@ ExternalProject_Add(
 		${Package_additional_cmake_args}
 	BUILD_COMMAND ${CMAKE_COMMAND} --build . --config Release --target ${Main_target} 
 	INSTALL_COMMAND ""
+	UPDATE_COMMAND ""
 	${Package_cmake_generator_line}
 	
 )
