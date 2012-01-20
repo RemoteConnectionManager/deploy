@@ -42,11 +42,11 @@ set(Package_list "")
 set(Package_list_added "")
   
 
-
-  FIND_PACKAGE(Subversion)
-  IF(Subversion_FOUND)
-	debug_message("svn exec-->${Subversion_SVN_EXECUTABLE}<-->${Subversion_VERSION_SVN}<--")
-  ENDIF(Subversion_FOUND)
+# 
+#   FIND_PACKAGE(Subversion)
+#   IF(Subversion_FOUND)
+# 	debug_message("svn exec-->${Subversion_SVN_EXECUTABLE}<-->${Subversion_VERSION_SVN}<--")
+#   ENDIF(Subversion_FOUND)
   
  
   find_program(PATCH_PROGRAM patch)
@@ -87,7 +87,7 @@ get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../S
 	endif()
 
 
-	set(Package_Pass_Variables CMAKE_PREFIX_PATH CMAKE_MODULE_PATH CMAKE_DEBUG_POSTFIX BUILD_SHARED_LIBS CMAKE_VERBOSE_MAKEFILE CMAKE_C_FLAGS	CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_CXX_COMPILER CMAKE_C_COMPILER Package_search_hints )
+	set(Package_Pass_Variables CMAKE_PREFIX_PATH CMAKE_MODULE_PATH CMAKE_DEBUG_POSTFIX BUILD_SHARED_LIBS CMAKE_VERBOSE_MAKEFILE CMAKE_BUILD_TYPE CMAKE_C_FLAGS	CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_CXX_COMPILER CMAKE_C_COMPILER Package_search_hints )
 	  if(APPLE)
 		set(Package_Pass_Variables ${Package_Pass_Variables} CMAKE_OSX_ARCHITECTURES)
 	  endif()
@@ -100,7 +100,7 @@ get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../S
 function(add_external_package_dir pkg)
 	get_filename_component(Package_source ${CMAKE_SOURCE_DIR}/../../Packages/${pkg} ABSOLUTE)
 		debug_message("WARNING testing  for ${pkg}  in folder -->${Package_source}<-- ARGV1-->${ARGV1}<--ARGC-->${ARGC}<--")
-	set(ForceBuild 0)
+	set(ForceBuild OFF)
 	if(ARGC GREATER 1)
 		set(ver ${ARGV1})
 		if(ARGC GREATER 2)
@@ -153,7 +153,7 @@ function(add_external_package_dir pkg)
 			else()
 				debug_message("NOT FOUND module ->${pkg}<- in files Find${pkg}.cmake ${pkg}Config.cmake in paths ${CMAKE_MODULE_PATH} ${CMAKE_ROOT}/Modules")
 			endif()
-			if(NOT my_found OR ForceBuild GREATER 0)
+			if(NOT my_found OR ForceBuild )
 				set(Package_current_dependencies_effective "")
 				if(EXISTS ${Package_source}/Depends.cmake)
 					set(Package_current_dependencies "")
@@ -397,7 +397,7 @@ endfunction(PackageCmakeAdd)
 
 
 function(PackageUnixConfigureAdd)
-	message("Package_InSource----->${Package_InSource}<---")
+	message("Package -->${PACKAGE}<--InSource->${Package_InSource}<-")
 	if(Package_InSource)
 		set(conf_command_body ./configure  --prefix=<INSTALL_DIR>)
 	else()
