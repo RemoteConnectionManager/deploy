@@ -18,7 +18,7 @@ else()
 	set(Package_configure_flags LDFLAGS=-Wl,-rpath,<INSTALL_DIR>/lib)
 	option(${PACKAGE}_shared "build   ${PACKAGE} shared" ON)
      	if(${PACKAGE}_shared)
-		set(Package_configure_flags ${configure_command} --enable-shared)
+		set(Package_configure_flags ${Package_configure_flags} --enable-shared)
 	endif()
 
 	PackageUnixConfigureAdd()
