@@ -22,6 +22,7 @@ if(NOT EXTERNAL_ASSEMBLY_SEARCH_AND_USE_SYSTEM_MODULES)
 endif()
 #
 set(Package_list "")
+set(Package_list_added "")
   
 
 
@@ -59,7 +60,6 @@ get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../S
 #this function really resolve a dependency, either find something or insert external
 #################################################################################
 function(add_external_package_dir pkg)
-	set(_inserted 0)
 	get_filename_component(Package_source ${CMAKE_SOURCE_DIR}/../../Packages/${pkg} ABSOLUTE)
 	message("WARNING testing  for ${pkg}  in folder -->${Package_source}<-- ARGV1-->${ARGV1}<--ARGC-->${ARGC}<--")
 	if(ARGC GREATER 1)
@@ -115,7 +115,8 @@ function(add_external_package_dir pkg)
 					message("WARNING!!!!########## handling deps for ${pkg} -->${Package_current_dependencies}<--")
 					foreach(mymodule ${Package_current_dependencies})
 						add_external_package_dir(${mymodule})
-						if(Package_added_recursive)
+						list(FIND Package_list_added ${mymodule} _found)
+						if(NOT _found LESS 0)
 							set(Package_current_dependencies_effective ${Package_current_dependencies_effective} ${mymodule})
 						endif()
 					endforeach()
@@ -126,14 +127,14 @@ function(add_external_package_dir pkg)
 					set(Package_current_dependencies_effective_line "")
 				endif()
 				message("@@@@@@@@add_subdirectory(${Package_source}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg}) with dep line -->${Package_current_dependencies_effective_line}<--")
-				set(_inserted 1)
 				add_subdirectory(${Package_source}/${ver} ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${pkg})
+				list(APPEND Package_list_added ${pkg})
 			endif()
 		endif()
 		list(APPEND Package_list ${pkg})
 	endif()
 	set(Package_list ${Package_list}  PARENT_SCOPE)
-	set(Package_added_recursive ${_inserted}  PARENT_SCOPE)
+	set(Package_list_added ${Package_list_added}  PARENT_SCOPE)
 endfunction(add_external_package_dir)
 
 
