@@ -16,7 +16,12 @@ PackageWriteMultiPatchFile(tmp
 
 file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
 
-
+FIND_PACKAGE(Ldap)
+if(LDAP_FOUND)
+	set(_disable_ldap_flag "")
+else()
+	set(_disable_ldap_flag "-DCURL_DISABLE_LDAP:BOOL=ON")
+endif()  
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
@@ -28,6 +33,8 @@ ExternalProject_Add(
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
 		-DCURL_STATICLIB:BOOL=${CURL_STATICLIB}
+		#this is for disabling ldap that does break builds under kubuntu
+		${_disable_ldap_flag}
 )
 
 
