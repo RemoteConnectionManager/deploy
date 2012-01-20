@@ -771,7 +771,7 @@ function(_ep_add_download_command name)
       if("${url}" MATCHES "^[a-z]+://")
         # TODO: Should download and extraction be different steps?
         string(REGEX MATCH "[^/]*$" fname "${url}")
-        if(NOT "${fname}" MATCHES "\\.(tar|tgz|tar\\.gz)$")
+        if(NOT "${fname}" MATCHES "\\.(zip|tar|tgz|tar\\.gz)$")
           message(FATAL_ERROR "Could not extract tarball filename from url:\n  ${url}")
         endif()
         set(file ${download_dir}/${fname})
