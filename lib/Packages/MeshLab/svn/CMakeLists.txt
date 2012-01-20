@@ -60,6 +60,7 @@ ExternalProject_Add(
 	${Package_std_dirs}
 	${Package_current_dependencies_effective_line} ${PACKAGE}_meshlab ${PACKAGE}_vcglib
 	INSTALL_COMMAND ""
+	BUILD_COMMAND make -j 8
 	CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} -recursive <SOURCE_DIR>/meshlab/src/meshlab_full.pro
 
 # 	CMAKE_COMMAND ${CMAKE_COMMAND}
