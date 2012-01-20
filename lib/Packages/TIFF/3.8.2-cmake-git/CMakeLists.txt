@@ -15,7 +15,7 @@ if(Git_FOUND)
 else()
 	set(Package_source_setup
 		URL http://3d-test.cineca.it/files/ITABC/public/cmake_packages/tiff3.8.2_cmake_git_norepo.tgz
-		URL_MD5 a2ebe81d171abfa4913ea103ca25761a
+		URL_MD5 6d91318e2a31d5b1f448817713694624
 	)
 endif()
 
