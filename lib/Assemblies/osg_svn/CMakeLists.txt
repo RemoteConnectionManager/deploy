@@ -16,4 +16,6 @@ debug_message("configuring with generator -->${CMAKE_GENERATOR}<--")
 
 
 add_external_package_dir(osg svn_head)
+add_external_package_dir(osgdata svn_head)
+add_external_package_dir(VirtualPlanetBuilder svn_head)
 
