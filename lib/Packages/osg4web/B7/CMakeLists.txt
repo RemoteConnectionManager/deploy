@@ -14,9 +14,16 @@ if(MSVC)
   set(Core_targets Engine_FunCore)
   set(Simple_viewer_targets Build_osgviewer  Build_simple_runprocess)
 else()
-  set(Main_target nposgviewerCP)
+  message("Testing CMAKE_SYSTEM_PROCESSOR -->${CMAKE_SYSTEM_PROCESSOR}")
+  if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64) 
+    message("skipping main target")
+    set(Main_target FunCore)
+    set(Core_targets "")
+  else()
+    set(Main_target nposgviewerCP)
+    set(Core_targets FunCore)
+  endif()
   set(Embed_viewer_targets "")
-  set(Core_targets FunCore)
   set(Simple_viewer_targets "")
 endif()
 set(Copy_targets osg_copy_Release osg_copy_sys_libs)
@@ -32,7 +39,7 @@ ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
 	${Package_current_dependencies_effective_line}
-	BZR_REPOSITORY http://3d.cineca.it/storage/bazaar_repo/BrowserEmbed/test_merge/	CMAKE_COMMAND ${CMAKE_COMMAND}
+	BZR_REPOSITORY http://rvn05.plx.cineca.it:12000/files/virtualrome/bazaar_repo/BrowserEmbed/test_merge/	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
 		${Package_additional_cmake_args}
