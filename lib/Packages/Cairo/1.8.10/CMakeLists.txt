@@ -7,8 +7,14 @@ if(WIN32)
 else()
 	#configure based install 
 	set(Package_PkgConfig ON)
-	PackageUnixConfigureSimpleAdd(
-		http://cairographics.org/releases/cairo-1.8.10.tar.gz
+	set(Package_source_setup
+		URL http://cairographics.org/releases/cairo-1.8.10.tar.gz
+		URL_MD5 b60a82f405f9400bbfdcf850b1728d25
 	)
+
+	PackageUnixConfigureAdd()
+#	PackageUnixConfigureSimpleAdd(
+#		http://cairographics.org/releases/cairo-1.8.10.tar.gz
+#	)
 endif()
 

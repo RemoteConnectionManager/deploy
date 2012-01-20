@@ -24,6 +24,7 @@ ENDIF(USER_MODULE_PATH)
 option(EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT OFF)
 set(EXTERNAL_ASSEMBLY_BUILD_SHARED ${EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT})
 #
+option(EXTERNAL_ASSEMBLY_INDIVIDUAL_INSTALL_PACKAGE "set to on to install each package into its own folder" OFF)
 
 # Allow the user to decide if Packages that use Find have to search in environment
 option(EXTERNAL_ASSEMBLY_SEARCH_AND_USE_SYSTEM_MODULES "set to on if you prefer system modules" OFF)
@@ -42,10 +43,6 @@ set(Package_list_added "")
 	debug_message("svn exec-->${Subversion_SVN_EXECUTABLE}<-->${Subversion_VERSION_SVN}<--")
   ENDIF(Subversion_FOUND)
   
-  FIND_PROGRAM(Wget wget)
-  IF(Wget)
-	debug_message("wget exec-->${Wget}")
-  ENDIF(Wget)
  
   find_program(PATCH_PROGRAM patch)
    IF(PATCH_PROGRAM)
@@ -53,15 +50,13 @@ set(Package_list_added "")
   ENDIF()
 
 
-if(APPLE)
-  include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
-else()
   include(ExternalProject)
-endif()
 
 set(EXTERNAL_ASSEMBLY_BASE_BUILD ${CMAKE_BINARY_DIR}/bld)
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install)
-set(CMAKE_PREFIX_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX})
+if( NOT EXTERNAL_ASSEMBLY_INDIVIDUAL_INSTALL_PACKAGE)
+	set(CMAKE_PREFIX_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX})
+endif()
 
 #here we want the sources to accumulate
 get_filename_component(EXTERNAL_ASSEMBLY_BASE_SOURCE ${CMAKE_SOURCE_DIR}/../../Sources ABSOLUTE)
@@ -210,8 +205,14 @@ function(PackageSetup )
 #	endif()
 
 	set(list_separator "")
-	set(Package_derived_cmake_args "")
+	set(Package_specific_cmake_args "")
 	set(Package_std_cmake_args -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> )
+	if(EXTERNAL_ASSEMBLY_INDIVIDUAL_INSTALL_PACKAGE)
+		foreach(dep_package ${Package_list})
+			list(REMOVE_ITEM CMAKE_PREFIX_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}/${PACKAGE})
+			list(APPEND CMAKE_PREFIX_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}/${PACKAGE})
+		endforeach()
+	endif()
 
 	foreach(pass_var ${Package_Pass_Variables})
 		if(DEFINED ${pass_var})
@@ -253,7 +254,11 @@ function(PackageSetup )
 		DOWNLOAD_DIR ${_NATIVE_DOWNLOAD_DIR}
 	)
 	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_BASE_BUILD}/${PACKAGE}/build _NATIVE_BINARY_DIR)
-	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX} _NATIVE_INSTALL_DIR)
+	if(EXTERNAL_ASSEMBLY_INDIVIDUAL_INSTALL_PACKAGE)
+		file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX}/${PACKAGE} _NATIVE_INSTALL_DIR)		
+	else()
+		file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_COMMON_PREFIX} _NATIVE_INSTALL_DIR)
+	endif()
 	set(Package_std_binary_dirs
 		BINARY_DIR ${_NATIVE_BINARY_DIR}
 		INSTALL_DIR ${_NATIVE_INSTALL_DIR}
@@ -269,6 +274,7 @@ function(PackageSetup )
 			VERSION 
 			PACKAGE 
 			Package_std_cmake_args 
+			Package_specific_cmake_args
 			Package_Source_Stamp_Dir 
 			Package_Source_Dir
 			Package_std_source_dirs 
@@ -278,7 +284,7 @@ function(PackageSetup )
 		debug_message(STATUS "exporting all vars-->${varlist}<--")
 	endif()
 	foreach(var ${varlist})
-		if(NOT ${var})
+		if(NOT DEFINED ${var})
 			message(FATAL_ERROR "PackageSetup does not have ${var} Variable ")
 		else()
 			set(${var} "${${var}}" PARENT_SCOPE)
@@ -337,6 +343,137 @@ endfunction(PackageBinarySimpleAdd)
 function(PackageWindowsBinarySimpleAdd URL)
 	PackageBinarySimpleAdd(${URL} ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/win32_bin_download)
 endfunction(PackageWindowsBinarySimpleAdd)
+
+
+function(PackageCmakeAdd)
+
+	ExternalProject_Add(
+		${PACKAGE}-GetSource
+		SOURCE_DIR ${Package_Source_Dir}
+		STAMP_DIR ${Package_Source_Stamp_Dir}
+		${Package_source_setup}
+		CONFIGURE_COMMAND ""
+		BUILD_COMMAND ""
+		INSTALL_COMMAND ""
+	)
+
+
+	if(Package_current_dependencies_effective_line)
+		set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
+	else()
+		set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
+	endif()
+
+	ExternalProject_Add(
+		${PACKAGE}
+		${Package_std_dirs}
+		DOWNLOAD_COMMAND ""	
+		CMAKE_GENERATOR ${CMAKE_GENERATOR}
+		CMAKE_ARGS 
+			${Package_std_cmake_args}
+			${Package_specific_cmake_args}
+		${Package_current_dependencies_effective_line} 
+		STEP_TARGETS configure build
+	)
+endfunction(PackageCmakeAdd)
+
+
+
+
+
+function(PackageUnixConfigureAdd)
+	message("Package_InSource----->${Package_InSource}<---")
+	if(Package_InSource)
+		set(conf_command_body ./configure  --prefix=<INSTALL_DIR>)
+	else()
+		set(conf_command_body <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR>)
+	endif()
+	if(Package_configure_flags)
+		set(conf_command_body ${conf_command_body} ${Package_configure_flags})
+	endif()
+	if(Package_PkgConfig)
+		string(REPLACE ";" "@@" managed_conf_command_body "${conf_command_body}" )
+		set(conf_command CONFIGURE_COMMAND ${CMAKE_COMMAND} -Dmy_binary_dir:PATH=<BINARY_DIR> -Dmy_source_dir:PATH=<SOURCE_DIR> -Dmy_install_dir:PATH=<INSTALL_DIR> -Dmy_configure:STRING=${managed_conf_command_body} -P ${_mymoduledir}/pkgconfig_env.cmake) 
+
+		set(make_command_body make --jobs 4)
+		string(REPLACE ";" "@@" managed_make_command_body "${make_command_body}" )
+		set(make_command BUILD_COMMAND ${CMAKE_COMMAND} -Dmy_binary_dir:PATH=<BINARY_DIR> -Dmy_source_dir:PATH=<SOURCE_DIR> -Dmy_install_dir:PATH=<INSTALL_DIR> -Dmy_configure:STRING=${managed_make_command_body} -P ${_mymoduledir}/pkgconfig_env.cmake) 
+		set(list_separator "LIST_SEPARATOR @@")
+	else()
+		set(conf_command CONFIGURE_COMMAND ${conf_command_body})
+		set(list_separator "")
+	endif()
+		debug_message("conf_command---->${conf_command}<---")
+
+	ExternalProject_Add(
+		${PACKAGE}-GetSource
+		SOURCE_DIR ${Package_Source_Dir}
+		STAMP_DIR ${Package_Source_Stamp_Dir}
+		${Package_source_setup}
+		UPDATE_COMMAND ""
+		CONFIGURE_COMMAND ""
+		BUILD_COMMAND ""
+		INSTALL_COMMAND ""
+	)
+
+	if(Package_current_dependencies_effective_line)
+		set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
+	else()
+		set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
+	endif()
+
+	ExternalProject_Add(
+		${PACKAGE}
+		${Package_std_dirs}
+		${Package_current_dependencies_effective_line} 
+		DOWNLOAD_COMMAND ""	
+		${conf_command}
+		${make_command}
+		${list_separator}
+		STEP_TARGETS configure build
+	)
+	message("
+
+	ExternalProject_Add(
+		${PACKAGE}
+		${Package_std_dirs}
+		${Package_current_dependencies_effective_line} 
+		DOWNLOAD_COMMAND ""	
+		${conf_command}
+		${make_command}
+		${list_separator}
+		STEP_TARGETS configure build
+	)
+
+	")
+# 		ExternalProject_Add(
+# 			${PACKAGE}
+# 			${Package_std_dirs}
+# 			${Package_current_dependencies_effective_line}
+# 			URL ${URL}
+# 			${conf_command}
+# 			${make_command}
+# 			${list_separator}
+# 
+# 			#CONFIGURE_COMMAND  ./configure  --prefix=<INSTALL_DIR>
+# 		)
+	if(Package_InSource)
+		ExternalProject_Add_Step(${PACKAGE} copy_source
+			COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> <BINARY_DIR>
+			COMMENT "copying <SOURCE_DIR> to <BINARY_DIR>"
+			DEPENDEES download update patch
+			DEPENDERS configure
+		)
+	endif()
+#	if(Package_PkgConfig)
+#		ExternalProject_Add_Step(${PACKAGE} install_pkgconfig
+#			COMMAND ${CMAKE_GENERATOR} install-pkgconfigDATA
+#			COMMENT "installing pkgconfig"
+#			DEPENDEES install
+#		)
+#	endif()
+
+endfunction(PackageUnixConfigureAdd)
 
 function(PackageUnixConfigureSimpleAdd URL)
 	message("Package_InSource----->${Package_InSource}<---")

@@ -45,7 +45,7 @@ if(UNIX)
   set(EXTERNAL_ASSEMBLY_BUILD_SHARED ${EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT})
   add_external_package_dir(GTK2)
   add_external_package_dir(GtkGLExt)
-  add_external_package_dir(wxWidgets 2.8.11)
+#  add_external_package_dir(wxWidgets 2.8.11 ON)
   endif(NOT APPLE)
 else()
   add_external_package_dir(PNG)
@@ -58,7 +58,7 @@ endif()
 
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install2)
 
-add_external_package_dir(osg)
+#add_external_package_dir(osg)
 add_external_package_dir(osgdata svn_head)
 
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install3)

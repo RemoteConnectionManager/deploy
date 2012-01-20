@@ -7,9 +7,16 @@ if(WIN32)
 else()
 	#configure based install 
 	set(Package_PkgConfig ON)
+	message("WARNING!!!! setting --with-freetype-config to <INSTALL_DIR> ... NOT ROBUST should use find")
 	set(Package_configure_flags --with-freetype-config=<INSTALL_DIR>/bin/freetype-config)
-	PackageUnixConfigureSimpleAdd(
-		http://fontconfig.org/release/fontconfig-2.8.0.tar.gz
+	set(Package_source_setup
+		URL http://fontconfig.org/release/fontconfig-2.8.0.tar.gz
+		URL_MD5 77e15a92006ddc2adbb06f840d591c0e
 	)
+
+	PackageUnixConfigureAdd()
+#	PackageUnixConfigureSimpleAdd(
+#		http://fontconfig.org/release/fontconfig-2.8.0.tar.gz
+#	)
 endif()
 

@@ -5,40 +5,38 @@ PackageSetup()
 #equivalent to adding --->#  define snprintf _snprintf
 if(MSVC)
 	set(MY_CMAKE_C_FLAGS "/Dsnprintf=_snprintf ${CMAKE_C_FLAGS}")
-else()
-#this is to avoid linking errors on AMD64, basically add -fPIC also to static lib buildslike
-#relocation R_X86_64_32S
-#see
-#http://www.cmake.org/pipermail/cmake/2006-September/011316.html
-#http://www.gentoo.org/proj/en/base/amd64/howtos/index.xml?part=1&chap=3
-
-#old#	if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
-#old#		set(MY_CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
-#old#	else()
-#old#		set(MY_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-#old#	endif()
 endif()	
 message("Building ${PACKAGE} with -->-DCMAKE_C_FLAGS=${MY_CMAKE_C_FLAGS}")
 #####################################################################
 
-#these are the patches to apply (order important???)
-PackageWriteMultiPatchFile(tmp     
-	zconf_in_source.diff
-	zconf_install.diff
+
+ExternalProject_Add(
+	${PACKAGE}-GetSource
+	SOURCE_DIR ${Package_Source_Dir}
+	STAMP_DIR ${Package_Source_Stamp_Dir}
+	URL http://zlib.net/current/zlib-1.2.5.tar.gz
+	URL_MD5 c735eab2d659a96e5a594c9e8541ad63
+	PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
+	UPDATE_COMMAND ""
+	CONFIGURE_COMMAND ""
+	BUILD_COMMAND ""
+	INSTALL_COMMAND ""
 )
 
-file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
-
+if(Package_current_dependencies_effective_line)
+	set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
+else()
+	set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
+endif()
 
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
-	URL http://zlib.net/current/zlib-1.2.5.tar.gz
-#	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
-	PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
-	#CMAKE_COMMAND ${CMAKE_COMMAND}
+	DOWNLOAD_COMMAND ""	
 	CMAKE_GENERATOR ${CMAKE_GENERATOR}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
+	${Package_current_dependencies_effective_line} 
+	STEP_TARGETS configure build
 )
 

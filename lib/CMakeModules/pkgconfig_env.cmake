@@ -1,4 +1,13 @@
 set(ENV{PATH} "${my_install_dir}/bin:$ENV{PATH}")
+string(REPLACE "@@" ";" my_configure "${my_configure}" )
+
+set(ENV{PKG_CONFIG_PATH} ${my_install_dir}/lib/pkgconfig)
+set(ENV{LD_LIBRARY_PATH} ${my_install_dir}/lib:$ENV{LD_LIBRARY_PATH})
+set(ENV{LDFLAGS} "-L${my_install_dir}/lib")
+set(ENV{CFLAGS} "-I${my_install_dir}/include")
+set(ENV{CPPFLAGS} "-I${my_install_dir}/include")
+set(ENV{PATH} "${my_install_dir}/bin:$ENV{PATH}")
+
 message("
 binary_dir--->${my_binary_dir}<--
 source_dir--->${my_source_dir}<--
@@ -6,11 +15,8 @@ install_dir--->${my_install_dir}<--
 my_configure-->${my_configure}<--
 PATH-->$ENV{PATH}<--
 ")
-set(ENV{PKG_CONFIG_PATH} ${my_install_dir}/lib/pkgconfig)
-set(ENV{LD_LIBRARY_PATH} ${my_install_dir}/lib)
-set(ENV{LDFLAGS} "-L${my_install_dir}/lib")
-set(ENV{CFLAGS} "-I${my_install_dir}/include")
-set(ENV{CPPFLAGS} "-I${my_install_dir}/include")
+
+
 execute_process(COMMAND ${my_configure} 
 	    RESULT_VARIABLE status_code
 #	    OUTPUT_VARIABLE log

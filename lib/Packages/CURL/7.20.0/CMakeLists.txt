@@ -1,11 +1,6 @@
 #this imports variables here
 PackageSetup()
 
-if(BUILD_SHARED_LIBS)
-    set(CURL_STATICLIB OFF)
-else()
-    set(CURL_STATICLIB ON)
-endif()
 
 #these are the patches to apply (order important!!!)
 PackageWriteMultiPatchFile(tmp     
@@ -17,6 +12,27 @@ PackageWriteMultiPatchFile(tmp
 
 file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
 
+
+ExternalProject_Add(
+	${PACKAGE}-GetSource
+	SOURCE_DIR ${Package_Source_Dir}
+	STAMP_DIR ${Package_Source_Stamp_Dir}
+	URL http://curl.haxx.se/download/curl-7.20.0.tar.gz
+	URL_MD5 ce04744b4ac753f851d34a6e5835410a
+	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
+	UPDATE_COMMAND ""
+	CONFIGURE_COMMAND ""
+	BUILD_COMMAND ""
+	INSTALL_COMMAND ""
+)
+
+if(BUILD_SHARED_LIBS)
+    set(CURL_STATICLIB OFF)
+else()
+    set(CURL_STATICLIB ON)
+endif()
+
+
 FIND_PACKAGE(Ldap)
 if(LDAP_FOUND)
 	set(_disable_ldap_flag "")
@@ -27,13 +43,18 @@ endif()
 message("WARNING!!!!! forcing OPENSSL disabling   ")
 set(_disable_use_openssl "-DCMAKE_USE_OPENSSL:BOOL=OFF")
 
+
+if(Package_current_dependencies_effective_line)
+	set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
+else()
+	set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
+endif()
+
+
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
-	URL http://curl.haxx.se/download/curl-7.20.0.tar.gz
-	${Package_current_dependencies_effective_line}
-	#old#PATCH_COMMAND ${CMAKE_COMMAND} -E copy "${Package_Dir}/Patch/lib/CMakeLists.txt" <SOURCE_DIR>/lib/CMakeLists.txt
-	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
+	DOWNLOAD_COMMAND ""	
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
@@ -41,6 +62,8 @@ ExternalProject_Add(
 		#this is for disabling ldap that does break builds under kubuntu
 		${_disable_ldap_flag}
 		${_disable_use_openssl}
+	${Package_current_dependencies_effective_line} 
+	STEP_TARGETS configure build
 )
 
 

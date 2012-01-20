@@ -7,8 +7,11 @@ if(WIN32)
 else()
 	#configure based install 
 	set(Package_PkgConfig ON)
-	PackageUnixConfigureSimpleAdd(
-		http://ftp.gnome.org/pub/gnome/sources/gtk+/2.18/gtk+-2.18.9.tar.gz
+	set(Package_source_setup
+		URL http://ftp.gnome.org/pub/gnome/sources/gtk+/2.18/gtk+-2.18.9.tar.gz
+		URL_MD5 7afcf0beefbbea7f84f034955eaac621
 	)
+
+	PackageUnixConfigureAdd()
 endif()
 

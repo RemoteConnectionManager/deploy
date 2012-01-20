@@ -7,8 +7,14 @@ if(WIN32)
 else()
 	#configure based install 
 	set(Package_PkgConfig ON)
-	PackageUnixConfigureSimpleAdd(
-		http://ftp.gnome.org/pub/gnome/sources/atk/1.30/atk-1.30.0.tar.gz
+	set(Package_source_setup
+		URL http://ftp.gnome.org/pub/gnome/sources/atk/1.30/atk-1.30.0.tar.gz
+		URL_MD5 d546d814b3ddfd10659545fb3c1168fc
 	)
+
+	PackageUnixConfigureAdd()
+# 	PackageUnixConfigureSimpleAdd(
+# 		http://ftp.gnome.org/pub/gnome/sources/atk/1.30/atk-1.30.0.tar.gz
+# 	)
 endif()
 

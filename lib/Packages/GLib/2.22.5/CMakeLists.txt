@@ -7,8 +7,15 @@ if(WIN32)
 else()
 	#configure based install 
 	set(Package_PkgConfig ON)
-	PackageUnixConfigureSimpleAdd(
-		http://ftp.gnome.org/pub/gnome/sources/glib/2.22/glib-2.22.5.tar.gz
+	set(Package_source_setup
+		URL http://ftp.gnome.org/pub/gnome/sources/glib/2.22/glib-2.22.5.tar.gz
+		URL_MD5 62ef6169c184344446679b32d7473601
 	)
+
+	PackageUnixConfigureAdd()
+
+# 	PackageUnixConfigureSimpleAdd(
+# 		http://ftp.gnome.org/pub/gnome/sources/glib/2.22/glib-2.22.5.tar.gz
+# 	)
 endif()
 

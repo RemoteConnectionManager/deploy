@@ -7,8 +7,14 @@ if(WIN32)
 else()
 	#configure based install 
 	set(Package_PkgConfig ON)
-	PackageUnixConfigureSimpleAdd(
-		http://cairographics.org/releases/pixman-0.18.0.tar.gz
+	set(Package_source_setup
+		URL http://cairographics.org/releases/pixman-0.18.0.tar.gz
+		URL_MD5 a4fb870fc325be258089f1683642e976
 	)
+
+	PackageUnixConfigureAdd()
+#	PackageUnixConfigureSimpleAdd(
+#		http://cairographics.org/releases/pixman-0.18.0.tar.gz
+#	)
 endif()
 

@@ -30,17 +30,37 @@ else()
 endif()
 
 ExternalProject_Add(
+	${PACKAGE}-GetSource
+	SOURCE_DIR ${Package_Source_Dir}
+	STAMP_DIR ${Package_Source_Stamp_Dir}
+	URL http://www.openscenegraph.org/downloads/developer_releases/OpenSceneGraph-2.9.9.zip
+	URL_MD5 0d18aa6ccb8f0fc75ed7ebec1ac3b010
+	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
+	UPDATE_COMMAND ""
+	CONFIGURE_COMMAND ""
+	BUILD_COMMAND ""
+	INSTALL_COMMAND ""
+)
+
+if(Package_current_dependencies_effective_line)
+	set( Package_current_dependencies_effective_line ${Package_current_dependencies_effective_line} ${PACKAGE}-GetSource)
+else()
+	set(Package_current_dependencies_effective_line DEPENDS ${PACKAGE}-GetSource)
+endif()
+
+
+ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
-	URL http://www.openscenegraph.org/downloads/developer_releases/OpenSceneGraph-2.9.9.zip
-	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
+	DOWNLOAD_COMMAND ""	
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
-		-DBUILD_OSG_EXAMPLES:BOOL=ON
+#		-DBUILD_OSG_EXAMPLES:BOOL=ON
         	${custom_cmake_args}
 	${make_command}
 	${Package_current_dependencies_effective_line}
+	STEP_TARGETS configure build
 )
 
 

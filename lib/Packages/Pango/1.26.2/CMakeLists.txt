@@ -7,8 +7,14 @@ if(WIN32)
 else()
 	#configure based install 
 	set(Package_PkgConfig ON)
-	PackageUnixConfigureSimpleAdd(
-		http://ftp.gnome.org/pub/gnome/sources/pango/1.26/pango-1.26.2.tar.gz
+	set(Package_source_setup
+		URL http://ftp.gnome.org/pub/gnome/sources/pango/1.26/pango-1.26.2.tar.gz
+		URL_MD5 a2ebe81d171abfa4913ea103ca25761a
 	)
+
+	PackageUnixConfigureAdd()
+# 	PackageUnixConfigureSimpleAdd(
+# 		http://ftp.gnome.org/pub/gnome/sources/pango/1.26/pango-1.26.2.tar.gz
+# 	)
 endif()
 
