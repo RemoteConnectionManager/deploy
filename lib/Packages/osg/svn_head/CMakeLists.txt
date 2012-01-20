@@ -15,7 +15,7 @@ ExternalProject_Add(
 	${Package_std_dirs}
 #	URL http://switch.dl.sourceforge.net/project/collada-dom/Collada%20DOM/Collada%20DOM%202.2/collada-dom-2.2.zip
 	SVN_REPOSITORY http://www.openscenegraph.org/svn/osg/OpenSceneGraph/trunk
-	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
+	#PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		${Package_std_cmake_args}
