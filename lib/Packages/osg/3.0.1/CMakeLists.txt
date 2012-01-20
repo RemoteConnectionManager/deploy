@@ -1,14 +1,24 @@
 #this imports variables here
 #override default as we force osg shared build
-set(EXTERNAL_ASSEMBLY_BUILD_SHARED ON)
-PackageSetup()
+message("here in osg CMAKE_FIND_ROOT_PATH_MODE_LIBRARY-->${CMAKE_FIND_ROOT_PATH_MODE_LIBRARY}<--")
+option(osg_shared "build   ${PACKAGE} shared" ON)
+set(EXTERNAL_ASSEMBLY_BUILD_SHARED osg_shared)
 
+PackageSetup()
+option(${PACKAGE}_examples "build   ${PACKAGE} examples" OFF)
 #these are the patches to apply (order important???)
 #to obtain successive patches:
 #modify
 #copy the mod to
 
 #diff -Nur src_orig src > ..\..\..\Packages\osg\2.9.7\Patch\OpenThreads_versions.diff
+
+##########################################################
+#
+#currently on Ubuntu need to have opengl dev so
+#sudo apt-get install libgl1-mesa-glx libglu1-mesa-dev
+#
+##########################################################
 
 PackageWriteMultiPatchFile(tmp     
 	module_override.diff
