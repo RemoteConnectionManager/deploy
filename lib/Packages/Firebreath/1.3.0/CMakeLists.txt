@@ -5,7 +5,7 @@ PackageSetup()
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
-	HG_REPOSITORY https://firebreath.googlecode.com/hg/
+	URL http://firebreath.googlecode.com/files/firebreath-1.3.0rc2.tar.gz
 	CMAKE_COMMAND ${CMAKE_COMMAND}
 	CMAKE_ARGS 
 		-DPROJECTS_DIR=<SOURCE_DIR>/../../../osg4web/B7/src/firebreath_projects
