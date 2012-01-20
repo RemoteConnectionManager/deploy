@@ -14,7 +14,7 @@ else()
 		URL http://www.ffmpeg.org/releases/ffmpeg-0.6.1.tar.gz
 		URL_MD5 fd45cacbe1294554eb72a5c9a311866f
 	)
-
+	set(Package_configure_flags --enable-pic )
 	PackageUnixConfigureAdd()
 endif()
 
