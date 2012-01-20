@@ -206,12 +206,12 @@ function(PackageSetup )
 			if(NOT ${pass_var} STREQUAL "")
 				set(pass_var_len 0)
 				set(_tmp ${${pass_var}})
-				message("variable -->${pass_var}<-->${_tmp}")
+				debug_message("variable -->${pass_var}<-->${_tmp}")
 				list(LENGTH _tmp pass_var_len)
-				message("length of -->${pass_var}<-->${pass_var_len}")
+				debug_message("length of -->${pass_var}<-->${pass_var_len}")
 				if(pass_var_len GREATER 1)
 					string(REPLACE ";" "@@" managed_list "${_tmp}" )
-					message("adding variable -->${pass_var}<-as list->${managed_list}")
+					debug_message("adding variable -->${pass_var}<-as list->${managed_list}")
 					set(list_separator LIST_SEPARATOR @@)
 					set(def_flag -D${pass_var}:CACHE=${managed_list})
 				else()
@@ -337,7 +337,11 @@ function(PackageUnixConfigureSimpleAdd URL)
 	if(Package_PkgConfig)
 		string(REPLACE ";" "@@" managed_conf_command_body "${conf_command_body}" )
 		set(conf_command CONFIGURE_COMMAND ${CMAKE_COMMAND} -Dmy_binary_dir:PATH=<BINARY_DIR> -Dmy_source_dir:PATH=<SOURCE_DIR> -Dmy_install_dir:PATH=<INSTALL_DIR> -Dmy_configure:STRING=${managed_conf_command_body} -P ${_mymoduledir}/pkgconfig_env.cmake) 
-		set(list_separator LIST_SEPARATOR @@)
+
+		set(make_command_body make --jobs 4)
+		string(REPLACE ";" "@@" managed_make_command_body "${make_command_body}" )
+		set(make_command BUILD_COMMAND ${CMAKE_COMMAND} -Dmy_binary_dir:PATH=<BINARY_DIR> -Dmy_source_dir:PATH=<SOURCE_DIR> -Dmy_install_dir:PATH=<INSTALL_DIR> -Dmy_configure:STRING=${managed_make_command_body} -P ${_mymoduledir}/pkgconfig_env.cmake) 
+		set(list_separator "LIST_SEPARATOR @@")
 	else()
 		set(conf_command CONFIGURE_COMMAND ${conf_command_body})
 		set(list_separator "")
@@ -349,7 +353,9 @@ function(PackageUnixConfigureSimpleAdd URL)
 			${Package_current_dependencies_effective_line}
 			URL ${URL}
 			${conf_command}
+			${make_command}
 			${list_separator}
+
 			#CONFIGURE_COMMAND  ./configure  --prefix=<INSTALL_DIR>
 		)
 	if(Package_InSource)
