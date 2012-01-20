@@ -18,3 +18,5 @@ string(REPLACE ";" ":" pkgpath_new "${pkgpath}")
 set(ENV{PKG_CONFIG_PATH} ${pkgpath_new})
 #message("-------CUSTOM FindPkgConfig---setting -ENV{PKG_CONFIG_PATH}--->$ENV{PKG_CONFIG_PATH}<--") 
 include(${CMAKE_ROOT}/Modules/FindPkgConfig.cmake)
+
+link_directories(${GTK_LIBRARY_DIRS})
