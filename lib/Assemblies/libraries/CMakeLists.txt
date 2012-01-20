@@ -16,7 +16,9 @@ if(APPLE)
 	set(CMAKE_OSX_ARCHITECTURES i386)
 endif()
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install1)
-set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/install1;${CMAKE_BINARY_DIR}/install_boost;${CMAKE_BINARY_DIR}/install2;${CMAKE_BINARY_DIR}/install3" )
+set(CMAKE_PREFIX_PATH 
+         "${CMAKE_BINARY_DIR}/install1;${CMAKE_BINARY_DIR}/install_boost;${CMAKE_BINARY_DIR}/install2;${CMAKE_BINARY_DIR}/install3" 
+)
 set(CMAKE_FIND_ROOT_PATH "${CMAKE_PREFIX_PATH}" )
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 find_package(Boost)
@@ -53,7 +55,7 @@ endif()
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install2)
 
 add_external_package_dir(osg)
-#add_external_package_dir(osgdata svn_head)
+add_external_package_dir(osgdata svn_head)
 
 set(EXTERNAL_ASSEMBLY_COMMON_PREFIX ${CMAKE_BINARY_DIR}/install3)
 
