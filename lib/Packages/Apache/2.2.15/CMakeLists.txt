@@ -10,7 +10,7 @@ else()
 	ExternalProject_Add(
 		${PACKAGE}
 		${Package_std_dirs}
-		URL ${URL}
+		URL http://apache.panu.it/httpd/httpd-2.2.15.tar.gz
 		CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR> --enable-dav --enable-dav-fs --enable-dav-lock --enable-module=ssl
 	)
 	
