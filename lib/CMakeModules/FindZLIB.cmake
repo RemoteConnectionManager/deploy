@@ -3,7 +3,7 @@
 
 message("-------CUSTOM FindZLIB------")
 #This find look also for debug library
-INCLUDE(SelectLibraryConfigurations)
+#old#INCLUDE(SelectLibraryConfigurations)
 
 #
 #  ZLIB_INCLUDE_DIRS - where to find zlib.h, etc.
