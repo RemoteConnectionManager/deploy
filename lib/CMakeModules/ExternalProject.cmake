@@ -23,6 +23,7 @@
 #    [HG_REPOSITORY url]        # URL of Mercurial repo
 #    [HG_REVISION rev]          # Revision to checkout from MERCURIAL repo
 #    [URL /.../src.tgz]          # Full path or URL of source
+#    [TIMEOUT seconds]           # Time allowed for file download operations
 #   #--Update/Patch step----------
 #    [UPDATE_COMMAND cmd...]     # Source work-tree update command
 #    [PATCH_COMMAND cmd...]      # Command to patch downloaded source
@@ -211,20 +212,25 @@ define_property(DIRECTORY PROPERTY "EP_PREFIX" INHERITED
 
 
 function(_ep_write_downloadfile_script script_filename remote local timeout)
-  if(NOT timeout)
-    set(timeout 30)
+  if(timeout)
+    set(timeout_args TIMEOUT ${timeout})
+    set(timeout_msg "${timeout} seconds")
+  else()
+    set(timeout_args "# no TIMEOUT")
+    set(timeout_msg "none")
   endif()
 
   file(WRITE ${script_filename}
 "message(STATUS \"downloading...
      src='${remote}'
-     dst='${local}'\")
+     dst='${local}'\"
+     timeout='${timeout_msg}'\")
 
 if(NOT EXISTS \"${local}\")	 
 file(DOWNLOAD
   \"${remote}\"
   \"${local}\"
-  TIMEOUT ${timeout}
+  ${timeout_args}
   STATUS status
   LOG log)
 
@@ -861,7 +867,8 @@ function(_ep_add_download_command name)
           message(FATAL_ERROR "Could not extract tarball filename from url:\n  ${url}")
         endif()
         set(file ${download_dir}/${fname})
-        _ep_write_downloadfile_script("${srcstamp_dir}/download-${name}.cmake" "${url}" "${file}" "")
+        get_property(timeout TARGET ${name} PROPERTY _EP_TIMEOUT)
+        _ep_write_downloadfile_script("${srcstamp_dir}/download-${name}.cmake" "${url}" "${file}" "${timeout}")
         set(cmd ${CMAKE_COMMAND} -P ${srcstamp_dir}/download-${name}.cmake
           COMMAND)
         set(comment "Performing download step (download and extract) for '${name}'")
