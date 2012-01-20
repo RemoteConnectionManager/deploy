@@ -38,6 +38,7 @@ set(Package_specific_cmake_args
 		-DCMP_ARCHIVE_OUTPUT_DIRECTORY:PATH=${CMP_ARCHIVE_OUTPUT_DIRECTORY}
 		-DCMP_RUNTIME_OUTPUT_DIRECTORY:PATH=${CMP_RUNTIME_OUTPUT_DIRECTORY}
 		-DCMP_LIBRARY_OUTPUT_DIRECTORY:PATH=${CMP_LIBRARY_OUTPUT_DIRECTORY}
+		-Dft_version:STRING=13.1.7
 )
 
 
@@ -53,5 +54,12 @@ set(Package_specific_cmake_args
 	# endif()
 PackageCmakeAdd()
 
+if(UNIX)
+	set(_includepostfix "/freetype2")
+	PackageUnixPkgConfigInstall(
+		  freetype
+		  freetype2
+	)
+endif()
 
 

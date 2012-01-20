@@ -418,7 +418,8 @@ function(PackageCmakeAdd)
 		set(make_command "")
 	endif()
 
-	debug_message("Package_specific_cmake_args---->${Package_specific_cmake_args}<---")
+	debug_message("Package ${PACKAGE} specific_cmake_args---->${Package_specific_cmake_args}<---")
+	debug_message("Package ${PACKAGE} std_cmake_args---->${Package_std_cmake_args}<---")
 
 	ExternalProject_Add(
 		${PACKAGE}
@@ -607,7 +608,7 @@ endfunction(PackageUnixAddCmakeVarsToConfigureFlags)
 
 function(PackageUnixPkgConfigInstall LIBNAME PKGFILENAME)
 		ExternalProject_Add_Step(${PACKAGE} install_pkgconfig
-			COMMAND ${CMAKE_COMMAND} -Dprefix:PATH=<INSTALL_DIR> -Dname:STRING=${PACKAGE} -Dversion:STRING=${VERSION} -Dlibname:STRING=${LIBNAME} -Dpkgfilename:string=${PKGFILENAME} -P ${_mymoduledir}/pkgconfig_lib_configure.cmake
+			COMMAND ${CMAKE_COMMAND} -Dprefix:PATH=<INSTALL_DIR> -Dname:STRING=${PACKAGE} -Dversion:STRING=${VERSION} -Dlibname:STRING=${LIBNAME} -Dpkgfilename:string=${PKGFILENAME} -Dincludepostfix:string="${_includepostfix}" -P ${_mymoduledir}/pkgconfig_lib_configure.cmake
 			COMMENT "installing pkgconfig"
 			DEPENDEES install
 		)
