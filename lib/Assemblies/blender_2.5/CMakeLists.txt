@@ -8,6 +8,7 @@ include(../../CMakeModules/AssemblySetup.cmake)
 debug_message("configuring with generator -->${CMAKE_GENERATOR}<--")
 
 #find_package(wxWidgets)
+add_external_package_dir(libsamplerate)
 add_external_package_dir(Python 3.1.2)
 add_external_package_dir(Blender 2.5.svn)
 
