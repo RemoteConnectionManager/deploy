@@ -333,7 +333,8 @@ execute_process(COMMAND @UNZIP_EXECUTABLE@ \${filename}
       if(compression_type STREQUAL "bzip2")
 	  string(CONFIGURE "
 message(STATUS \"uncompressing... [bzip2 ]\")
-execute_process(COMMAND @Bunzip2_EXECUTABLE@ \${filename} -c -f \${tmp}/unzipped.tar
+execute_process(COMMAND @Bunzip2_EXECUTABLE@ \${filename} -c -f 
+	OUTPUT_FILE  \${tmp}/unzipped.tar
 	WORKING_DIRECTORY \${ut_dir}
 	RESULT_VARIABLE rv)
 message(STATUS \"untar... \${tmp}/unzipped.tar\")
