@@ -21,7 +21,8 @@ PackageSetup()
 ExternalProject_Add(
 	${PACKAGE}
 	${Package_std_dirs}
-	URL http://download.sourceforge.net/libpng/libpng-1.2.44.tar.gz
+	#URL http://download.sourceforge.net/libpng/libpng-1.2.44.tar.gz
+	URL http://netcologne.dl.sourceforge.net/project/libpng/libpng-previous/1.2.44/libpng-1.2.44.tar.gz
 	${Package_current_dependencies_effective_line}
 
 	#This patch commands change the name of scripts/libpng.pc.in to scripts/libpng-pc.in as it breaks the cmake command
