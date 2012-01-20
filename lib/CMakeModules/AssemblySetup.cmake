@@ -243,6 +243,7 @@ function(PackageSetup )
 
 	
 	set(Package_Source_Stamp_Dir ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/stamp )
+	set(Package_Source_Dir ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/src )
 	
 	file(TO_NATIVE_PATH ${EXTERNAL_ASSEMBLY_BASE_SOURCE}/${PACKAGE}/${VERSION}/src _NATIVE_SOURCE_DIR)
 	file(TO_NATIVE_PATH ${Package_Source_Stamp_Dir} _NATIVE_SRCSTAMP_DIR)
@@ -270,6 +271,7 @@ function(PackageSetup )
 			PACKAGE 
 			Package_std_cmake_args 
 			Package_Source_Stamp_Dir 
+			Package_Source_Dir
 			Package_std_source_dirs 
 			Package_std_binary_dirs
 			Package_std_dirs
