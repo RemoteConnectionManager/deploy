@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 function(debug_message)
 	if(MESSAGE_DEBUG_ACTIVE)
-		message(${ARGN})
+		message("${ARGN}")
 	endif()
 endfunction(debug_message)
 
