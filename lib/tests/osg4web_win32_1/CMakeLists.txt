@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 #test mod
+#test mod1
 
   FIND_PACKAGE(Git)
   IF(Git_FOUND)
