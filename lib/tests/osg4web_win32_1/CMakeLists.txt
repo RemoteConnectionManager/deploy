@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 #test mod
 #test mod1
 
+#test mod2
+
+
+
+
   FIND_PACKAGE(Git)
   IF(Git_FOUND)
 	MESSAGE("Git exec-->${GIT_EXECUTABLE}<--")
