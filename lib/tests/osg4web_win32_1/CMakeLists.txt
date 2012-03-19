@@ -8,6 +8,7 @@
 #test mod4
 
 #test mod5
+#test mod6
 
   FIND_PACKAGE(Git)
   IF(Git_FOUND)
