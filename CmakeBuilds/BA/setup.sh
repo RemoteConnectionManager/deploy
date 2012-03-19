@@ -2,7 +2,7 @@ module purge
 module load autoload
 module load profile/advanced
 module load ba
-#module load bzr
+module load bzr
 module use /plx/userprod/pro3dwe1/BA/modulefiles/
 module load cmake
 
@@ -24,9 +24,8 @@ if [ "$ba_test_user" = "" ]; then
 fi
 
 if [ "$ba_default_download" = "" ]; then
-  ba_default_download="bzr branch http://rvn05.plx.cineca.it:12000/files/virtualrome/bazaar_repo/CmakeDeps/lib/ \$BA_PKG_SOURCE_DIR"
+  ba_default_download=" svn co https://hpc-forge.cineca.it/svn/CmakeBuilds/CmakeBuilds \$BA_PKG_SOURCE_DIR"
 fi
-
 if [ "$ba_test_mode" = "" ]; then
    test  "$user" = "$ba_test_user"
    if [ $? -eq 0 ]; then
@@ -120,11 +119,13 @@ mkdir -p $work_dir
 if  ${ba_test_mode} ; then
   echo "skipping source download"
   cd $source_dir
-  current_revision=`bzr revno`
+  current_revision=`svnversion`
   echo "current revision -->${current_revision}<--"
   build_source="cd \$BA_PKG_SOURCE_DIR\\n bzr revno > $work_dir/REVISION.txt"
 else
-  build_source="${ba_default_download}\\ncd \$BA_PKG_SOURCE_DIR\\n bzr revno > $ba_work_dir/REVISION.txt"
+  build_source="${ba_default_download}\\ncd \$BA_PKG_SOURCE_DIR\\n svnversion > $ba_work_dir/REVISION.txt"
+  echo "------------sono qui------->${build_source}<--"
+
 fi
 
 if [ "$autopackage_assembly" = "" ]; then
@@ -177,6 +178,8 @@ sed --in-place=.orig\
 	-e "s@^  # module@module@" \
 ${ba_build_dir}/BUILD_SCRIPT 
 
+#using build script for downloading
+${ba_build_dir}/BUILD_SCRIPT -d
 #using build script for configuring
 ${ba_build_dir}/BUILD_SCRIPT -C
 #using build script for building
