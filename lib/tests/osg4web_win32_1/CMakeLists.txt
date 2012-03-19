@@ -5,6 +5,7 @@
 #test mod2
 #test mod3
 
+#test mod4
 
 
   FIND_PACKAGE(Git)
