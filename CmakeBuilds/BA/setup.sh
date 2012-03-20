@@ -2,7 +2,6 @@ module purge
 module load autoload
 module load profile/advanced
 module load ba
-module load bzr
 module use /plx/userprod/pro3dwe1/BA/modulefiles/
 module load cmake
 
@@ -32,6 +31,7 @@ if [ "$ba_test_mode" = "" ]; then
       ba_test_mode=true
    else
       ba_test_mode=false
+      ba_build_local=true
    fi
 fi
 
@@ -103,18 +103,26 @@ if [ "$source_dir" = "" ]; then
     source_dir="${ba_work_dir}/src"
   fi
 fi
+mkdir -p $source_dir
+
 if [ "$work_default_base_dir" = "" ]; then
-  work_default_base_dir="/scratch_local/pro3dwe1/build/ba_builds"
+  work_default_base_dir="/scratch_local/${user}/build/ba_builds"
 fi
 if [ "$work_dir" = "" ]; then
-  if [ "$user" = "pro3dwe1" ]; then
-    work_dir="${work_default_base_dir}/${ba_module_name}/${ba_module_version}"
+  work_dir="${work_default_base_dir}/${ba_module_name}/${ba_module_version}"
+  if  $ba_test_mode ; then
+    mkdir -p $work_dir
   else
-    work_dir="${ba_work_dir}/build"
+    if $ba_build_local ; then
+      mkdir -p $work_dir
+      ln -s $work_dir ${ba_work_dir}/build
+      work_dir="${ba_work_dir}/build"
+    else
+      work_dir="${ba_work_dir}/build"
+      mkdir -p $work_dir
+    fi
   fi
 fi
-mkdir -p $source_dir
-mkdir -p $work_dir
 
 if  ${ba_test_mode} ; then
   echo "skipping source download"
@@ -137,6 +145,11 @@ fi
 if [ "$make_command" = "" ]; then
   make_command="make -j 8"
 fi
+
+if [ "$make_command" = "" ]; then
+  make_command="make -j 8"
+fi
+
 
 force_install_command="cd $work_dir\\nrm bld/${autopackage_name}/${autopackage_name}-prefix/src/${autopackage_name}-stamp/${autopackage_name}-install\\nmake ${autopackage_name}-install"
 
