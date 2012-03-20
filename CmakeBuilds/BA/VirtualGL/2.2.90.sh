@@ -5,7 +5,7 @@ ba_category=tool
 #autopackage_config_args='-DCMAKE_BUILD_TYPE:string=Release -DEXTERNAL_ASSEMBLY_BUILD_COMMAND:string="make;-j;8"'
 ba_module_version="2.2.90"
 #autopackage_version=3.10.1
-ba_req_modules="nasm"
+module_build_setup="module load autoload cmake nasm"
 
 ba_home_url="http://www.virtualgl.org/"
 ba_download_url="http://sourceforge.net/projects/virtualgl/files/VirtualGL/2.2.90%20%282.3beta1%29/VirtualGL-2.2.90.tar.gz/download"
