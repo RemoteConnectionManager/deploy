@@ -8,4 +8,5 @@
 # else()
 # 	message("nasm NOT FOUND, inserting external")
 	set(Package_current_dependencies libjpeg-turbo)
+	set(libjpeg-turbo_shared ON CACHE BOOL "" )
 #endif()
