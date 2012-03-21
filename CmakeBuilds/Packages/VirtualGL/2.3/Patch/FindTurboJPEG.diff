@@ -1,0 +1,63 @@
+diff -ur src.orig/cmakescripts/FindTurboJPEG.cmake src/cmakescripts/FindTurboJPEG.cmake
+--- src.orig/cmakescripts/FindTurboJPEG.cmake	2011-08-12 09:09:51.000000000 +0200
++++ src/cmakescripts/FindTurboJPEG.cmake	2011-09-12 16:11:56.000000000 +0200
+@@ -26,34 +26,44 @@
+ endif()
+ include_directories(${TJPEG_INCLUDE_DIR})
+ 
+-if(WIN32)
+-	if(64BIT)
+-		set(DEFAULT_TJPEG_LIBRARY c:\\libjpeg-turbo64\\lib\\turbojpeg-static.lib)
+-	else()
+-		set(DEFAULT_TJPEG_LIBRARY c:\\libjpeg-turbo\\lib\\turbojpeg-static.lib)
+-	endif()
+-else()
+-	if(64BIT)
+-		set(DEFAULT_TJPEG_LIBRARY /opt/libjpeg-turbo/lib64/libturbojpeg.a)
++FIND_LIBRARY(
++	TJPEG_LIBRARY 
++	NAMES turbojpeg libturbojpeg.a turbojpeg-static 
++#	${Package_search_hints}
++)
++if( NOT TJPEG_LIBRARY) 
++	message("WARNING!!!!!! TJPEG_LIBRARY -->${TJPEG_LIBRARY}<--CMAKE_PREFIX_PATH-->${CMAKE_PREFIX_PATH}<--")
++	message("WARNING!!!!!! TJPEG_LIBRARY -->${TJPEG_LIBRARY}<--")
++	if(WIN32)
++		if(64BIT)
++			set(DEFAULT_TJPEG_LIBRARY c:\\libjpeg-turbo64\\lib\\turbojpeg-static.lib)
++		else()
++			set(DEFAULT_TJPEG_LIBRARY c:\\libjpeg-turbo\\lib\\turbojpeg-static.lib)
++		endif()
+ 	else()
+-		set(DEFAULT_TJPEG_LIBRARY /opt/libjpeg-turbo/lib32/libturbojpeg.a)
++		if(64BIT)
++			set(DEFAULT_TJPEG_LIBRARY /opt/libjpeg-turbo/lib64/libturbojpeg.a)
++		else()
++			set(DEFAULT_TJPEG_LIBRARY /opt/libjpeg-turbo/lib32/libturbojpeg.a)
++		endif()
+ 	endif()
++	
++	set(TJPEG_LIBRARY ${DEFAULT_TJPEG_LIBRARY} CACHE PATH
++	"TurboJPEG library path (default: ${DEFAULT_TJPEG_LIBRARY})")
++	message("WARNING!!!!!! TJPEG_LIBRARY -->${TJPEG_LIBRARY}<--")
+ endif()
+-
+-set(TJPEG_LIBRARY ${DEFAULT_TJPEG_LIBRARY} CACHE PATH
+-  "TurboJPEG library path (default: ${DEFAULT_TJPEG_LIBRARY})")
+-
+ if(WIN32)
+ 	set(CMAKE_REQUIRED_DEFINITIONS -MT)
+ endif()
+ set(CMAKE_REQUIRED_INCLUDES ${TJPEG_INCLUDE_DIR})
+ set(CMAKE_REQUIRED_LIBRARIES ${TJPEG_LIBRARY})
++message("CMAKE_REQUIRED_LIBRARIES-->${CMAKE_REQUIRED_LIBRARIES}<--")
+ check_c_source_compiles("#include <turbojpeg.h>\nint main(void) { tjhandle h=tjInitCompress(); return 0; }" TURBOJPEG_WORKS)
+ set(CMAKE_REQUIRED_DEFINITIONS)
+ set(CMAKE_REQUIRED_INCLUDES)
+ set(CMAKE_REQUIRED_LIBRARIES)
+ if(NOT TURBOJPEG_WORKS)
+-	message(FATAL_ERROR "Could not link with TurboJPEG library ${TJPEG_LIBRARY}.  If it is installed in a different place, then set TJPEG_LIBRARY accordingly.")
++	message( "Could not link with TurboJPEG library ${TJPEG_LIBRARY}.  If it is installed in a different place, then set TJPEG_LIBRARY accordingly.")
+ endif()
+ 
+ message(STATUS "TJPEG_LIBRARY = ${TJPEG_LIBRARY}")
