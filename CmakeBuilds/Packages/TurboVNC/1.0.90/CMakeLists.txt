@@ -3,8 +3,11 @@
 #cmake -DAUTO_PACKAGE:PATH=TurboVNC -DTurboVNC_build_server:BOOL=ON ../../src/Assemblies/auto_package/
 
 ##### on a mean ubuntu it required
+##searching for files in http://packages.ubuntu.com/
 #sudo apt-get install libX11-dev
 #sudo apt-get install libXaw7-dev
+
+#also libxcursor-dev libxmu-headers libxaw7-dev
 
 #this perhaps could be avoided if building libz from source
 #sudo apt-get install libz-dev    
