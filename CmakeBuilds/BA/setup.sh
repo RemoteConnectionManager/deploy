@@ -129,7 +129,7 @@ if  ${ba_test_mode} ; then
   cd $source_dir
   current_revision=`svnversion`
   echo "current revision -->${current_revision}<--"
-  build_source="cd \$BA_PKG_SOURCE_DIR\\n bzr revno > $work_dir/REVISION.txt"
+  build_source="cd \$BA_PKG_SOURCE_DIR\\n svnversion > $work_dir/REVISION.txt"
 else
   build_source="${ba_default_download}\\ncd \$BA_PKG_SOURCE_DIR\\n svnversion > $ba_work_dir/REVISION.txt"
   echo "------------sono qui------->${build_source}<--"
