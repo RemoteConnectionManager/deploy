@@ -2,6 +2,7 @@ ba_module_name=TurboVNC
 ba_category=tool
 #autopackage_config_args="-DQT_INSTALL_DIR:path=${QT_HOME} -DPYTHON_INSTALL_DIR:path=${PYTHON_HOME}"
 #autopackage_config_args='-DCMAKE_BUILD_TYPE:string=Release -DEXTERNAL_ASSEMBLY_BUILD_COMMAND:string="make;-j;8"'
+autopackage_config_args="-DTurboVNC_build_server:bool=ON -DUSE_SYSTEM_LIBRARIES:bool=ON"
 ba_module_version="1.0.90"
 #autopackage_version=3.10.1
 module_build_setup="module load autoload nasm"

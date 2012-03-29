@@ -3,14 +3,14 @@ ba_category=tool
 autopackage_assembly=apache
 autopackage_config_args="-DUSE_WSGI:bool=ON -DUSE_SYSTEM_LIBRARIES:bool=ON"
 ba_module_version=MDC_django_owncloud
-ba_req_modules="python/2.7.1"
+ba_req_modules="python/2.7.2"
 
-ba_home_url="http://httpd.apache.org"
-ba_download_url="http://mirror.nohup.it/apache/httpd/httpd-2.2.17.tar.gz"
+ba_home_url="see packages"
+ba_download_url="several url see individual Packages"
 ba_short_desc="Apache+PHP+MYSQL+Subversion+modwsgi"
 ba_long_desc="see assembly"
 ba_license="unknown"
-make_command="make"
+make_command="make -j 10"
 
 tmp=`dirname $0`
 base=`dirname $tmp`
