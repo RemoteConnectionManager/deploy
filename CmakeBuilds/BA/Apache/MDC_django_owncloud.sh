@@ -10,7 +10,7 @@ ba_download_url="several url see individual Packages"
 ba_short_desc="Apache+PHP+MYSQL+Subversion+modwsgi"
 ba_long_desc="see assembly"
 ba_license="unknown"
-make_command="make -j 10"
+make_command="make"
 
 tmp=`dirname $0`
 base=`dirname $tmp`

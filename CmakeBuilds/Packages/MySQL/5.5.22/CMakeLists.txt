@@ -7,8 +7,8 @@ PackageSetup()
 
 
 set(Package_source_setup
-                URL http://mirror.switch.ch/ftp/mirror/mysql/Downloads/MySQL-5.5/mysql-5.5.11.tar.gz
-                URL_MD5 d41d8cd98f00b204e9800998ecf8427e
+                URL http://na.mirror.garr.it/mirrors/MySQL/Downloads/MySQL-5.5/mysql-5.5.22.tar.gz
+                URL_MD5 c5b151a70e9ceed5308f108f1ece7b3b
         )
 
 PackageCmakeAdd()

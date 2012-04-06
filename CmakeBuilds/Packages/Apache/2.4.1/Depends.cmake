@@ -1,5 +1,5 @@
 if(WIN32)
 	set(Package_current_dependencies unzip)
 else()
-	set(Package_current_dependencies APR/1.4.6 APRUtil)
+	set(Package_current_dependencies APR/1.4.6 APRUtil/1.4.1 )
 endif()

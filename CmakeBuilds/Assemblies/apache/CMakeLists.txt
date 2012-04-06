@@ -16,14 +16,14 @@ else()
 	set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 endif()
 set(EXTERNAL_ASSEMBLY_BUILD_SHARED_HINT ON)
+set(CURL_static OFF)
 
+add_external_package_dir(Apache 2.4.1)
+add_external_package_dir(Subversion 1.7.4 TRUE)
 
-add_external_package_dir(Apache)
-add_external_package_dir(Subversion 1.6.16)
-
-add_external_package_dir(PHP)
+add_external_package_dir(PHP 5.4.0)
 option(USE_WSGI "build mod_wsgi module" OFF)
 if(USE_WSGI)
-  add_external_package_dir(mod_wsgi)
+#  add_external_package_dir(mod_wsgi)
 endif()
 
