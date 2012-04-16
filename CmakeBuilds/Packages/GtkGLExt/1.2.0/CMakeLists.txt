@@ -8,7 +8,7 @@ else()
 	#configure based install 
 	set(Package_PkgConfig ON)
 	set(Package_source_setup
-		URL http://mesh.dl.sourceforge.net/project/gtkglext/gtkglext/1.2.0/gtkglext-1.2.0.tar.gz
+		URL http://downloads.sourceforge.net/project/gtkglext/gtkglext/1.2.0/gtkglext-1.2.0.tar.gz
 		URL_MD5 5c3240bfc1b21becd33ce35c5abe6f8d
 	)
 
