@@ -5,7 +5,7 @@ ba_category=library
 #autopackage_config_args='-DCMAKE_BUILD_TYPE:string=Release -DEXTERNAL_ASSEMBLY_BUILD_COMMAND:string="make;-j;8"'
 autopackage_config_args="-DUSE_SYSTEM_LIBRARIES:bool=ON"
 ba_module_version="2.3.1_pro"
-butopackage_version="2.3.1"
+autopackage_version="2.3.1"
 
 module_build_setup="module purge\\n module load profile/advanced cmake cuda/4.0  python/2.6.4 numpy/1.6.1 Qt/4.7.4--gnu--4.1.2"
 ba_req_modules="profile/advanced cuda/4.0  python/2.6.4 numpy/1.6.1 Qt/4.7.4--gnu--4.1.2"
