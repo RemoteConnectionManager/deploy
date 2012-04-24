@@ -10,6 +10,8 @@ PackageSetup()
 
 option(${PACKAGE}_python "activate   ${PACKAGE} python wrapping" ON)
 option(${PACKAGE}_use_image_internal "${PACKAGE} use internal jpeg,tiff,png" ON)
+option(${PACKAGE}_Qt "activate   ${PACKAGE} Qt GUI" OFF)
+
 
 
 
@@ -42,6 +44,9 @@ if(${PACKAGE}_use_image_internal)
 	set(Package_specific_cmake_args ${Package_specific_cmake_args} -DOPENCV_BUILD_3RDPARTY_LIBS:BOOL=ON )
 endif()
 
+if(${PACKAGE}_Qt)
+	set(Package_specific_cmake_args ${Package_specific_cmake_args} -DWITH_QT:BOOL=ON -DWITH_QT_OPENGL:BOOL=ON)
+endif()
 
 PackageCmakeAdd()
 

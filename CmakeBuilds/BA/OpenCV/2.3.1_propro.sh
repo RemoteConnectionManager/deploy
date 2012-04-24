@@ -3,7 +3,7 @@ ba_module_name=OpenCV
 ba_category=library
 #autopackage_config_args="-DQT_INSTALL_DIR:path=${QT_HOME} -DPYTHON_INSTALL_DIR:path=${PYTHON_HOME}"
 #autopackage_config_args='-DCMAKE_BUILD_TYPE:string=Release -DEXTERNAL_ASSEMBLY_BUILD_COMMAND:string="make;-j;8"'
-autopackage_config_args="-DUSE_SYSTEM_LIBRARIES:bool=ON"
+autopackage_config_args="-DOpenCV_Qt:bool=ON -DUSE_SYSTEM_LIBRARIES:bool=ON -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON "
 ba_module_version="2.3.1_pro"
 autopackage_version="2.3.1"
 
