@@ -192,8 +192,18 @@ fi
 
  ba postprocess -i $configfile -f general.description.homepage_url="${ba_home_url}" general.description.download_url="${ba_download_url}" general.description.short="${ba_short_desc}" general.description.long="${ba_long_desc}" general.license.license_type="${ba_license}"
 
+if [ "$ba_modules_prereq" = "" ]; then
+	ba_hook_modules_prereq='# ba_modules_prereq'
+	ba_subst_modules_prereq='ba_modules_prereq'
+        echo "!!!!!! normal mode module prereq !!!!!!!!!"
+else
+	ba_hook_modules_prereq='^# ba_modules_prereq.*$'
+	ba_subst_modules_prereq="${ba_modules_prereq}"
+        echo "!!!!!!  mode module prereq--->${ba_modules_prereq}<--- !!!!!!!!!"
+fi
+
 sed --in-place=.orig\
-	-e "s@# ba_modules_prereq@ba_modules_prereq@" \
+	-e "s@${ba_hook_modules_prereq}@${ba_subst_modules_prereq}@" \
 	-e "s@# prepend-path@prepend-path@" \
 	-e "s@# setenv@setenv@" \
 	-e "s@# conflict @conflict @" \
