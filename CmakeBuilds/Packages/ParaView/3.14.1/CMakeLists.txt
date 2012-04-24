@@ -16,6 +16,7 @@ option(${PACKAGE}_python "activate   ${PACKAGE} python wrapping" ON)
 option(${PACKAGE}_examples "compile  ${PACKAGE} examples" ON)
 option(${PACKAGE}_mpi "activate   ${PACKAGE} mpi" ON)
 
+
 if(${PACKAGE}_python)
 	find_package(PythonInterp)
 	if(PYTHON_EXECUTABLE)
@@ -65,27 +66,24 @@ if(${PACKAGE}_examples)
 	set(Package_specific_cmake_args ${Package_specific_cmake_args} -DBUILD_EXAMPLES:BOOL=${${PACKAGE}_examples})
 endif()
 
+#this patch is for enabling 
+PackageWriteMultiPatchFile(tmp 
+	HDF5_ENABLE_PARALLEL_vtknetcdf.diff
+)
+
+file(WRITE ${Package_Source_Stamp_Dir}/patch.cmake ${tmp})
+
+
 set(Package_source_setup
 	URL http://paraview.org/files/v3.14/ParaView-3.14.1-Source.tar.gz
 	URL_MD5 039c612777f5eb7bba5d37319f34c922
+	PATCH_COMMAND ${CMAKE_COMMAND} -P ${Package_Source_Stamp_Dir}/patch.cmake
+	UPDATE_COMMAND ""
 )
 
 PackageCmakeAdd()
 
 
-# ExternalProject_Add(
-# 	${PACKAGE}
-# 	${Package_std_dirs}
-# 	URL http://www.paraview.org/files/v3.8/ParaView-3.8.1.tar.gz
-# 	URL_MD5 b432b9e68cc308ae8f086d759f578125
-# 	CMAKE_COMMAND ${CMAKE_COMMAND}
-# 	CMAKE_ARGS ${Package_std_cmake_args} 
-# 		${Package_specific_cmake_args}
-# 	${make_command}
-# 	${Package_current_dependencies_effective_line}
-# 	#CONFIGURE_COMMAND <SOURCE_DIR>/configure --srcdir=<SOURCE_DIR> --prefix=<INSTALL_DIR> --with-plugins=innodb_plugin
-# )
-	
 
 
 

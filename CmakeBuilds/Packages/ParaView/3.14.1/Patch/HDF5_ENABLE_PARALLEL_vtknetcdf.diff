@@ -1,0 +1,11 @@
+diff -Nur src.orig/VTK/Utilities/vtknetcdf/CMakeLists.txt src/VTK/Utilities/vtknetcdf/CMakeLists.txt
+--- src.orig/VTK/Utilities/vtknetcdf/CMakeLists.txt	2012-04-02 18:57:30.000000000 +0200
++++ src/VTK/Utilities/vtknetcdf/CMakeLists.txt	2012-04-24 00:10:46.384474000 +0200
+@@ -302,6 +302,7 @@
+   ${CMAKE_CURRENT_SOURCE_DIR}/libsrc4
+   ${CMAKE_CURRENT_BINARY_DIR}
+   ${VTK_HDF5_INCLUDE_DIR}
++  ${MPI_INCLUDE_PATH}
+   )
+ 
+ set(netcdf_liblib_SOURCES "" CACHE INTERNAL "" FORCE)
