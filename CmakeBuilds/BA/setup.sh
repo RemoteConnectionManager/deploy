@@ -35,7 +35,7 @@ fi
 
 
 if [ "$ba_default_download" = "" ]; then
-  ba_default_download=" svn export https://hpc-forge.cineca.it/svn/CmakeBuilds/CmakeBuilds \$BA_PKG_SOURCE_DIR --force"
+  ba_default_download=" svn co https://hpc-forge.cineca.it/svn/CmakeBuilds/CmakeBuilds \$BA_PKG_SOURCE_DIR "
 fi
 if [ "$ba_test_mode" = "" ]; then
    test  "$user" = "$ba_test_user"
@@ -50,7 +50,7 @@ fi
 
 if [ "$ba_category" = "" ]; then
     ba_category="tool"
-fi/cineca/prod/build/tools/ParaView/3.14.1/gnu--4.1.2/BA_WORK
+fi
 
 if [ "$ba_compiler" = "" ]; then
     ba_compiler='gnu/4.1.2'

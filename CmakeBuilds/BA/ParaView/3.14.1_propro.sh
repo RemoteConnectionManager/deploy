@@ -7,7 +7,7 @@ ba_category=tool
 autopackage_config_args='-DCMAKE_BUILD_TYPE:string=Release -DEXTERNAL_ASSEMBLY_BUILD_COMMAND:string="make;-j;12"'
 ba_module_version="3.14.1"
 autopackage_version=3.14.1
-module_build_setup=" module purge\nload profile/advanced cmake  "
+module_build_setup="module purge\n module load profile/advanced cmake  "
 ba_req_modules="$openmpi_module Qt/4.7.4--gnu--4.1.2 python/2.7.2"
 
 ba_home_url="http://www.paraview.org"
