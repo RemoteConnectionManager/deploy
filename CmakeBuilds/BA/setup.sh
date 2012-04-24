@@ -2,8 +2,6 @@ module purge
 module load autoload
 module load profile/advanced
 module load ba
-module use /plx/userprod/pro3dwe1/BA/modulefiles/
-module load cmake
 
 SCRIPT_PATH="${BASH_SOURCE[0]}";
 if([ -h "${SCRIPT_PATH}" ]) then
@@ -22,8 +20,21 @@ if [ "$ba_test_user" = "" ]; then
   ba_test_user="pro3dwe1"
 fi
 
+if [ "${user}" = "propro01" ]; then
+  ba_build_local=false
+  if [ "$ba_author" = "" ]; then
+    ba_author="Luigi Calori"
+  fi
+fi
+
+echo "ba_test_mode-${user}-${ba_test_user}- ---${ba_test_mode}---"
+if [ "$ba_author" = "" ]; then
+    ba_author=`finger -p $user | grep Name: | sed s/^.*Name:\ //`
+fi
+
+
 if [ "$ba_default_download" = "" ]; then
-  ba_default_download=" svn co https://hpc-forge.cineca.it/svn/CmakeBuilds/CmakeBuilds \$BA_PKG_SOURCE_DIR"
+  ba_default_download=" svn export https://hpc-forge.cineca.it/svn/CmakeBuilds/CmakeBuilds \$BA_PKG_SOURCE_DIR --force"
 fi
 if [ "$ba_test_mode" = "" ]; then
    test  "$user" = "$ba_test_user"
@@ -35,10 +46,6 @@ if [ "$ba_test_mode" = "" ]; then
    fi
 fi
 
-echo "ba_test_mode-${user}-${ba_test_user}- ---${ba_test_mode}---"
-if [ "$ba_author" = "" ]; then
-    ba_author=`finger -p $user | grep Name: | sed s/^.*Name:\ //`
-fi
 
 if [ "$ba_category" = "" ]; then
     ba_category="tool"
@@ -129,7 +136,7 @@ if  ${ba_test_mode} ; then
   cd $source_dir
   current_revision=`svnversion`
   echo "current revision -->${current_revision}<--"
-  build_source="cd \$BA_PKG_SOURCE_DIR\\n svnversion > $work_dir/REVISION.txt"
+  build_source="cd \$BA_PKG_SOURCE_DIR\\n svnversion > $ba_work_dir/REVISION.txt"
 else
   build_source="${ba_default_download}\\ncd \$BA_PKG_SOURCE_DIR\\n svnversion > $ba_work_dir/REVISION.txt"
   echo "------------sono qui------->${build_source}<--"
@@ -146,10 +153,6 @@ if [ "$make_command" = "" ]; then
   make_command="make -j 8"
 fi
 
-if [ "$make_command" = "" ]; then
-  make_command="make -j 8"
-fi
-
 
 force_install_command="cd $work_dir\\nrm bld/${autopackage_name}/${autopackage_name}-prefix/src/${autopackage_name}-stamp/${autopackage_name}-install\\nmake ${autopackage_name}-install"
 
@@ -159,26 +162,6 @@ ba_hook_configure='# ./configure --prefix="$BA_PKG_INSTALL_DIR"'
 ba_hook_make='# make$'
 ba_hook_install='# make install$'
 
-
-####################################  remove #########################################################
-#build_source="bzr branch http://rvn05.plx.cineca.it:12000/files/virtualrome/bazaar_repo/CmakeDeps/lib/ \$BA_PKG_SOURCE_DIR\\ncd \$BA_PKG_SOURCE_DIR\\n bzr revno > $work_dir/REVISION.txt"
-#build_source='bzr branch http://rvn05.plx.cineca.it:12000/files/virtualrome/bazaar_repo/CmakeDeps/lib/ $BA_PKG_SOURCE_DIR'
-
-#build_source="${ba_default_download}\\ncd \$BA_PKG_SOURCE_DIR\\n bzr revno > $work_dir/REVISION.txt"
-
-
-# sed "s@${ba_hook_prepare_source}@BA_PKG_SOURCE_DIR=${source_folder}\\n${build_source}\\n@" BUILD_SCRIPT | \
-# sed "s@${ba_hook_configure}@cd $work_dir\\ncmake \${BA_PKG_SOURCE_DIR}/Assemblies/cmake\\n@" |
-# sed "s@${ba_hook_make}@cd $work_dir\\nmake -j 8\\n@" |more
-####################################  remove #########################################################
-
-# sed --in-place=.orig\
-# 	-e "s@${ba_hook_set_source}@BA_PKG_SOURCE_DIR=${source_dir}@" \
-# 	-e "s@${ba_hook_prepare_source}@${build_source}\\n@" \
-# 	-e "s@${ba_hook_configure}@cd $work_dir\\ncmake \${BA_PKG_SOURCE_DIR}/Assemblies/cmake -DEXTERNAL_ASSEMBLY_COMMON_PREFIX:PATH=${ba_prefix_dir}\\n@" \
-#         -e "s@${ba_hook_make}@cd $work_dir\\nmake -j 8\\n@" \
-# 	-e "s@^  # module@module@" \
-# ${ba_build_dir}/BUILD_SCRIPT 
 
 #configuring  build script 
 sed --in-place=.orig\
