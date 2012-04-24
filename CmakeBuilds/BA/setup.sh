@@ -22,6 +22,7 @@ fi
 
 if [ "${user}" = "propro01" ]; then
   ba_build_local=false
+  ba_test_mode=false
   if [ "$ba_author" = "" ]; then
     ba_author="Luigi Calori"
   fi
@@ -49,7 +50,7 @@ fi
 
 if [ "$ba_category" = "" ]; then
     ba_category="tool"
-fi
+fi/cineca/prod/build/tools/ParaView/3.14.1/gnu--4.1.2/BA_WORK
 
 if [ "$ba_compiler" = "" ]; then
     ba_compiler='gnu/4.1.2'
