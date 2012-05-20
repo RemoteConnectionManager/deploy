@@ -1,5 +1,0 @@
-if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-  set(Package_current_dependencies osg  md5deep)
-else()
-  set(Package_current_dependencies osg Zip geckosdk md5deep)
-endif()

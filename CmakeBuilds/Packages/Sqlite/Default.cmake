@@ -1,5 +1,0 @@
-if(WIN32)
-	set(Package_default_version 3.7.6.2)
-else()
-	set(Package_default_version 3.6.23)
-endif()

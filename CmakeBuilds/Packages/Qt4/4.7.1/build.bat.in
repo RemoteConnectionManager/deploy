@@ -1,6 +1,0 @@
-call @_vcvars@ @CMAKE_SYSTEM_PROCESSOR@
-cd ${MY_INSTALL_NATIVE_DIR}
-nmake 
-set result=%ERRORLEVEL%
-exit \b %result%
-
