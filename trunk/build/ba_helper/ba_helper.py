@@ -33,7 +33,9 @@ def run(cmd,tmpfile=True,currenv=False):
     stdout,stderr = myprocess.communicate()
     myprocess.wait()
     #print "out-->"+stdout
-    #print "err-->"+stderr
+    if stderr : 
+	 print "err-->"+stderr
+	 exit(1)
     return (stdout,stderr)
 
 ##########################
@@ -153,17 +155,18 @@ class ba_helper():
 		shutil.copyfile(fname,prev_file)
 
     
-    def exec_build_passes(self,passes=[]):
+    def exec_build_passes(self,passes=[],report=False):
         buildfile=os.path.join(self.build_dir,'BUILD_SCRIPT')
 	
 	if os.path.exists(buildfile):
             for p in ['download','configure','make','install']:
 	        if p in passes:
 		    cmd="/bin/bash "+buildfile+" --"+p
-	            #print "running-->",cmd
+		    outname=os.path.join(self.build_dir,p+'_out.log')
+	            print "pass "+p+" out in "+outname+" run-->"+cmd
 	            (out,err)=run(cmd,currenv=True)
 		    if out :
-			outname=os.path.join(self.build_dir,p+'_out.log')
+			if report : print out
 		        with open (outname, "w") as myfile:
                             myfile.write(out)
 
@@ -283,6 +286,7 @@ class ba_builder():
             self.op.add_option('-'+i[0],'--'+i,action="store_true", dest=i,default=False,help='execute '+i+' step')
 
         self.op.add_option('-a','--build_all'+i,action="store_true", dest='build_all',default=False,help='execute all build steps')
+        self.op.add_option('-v','--verbose'+i,action="store_true", dest='verbose',default=False,help='print output of build steps')
         self.op.add_option("--platform_template",action="store",type="string", dest="platform_template",default='unix',help='set platform template file, default to unix')
         self.op.add_option("--build_template",action="store",type="string", dest="build_template",default='gnu',help='set build template file, default to gnu')
 
@@ -307,10 +311,10 @@ class ba_builder():
 
         cfg=moduleconfig.moduleconfig(init_parse=moduleconfig.preload(prld))
         cfg.parse(conf_file)
-        opt=cfg.module_options()
+        module_opt=cfg.module_options()
     
         bah=ba_helper()
-        bah.merge_options(options=opt)
+        bah.merge_options(options=module_opt)
         #print "editfiles-->",list(bah.editfiles)
         bah.create()
 
@@ -332,7 +336,7 @@ class ba_builder():
 
 
         bah.parse(build)
-        bah.exec_build_passes(bp)
+        bah.exec_build_passes(bp,opts.verbose)
         bah.postprocess()
         bah.parse(module)
         bah.module()
