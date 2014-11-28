@@ -100,6 +100,7 @@ class ba_helper():
         self.name=''
         self.prefix=''
 	self.replaces=dict()
+        self.stop_on_error_lines="set -e\nset -o errexit\n"
  
     def merge_options(self,options=dict()):
         for o in self.options:
@@ -188,7 +189,15 @@ class ba_helper():
                 self.out += "    "+nl+'\n'
         self.prefix=''
         self.out += self.prefix+line+'\n'
-    
+
+    def force_replace(self,line='',groups=dict(),match=None):
+#        print "force_replace:",groups,match
+        replace=groups.get('replace',None)
+        if replace:            
+            self.out += self.prefix+line.replace(replace,self.replaces.get(match,''))+'\n'
+        else:
+            self.out += self.prefix+line+'\n'
+
     def replace(self,line='',groups=dict(),match=None):
         name=groups.get('name','')
         replace=groups.get('replace',name)
@@ -202,12 +211,13 @@ class ba_helper():
                 return
 	self.out += self.prefix+line+'\n'
     
-    def parse(self,repls=dict()):
+    def parse(self,repls=dict(),stop_on_error=False):
 
         header=re.compile(r'^\s*ba_header\s*"(?P<name>.*?)"')
         start=re.compile(r'^\s*#*\s*vvv\s*#*')
         stop=re.compile(r'^\s*#*\s*\^\^\^\s*#*')
         pkg_source_dir=re.compile(r'^\s*BA_PKG_SOURCE_DIR\s*="(?P<name>.*?)"')
+        redirect_line=re.compile(r'^\s*}\s+(?P<replace>2>&1\s+\|\s+tee\s+\-a\s+\"\$BA_PKG_BUILD_LOG\")')
         module_setenv_home=re.compile(r'^(?P<name>#\s*setenv)\s+[A-Z_]*HOME\s*".*"') 
         module_prepend_path=re.compile(r'^(?P<replace>#\s*prepend-path)\s+(?P<name>[A-Z_]*)\s+".*"') 
         module_conflict=re.compile(r'^(?P<name>#\s*conflict)\s+') 
@@ -219,6 +229,7 @@ class ba_helper():
         self.matches[start]=(self.start,'start')
         self.matches[stop]=(self.stop,'stop')
         self.matches[pkg_source_dir]=(self.replace,'pkg_source_dir')
+        if stop_on_error : self.matches[redirect_line]=(self.force_replace,'redirect_line')
         self.matches[module_setenv_home]=(self.replace,'setenv_home')
         self.matches[module_conflict_comment]=(self.replace,'conflict_comment')
         self.matches[module_conflict]=(self.replace,'conflict')
@@ -244,6 +255,7 @@ class ba_helper():
                 linecount=0
                 for l in input.splitlines():
                     if linecount==1 :
+                        if stop_on_error: self.out += self.stop_on_error_lines
                         self.out += self.replaces.get('reproduce_string','')
 
                     linecount+=1
@@ -287,6 +299,7 @@ class ba_builder():
 
         self.op.add_option('-a','--build_all'+i,action="store_true", dest='build_all',default=False,help='execute all build steps')
         self.op.add_option('-v','--verbose'+i,action="store_true", dest='verbose',default=False,help='print output of build steps')
+        self.op.add_option('-s','--stop_on_error'+i,action="store_true", dest='stop_on_error',default=False,help='stop build steps on error')
         self.op.add_option("--platform_template",action="store",type="string", dest="platform_template",default='unix',help='set platform template file, default to unix')
         self.op.add_option("--build_template",action="store",type="string", dest="build_template",default='gnu',help='set build template file, default to gnu')
 
@@ -335,7 +348,7 @@ class ba_builder():
         #print module
 
 
-        bah.parse(build)
+        bah.parse(build,opts.stop_on_error)
         bah.exec_build_passes(bp,opts.verbose)
         bah.postprocess()
         bah.parse(module)
