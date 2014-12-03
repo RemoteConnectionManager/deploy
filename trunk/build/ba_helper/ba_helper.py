@@ -162,14 +162,20 @@ class ba_helper():
 	if os.path.exists(buildfile):
             for p in ['download','configure','make','install']:
 	        if p in passes:
-		    cmd="/bin/bash "+buildfile+" --"+p
-		    outname=os.path.join(self.build_dir,p+'_out.log')
-	            print "pass "+p+" out in "+outname+" run-->"+cmd
-	            (out,err)=run(cmd,currenv=True)
-		    if out :
-			if report : print out
-		        with open (outname, "w") as myfile:
-                            myfile.write(out)
+		    cmd="/bin/bash "+buildfile+" --"+p          
+                    results=dict()
+                    msg="pass "+p
+                    for r in ['out','err']:
+                        results[r]=[os.path.join(self.build_dir,p+'_'+r+'.log'),'']
+                        msg += "\n  " + r+" in "+results[r][0]
+                    msg += "\n  run-->"+cmd
+                    print msg
+	            (results['out'][1],results['err'][1])=run(cmd,currenv=True)
+                    for r in ['out','err']:
+		        if results[r][1] :
+			    if report : print results[r][1]
+		            with open (results[r][0], "w") as myfile:
+                                myfile.write(results[r][1])
 
 		
     def setname(self,line='',groups=dict(),match=None):
@@ -295,13 +301,13 @@ class ba_builder():
         #['download','configure','make','install']
         self.op=optparse.OptionParser( usage="usage: %prog [options] config file" )
         for i in self.build_passes:
-            self.op.add_option('-'+i[0],'--'+i,action="store_true", dest=i,default=False,help='execute '+i+' step')
+            self.op.add_option('-'+i[0],'--'+i,action="store_true", dest=i,default=False,help='execute '+i+' step ')
 
-        self.op.add_option('-a','--build_all'+i,action="store_true", dest='build_all',default=False,help='execute all build steps')
-        self.op.add_option('-v','--verbose'+i,action="store_true", dest='verbose',default=False,help='print output of build steps')
-        self.op.add_option('-s','--stop_on_error'+i,action="store_true", dest='stop_on_error',default=False,help='stop build steps on error')
-        self.op.add_option("--platform_template",action="store",type="string", dest="platform_template",default='unix',help='set platform template file, default to unix')
-        self.op.add_option("--build_template",action="store",type="string", dest="build_template",default='gnu',help='set build template file, default to gnu')
+        self.op.add_option('-a','--build_all',action="store_true", dest='build_all',default=False,help=' execute all build steps')
+        self.op.add_option('-v','--verbose',action="store_true", dest='verbose',default=False,help=' print output of build steps')
+        self.op.add_option('-s','--stop_on_error',action="store_true", dest='stop_on_error',default=False,help=' stop build steps on error')
+        self.op.add_option("--platform_template",action="store",type="string", dest="platform_template",default='unix',help=' set platform template file, default to unix')
+        self.op.add_option("--build_template",action="store",type="string", dest="build_template",default='gnu',help=' set build template file, default to gnu')
 
     def parse(self,argv=None):
         if not argv:
@@ -338,6 +344,7 @@ class ba_builder():
           confdict={
             ('build','build_dir') : bah.build_dir,
             ('build','install_dir') : bah.prefix_dir,
+            ('build','work_dir') : bah.work_dir,
           }
          )
         )
