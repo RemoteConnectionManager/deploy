@@ -345,6 +345,7 @@ class ba_builder():
             ('build','build_dir') : bah.build_dir,
             ('build','install_dir') : bah.prefix_dir,
             ('build','work_dir') : bah.work_dir,
+            ('build','module_file') : bah.module_file,
           }
          )
         )
