@@ -14,4 +14,5 @@ python ba_helper/ba_helper.py -a Packages/blender/2.72b/bin64bit.cfg
 python ba_helper/ba_helper.py -a --stop_on_error Packages/vapor/2.3.0/bin64bit.cfg
 python ba_helper/ba_helper.py   -a  Packages/cmake/3.1.0-rc2/
 #python ba_helper/ba_helper.py -a   Packages/qt/5.3.2/static.cfg
-python ba_helper/ba_helper.py  -a  Packages/qt/5.3.2/shared_opengl.cfg
+python ba_helper/ba_helper.py -a                                                                                                                                   Packages/qt/5.3.2/shared_opengl.cfg
+python ba_helper/ba_helper.py -a Packages/qtcreator/3.2.1/
