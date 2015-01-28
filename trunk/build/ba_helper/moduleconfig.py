@@ -216,7 +216,9 @@ class moduleconfig(hierconfig):
 
         return out
 
-def preload(pre_list=['unix','gnu']):
+def preload(pre_list=[]):
+    if 0==len(pre_list) :
+        pre_list=['unix',self.myintrospect.sysintro['hostname'].split('.')[1:][0:1]]
     templatedir=os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])),'templates')
     if not os.path.exists(templatedir):
         print "templtedir "+ templatedir + " missing !!!!!!!!!!!!!"
