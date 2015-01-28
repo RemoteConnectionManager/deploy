@@ -3,7 +3,7 @@ set -e
 set -o errexit
 module load autoload ba
 echo $PWD
-python  ba_helper/ba_helper.py -a --stop_on_error Packages/nasm/2.07
+python  ba_helper/ba_helper.py -a Packages/nasm/2.07
 python  ba_helper/ba_helper.py -a --stop_on_error Packages/cmake/3.1.1/bin386.cfg
 python  ba_helper/ba_helper.py -a --stop_on_error Packages/libjpeg-turbo/1.3.1
 python  ba_helper/ba_helper.py -a --stop_on_error Packages/turbovnc/svn
