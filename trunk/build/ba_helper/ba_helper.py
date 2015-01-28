@@ -9,6 +9,7 @@ import shutil
 import optparse
 
 import moduleconfig
+import moduleintrospection
 
 def run(cmd,tmpfile=True,currenv=False):
     #print "running command--->"+cmd 
@@ -298,6 +299,7 @@ class ba_helper():
 class ba_builder():
     def __init__(self):
         self.build_passes=['download','configure','make','install']
+        self.clustername=moduleintrospection.myintrospect().sysintro['hostname'].split('.')[1:][0:1][0]
         #['download','configure','make','install']
         self.op=optparse.OptionParser( usage="usage: %prog [options] config file" )
         for i in self.build_passes:
@@ -307,7 +309,7 @@ class ba_builder():
         self.op.add_option('-v','--verbose',action="store_true", dest='verbose',default=False,help=' print output of build steps')
         self.op.add_option('-s','--stop_on_error',action="store_true", dest='stop_on_error',default=False,help=' stop build steps on error')
         self.op.add_option("--platform_template",action="store",type="string", dest="platform_template",default='unix',help=' set platform template file, default to unix')
-        self.op.add_option("--build_template",action="store",type="string", dest="build_template",default='gnu',help=' set build template file, default to gnu')
+        self.op.add_option("--build_template",action="store",type="string", dest="build_template",default=self.clustername,help=' set build template file, default to '+self.clustername)
 
     def parse(self,argv=None):
         if not argv:
