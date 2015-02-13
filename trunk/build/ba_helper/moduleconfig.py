@@ -121,19 +121,22 @@ class hierconfig(baseconfig):
 
     def parse(self,filename=None,dirs=None):
         if  dirs==None: dirs=self.dirs
-        if( not filename):
-            filename=os.path.join('.',self.configfile)
-        if(os.path.exists(filename)):
-	    filename=os.path.abspath(filename)
-	    if os.path.isdir(filename):
-	       path=os.path.abspath(filename)
-	       configs=[]
-            else:
-	        if self.configfile == os.path.basename(filename):
-		    configs=[]
-		else: 
-		    configs=[os.path.abspath(filename)]
-	        path=os.path.dirname(filename)
+        if( not filename): filename='.'
+
+	configs=[]
+	if os.path.isdir(filename):
+	    path=os.path.abspath(filename)
+        else:
+	    count = 2
+	    fname=filename
+	    while ( not os.path.exists(fname) ) and ( count > 0 ) :
+	        count = count -1
+	        fname = os.path.join(os.path.dirname(os.path.dirname(fname)),os.path.basename(fname))
+            if(os.path.exists(fname)):
+                configs.append(os.path.abspath(fname))
+	    path=os.path.abspath(os.path.dirname(filename))
+	    
+        if(os.path.exists(path)):
 	    for d in dirs:
 #		print "configs:",configs
 #		print "looking for config in -->",path
@@ -163,7 +166,7 @@ class moduleconfig(hierconfig):
             ('module','pkg-name'):('general','name'),
             ('module','pkg-version'):('general','version'),
             ('module','required-modules'):('general','depends'),
-            ('module','build-author'):('general','author'),
+            ('module','builad-author'):('general','author'),
         }
 
 
@@ -217,8 +220,11 @@ class moduleconfig(hierconfig):
         return out
 
 def preload(pre_list=[]):
+    s=moduleintrospection.myintrospect()
     if 0==len(pre_list) :
-        pre_list=['unix',self.myintrospect.sysintro['hostname'].split('.')[1:][0:1]][0]
+        pre_list=['unix',s.sysintro['hostname'].split('.')[1:][0:1][0]]
+    print "-----------------hostname-----------",s.sysintro['hostname']
+    print "-----------------pre_list-----------",pre_list
     templatedir=os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])),'templates')
     if not os.path.exists(templatedir):
         print "templtedir "+ templatedir + " missing !!!!!!!!!!!!!"
