@@ -19,3 +19,5 @@ python ba_helper/ba_helper.py -a Packages/qt/5.3.2/source.cfg
 python ba_helper/ba_helper.py -a Packages/qt/5.3.2/shared_opengl.cfg
 python ba_helper/ba_helper.py -a Packages/qtcreator/3.2.1/
 python ba_helper/ba_helper.py -a  Packages/vmd/1.9.2/bin64bit.cfg
+
+python  ba_helper/ba_helper.py -a Packages/fluxbox/1.3.7
