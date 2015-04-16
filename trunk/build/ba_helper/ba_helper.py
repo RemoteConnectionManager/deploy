@@ -11,8 +11,8 @@ import optparse
 import moduleconfig
 import moduleintrospection
 
-def run(cmd,tmpfile=True,currenv=False):
-    #print "running command--->"+cmd 
+def run(cmd,tmpfile=True,currenv=False,verbose=False):
+    if verbose : print "running command--->"+cmd 
     if(currenv):
         #print "command--->"+cmd 
         args=cmd.split()
@@ -29,7 +29,7 @@ def run(cmd,tmpfile=True,currenv=False):
 	else:
 		#args=["/bin/bash", "-i","-c",cmd]
 		args=["/bin/bash", "-c",cmd]
-    #print "run...args:",args
+    if verbose : print "run...args:",args
     myprocess = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     stdout,stderr = myprocess.communicate()
     myprocess.wait()
@@ -54,11 +54,15 @@ class matcher():
         
 class ba_helper():
 
-    def __init__(self):
-        (out,err)=run("ba -b")   
+    def __init__(self,verbose=False):
+        self.verbose=verbose
+        (out,err)=run("ba -b",verbose=self.verbose)   
         if(err):
             print "ba command not found, try module load ba"
             exit()
+        else:
+	    if self.verbose:
+	        print "ba controlled modules\n"+out
         self.base_options={
             'build.minor_release_support' : 'False',
             '--modulefile-schema' : 'single',
@@ -134,7 +138,7 @@ class ba_helper():
 
         #print "running-->"+command+"<--"
         #print 
-        (out,err)=run(command,True)        
+        (out,err)=run(command,True,verbose=self.verbose)        
         regpath=re.compile(r"^Config file\s*'(?P<path>.*?)'")
         for l in out.splitlines():
 #            print "line--->"+l
@@ -145,7 +149,7 @@ class ba_helper():
                 self.configfile=path
         if(self.configfile):
             for attr in self.attribs:
-                (out,err)=run("ba query "+self.attribs[attr]+"."+attr+" -i "+self.configfile+" | sed s/^[^=]*=//")
+                (out,err)=run("ba query "+self.attribs[attr]+"."+attr+" -i "+self.configfile+" | sed s/^[^=]*=//",verbose=self.verbose)
                 path=out.strip()
      #           if(os.path.exists(path)): 
                 setattr(self,attr,path)
@@ -171,7 +175,7 @@ class ba_helper():
                         msg += "\n  " + r+" in "+results[r][0]
                     msg += "\n  run-->"+cmd
                     print msg
-	            (results['out'][1],results['err'][1])=run(cmd,currenv=True)
+	            (results['out'][1],results['err'][1])=run(cmd,currenv=True,verbose=self.verbose)
                     for r in ['out','err']:
 		        if results[r][1] :
 			    if report : print results[r][1]
@@ -294,7 +298,7 @@ class ba_helper():
     def module(self):
         if(self.configfile):
             command='ba module -f -i ' + self.configfile
-            (out,err)=run(command,currenv=True)
+            (out,err)=run(command,currenv=True,verbose=self.verbose)
 
 class ba_builder():
     def __init__(self):
@@ -334,7 +338,7 @@ class ba_builder():
         cfg.parse(conf_file)
         module_opt=cfg.module_options()
     
-        bah=ba_helper()
+        bah=ba_helper(verbose=opts.verbose)
         bah.merge_options(options=module_opt)
         #print "editfiles-->",list(bah.editfiles)
         bah.create()
