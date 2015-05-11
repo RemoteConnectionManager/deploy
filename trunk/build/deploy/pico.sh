@@ -21,3 +21,5 @@ python ba_helper/ba_helper.py -a Packages/qtcreator/3.2.1/
 python ba_helper/ba_helper.py -a  Packages/vmd/1.9.2/bin64bit.cfg
 
 python  ba_helper/ba_helper.py -a Packages/fluxbox/1.3.7
+python  ba_helper/ba_helper.py -a Packages/pcmanfm/1.2.3
+
