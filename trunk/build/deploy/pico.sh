@@ -22,4 +22,4 @@ python ba_helper/ba_helper.py -a  Packages/vmd/1.9.2/bin64bit.cfg
 
 python  ba_helper/ba_helper.py -a Packages/fluxbox/1.3.7
 python  ba_helper/ba_helper.py -a Packages/pcmanfm/1.2.3
-
+python  ba_helper/ba_helper.py -a Packages/vaa3d/2.9/bin64bit.cfg
