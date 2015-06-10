@@ -229,7 +229,7 @@ class ba_helper():
         stop=re.compile(r'^\s*#*\s*\^\^\^\s*#*')
         pkg_source_dir=re.compile(r'^\s*BA_PKG_SOURCE_DIR\s*="(?P<name>.*?)"')
         redirect_line=re.compile(r'^\s*}\s+(?P<replace>2>&1\s+\|\s+tee\s+\-a\s+\"\$BA_PKG_BUILD_LOG\")')
-        module_setenv_home=re.compile(r'^(?P<name>#\s*setenv)\s+[A-Z_]*HOME\s*".*"') 
+        module_setenv_home=re.compile(r'^(?P<name>#\s*setenv)\s+[A-Z0-9_]*HOME\s*".*"') 
         module_prepend_path=re.compile(r'^(?P<replace>#\s*prepend-path)\s+(?P<name>[A-Z_]*)\s+".*"') 
         module_conflict=re.compile(r'^(?P<name>#\s*conflict)\s+') 
         module_prereq=re.compile(r'^(?P<replace>#\s*ba_modules_prereq)\s+(?P<name>.*)$') 
