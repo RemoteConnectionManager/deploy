@@ -1,0 +1,1 @@
+https://hpc-forge.cineca.it/svn/CmakeBuilds/trunk/downloads/libjpeg-turbo/libjpeg-turbo-1.4.2.tar.gz_2666158ccd5318513f875867bbc4af52f6eb9f0b
