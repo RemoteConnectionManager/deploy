@@ -54,7 +54,8 @@ class baseconfig:
 		self.options[o]=self.options.get(o,[])+[s]
         self.clean()
         meta=baseconfig(confdict={
-              ('meta_config','path') : os.path.dirname(configfile)
+              ('meta_config','path') : os.path.dirname(configfile),
+              ('meta_config','toppath') : os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))),
         })
 
         out=self.template_subst(meta)
