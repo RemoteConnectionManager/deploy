@@ -106,7 +106,8 @@ class ba_helper():
         self.prefix=''
 	self.replaces=dict()
         self.stop_on_error_lines="set -e\nset -o errexit\n"
- 
+        self.skip=False
+        
     def merge_options(self,options=dict()):
         for o in self.options:
             replace=options.get(o,None)
@@ -192,6 +193,7 @@ class ba_helper():
         code=self.replaces.get(self.name,None)
         self.out += self.prefix+line+'\n'
 	if(code): self.prefix=''
+	self.skip=True
     
     def stop(self,line='',groups=dict(),match=None):
         code=self.replaces.get(self.name,None)
@@ -200,6 +202,7 @@ class ba_helper():
                 self.out += "    "+nl+'\n'
         self.prefix=''
         self.out += self.prefix+line+'\n'
+        self.skip=False
 
     def force_replace(self,line='',groups=dict(),match=None):
 #        print "force_replace:",groups,match
@@ -281,6 +284,7 @@ class ba_helper():
                                  unhandled=False    
 
                     if unhandled:
+		      if not self.skip:
                          self.out += self.prefix+l+'\n'
                 #print self.out
                 with open (fname, "w") as myfile:
