@@ -227,7 +227,7 @@ class ba_helper():
     
     def parse(self,repls=dict(),stop_on_error=False):
 
-        header=re.compile(r'^\s*ba_header\s*"(?P<name>.*?)"')
+        header=re.compile(r'^\s*ba_header\s*"(?P<name>\w*)[^"]*"')
         start=re.compile(r'^\s*#*\s*vvv\s*#*')
         stop=re.compile(r'^\s*#*\s*\^\^\^\s*#*')
         pkg_source_dir=re.compile(r'^\s*BA_PKG_SOURCE_DIR\s*="(?P<name>.*?)"')
